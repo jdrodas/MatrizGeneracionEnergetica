@@ -1,0 +1,33 @@
+// Scripts de clase - Agosto 27 de 2025 
+// Curso de Tópicos Avanzados de base de datos - UPB 202520
+// Juan Dario Rodas - juand.rodasm@upb.edu.co
+
+// Proyecto: Matriz Generación Energetica
+// Representación del modelo de datos en DBML
+
+Table "tipos" {
+  "id" uuid [pk, default: `gen_random_uuid()`, note: 'ID del tipo de fuente energética']
+  "nombre" text [not null, note: 'Nombre el tipo e fuente']
+  "descripcion" text [not null, note: 'descripcion detallada del tipo de fuente']
+  "esrenovable" boolean [not null, note: 'Indica si es fuente renovable']
+  Note: 'Catálogo de tipos de fuentes energéticas'
+}
+
+Table "plantas" {
+  "id" uuid [pk, default: `gen_random_uuid()`, note: 'ID de la planta generadora']
+  "nombre" text [not null, note: 'Nombre de la planta']
+  "tipo_id" uuid [not null, note: 'Tipo de fuente utilizada por la planta']
+  "capacidad" decimal [not null, note: 'Capacidad instalada de generación en Megavatios']
+  Note: 'Registro de plantas generadoras de energía'
+}
+
+Table "produccion" {
+  "id" uuid [pk, default: `gen_random_uuid()`, note: 'ID del registro de generación']
+  "planta_id" uuid [not null, note: 'ID de la planta que está produciendo energía']
+  "fecha" date [not null, note: 'Fecha en la que se produce el registro de generación']
+  "produccion" decimal [not null, note: 'Energía generada por la planta en este día']
+  Note: 'Registro de la generación diaria de cada planta'
+}
+
+Ref:"tipos"."id" < "plantas"."tipo_id"
+Ref:"plantas"."id" < "produccion"."planta_id"
