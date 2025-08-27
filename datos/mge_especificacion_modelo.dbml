@@ -5,6 +5,15 @@
 // Proyecto: Matriz Generación Energetica
 // Representación del modelo de datos en DBML
 
+Table "ubicaciones"{
+  "id" uuid [pk, default: `gen_random_uuid()`, note: 'ID de la ubicación']  
+  "codigo_departamento" text [not null, note: 'Código DIVIPOLA del departamento']        
+  "codigo_municipio" text [not null, note: 'Código DIVIPOLA del municipio']
+  "nombre_departamento" text [not null, note: 'Nombre oficial del departamento según DIVIPOLA']
+  "nombre_municipio" text [not null, note: 'Nombre oficial del municipio según DIVIPOLA']
+}
+
+
 Table "tipos" {
   "id" uuid [pk, default: `gen_random_uuid()`, note: 'ID del tipo de fuente energética']
   "nombre" text [not null, note: 'Nombre el tipo e fuente']
@@ -17,6 +26,7 @@ Table "plantas" {
   "id" uuid [pk, default: `gen_random_uuid()`, note: 'ID de la planta generadora']
   "nombre" text [not null, note: 'Nombre de la planta']
   "tipo_id" uuid [not null, note: 'Tipo de fuente utilizada por la planta']
+  "ubicacion_id" uuid [not null, note: 'Ubicación geográfica de la planta']  
   "capacidad" decimal [not null, note: 'Capacidad instalada de generación en Megavatios']
   Note: 'Registro de plantas generadoras de energía'
 }
@@ -30,4 +40,5 @@ Table "produccion" {
 }
 
 Ref:"tipos"."id" < "plantas"."tipo_id"
+Ref:"ubicaciones"."id" < "plantas"."ubicacion_id"
 Ref:"plantas"."id" < "produccion"."planta_id"

@@ -1,4 +1,4 @@
-id;nombre;tipo_id;capacidad
-04d485c9-b567-42f3-8d69-209a5bc0dbc3;Caracolí;2e17feeb-82e9-4c6f-b0c5-6674b6f1dd31;2.6
-2de3b892-c71a-41eb-9618-415468124564;Termobarranquilla;22badb43-410b-48a8-b176-69d199727b00;918
-b953b9c9-74cc-4f7f-96db-70cf78663860;Celsia Solar Yuma;1ac6466a-a4a0-454f-aeb8-a174af3c01aa;9.9
+id;nombre;tipo_id;capacidad;ubicacion_id
+04d485c9-b567-42f3-8d69-209a5bc0dbc3;Caracolí;2e17feeb-82e9-4c6f-b0c5-6674b6f1dd31;2.6;ea35c204-121f-4b9c-99cb-4366654ae04d
+2de3b892-c71a-41eb-9618-415468124564;Termobarranquilla;22badb43-410b-48a8-b176-69d199727b00;918;0f5a8a62-bf32-4af2-8982-3d23dafa0ae3
+b953b9c9-74cc-4f7f-96db-70cf78663860;Celsia Solar Yuma;1ac6466a-a4a0-454f-aeb8-a174af3c01aa;9.9;5bee91b1-ce40-45ec-8d46-c935027146e3

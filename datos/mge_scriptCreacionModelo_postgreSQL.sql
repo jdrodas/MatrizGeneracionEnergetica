@@ -15,6 +15,26 @@
 -- Creación de Tablas
 -- ****************************************
 
+create table core.ubicaciones
+(
+    id          uuid default gen_random_uuid() constraint ubicaciones_pk primary key,    
+    codigo_departamento text not null,
+    codigo_municipio text not null,
+    nombre_departamento text not null,
+    nombre_municipio text not null
+);
+
+alter table ubicaciones add constraint ubicaciones_codigo_municipio_uk unique (codigo_municipio);
+create unique index ubicacion_dpto_mpio_uk on core.ubicaciones (codigo_departamento, lower(nombre_municipio));
+
+comment on table core.ubicaciones is 'Ubicaciones geográficas para las plantas de generación';
+comment on column core.ubicaciones.id is 'ID de la ubicación';
+comment on column core.ubicaciones.codigo_departamento is 'Código DIVIPOLA del departamento';
+comment on column core.ubicaciones.codigo_municipio is 'Código DIVIPOLA del municipio';
+comment on column core.ubicaciones.nombre_departamento is 'Nombre oficial del departamento según DIVIPOLA';
+comment on column core.ubicaciones.nombre_municipio  is 'Nombre oficial del municipio según DIVIPOLA';
+
+
 create table core.tipos
 (
     id          uuid default gen_random_uuid() constraint tipos_pk primary key,
@@ -32,10 +52,11 @@ comment on column core.tipos.esrenovable is 'Indica si es fuente renovable';
 
 create table core.plantas
 (
-    id        uuid default gen_random_uuid() not null constraint plantas_pk primary key,
-    nombre    text    not null,
-    tipo_id   uuid    not null,
-    capacidad decimal not null
+    id              uuid default gen_random_uuid() not null constraint plantas_pk primary key,
+    nombre          text not null,
+    tipo_id         uuid not null constraint plantas_tipo_fk references tipo,
+    ubicacion_id    uuid not null constraint plantas_ubicacion_fk references ubicaciones,
+    capacidad       decimal not null
 );
 
 create unique index planta_tipo_uk on core.plantas (lower(nombre), tipo_id);
@@ -44,6 +65,7 @@ comment on table core.plantas is 'Registro de plantas generadoras de energía';
 comment on column core.plantas.id is 'ID de la planta generadora';
 comment on column core.plantas.nombre is 'Nombre de la planta';
 comment on column core.plantas.tipo_id is 'Tipo de fuente de energía utilizada por la planta';
+comment on column core.plantas.ubicacion_id is 'ID de la ubicación geográfica de la planta';
 comment on column core.plantas.capacidad is 'Capacidad instalada de generación en Megavatios';
 
 
@@ -74,9 +96,12 @@ select distinct
     p.capacidad,
     p.tipo_id,
     t.nombre tipo_nombre,
-    t.esrenovable
+    t.esrenovable,
+    p.ubicacion_id,
+    (u.nombre_municipio || '. '||  u.nombre_departamento) ubicacion    
 from core.plantas p
     join core.tipos t on p.tipo_id = t.id
+    join core.ubicaciones u on p.ubicacion_id = u.id
 );
 
 create view core.v_produccion_tipo_dia as
