@@ -276,7 +276,7 @@ $$
 
     begin
 
-        -- Cuantos tipos existen con el uuid proporcionado
+        -- Cuantos plantas existen con el uuid proporcionado
         select count(id) into l_total_registros
         from core.plantas
         where id = p_id;
@@ -295,6 +295,123 @@ $$
         end if;
 
         delete from core.plantas
+        where id = p_id;
+
+    end;
+$$;
+
+
+-- ### Producción de Energía por día y planta ####
+
+-- p_inserta_produccion
+create procedure core.p_inserta_produccion(
+                            in p_planta_id      uuid, 
+                            in p_fecha          date, 
+                            in p_produccion     decimal)
+language plpgsql as
+$$
+    declare
+        l_total_registros integer;
+
+    begin
+        -- Validamos que la planta sea válida
+        select count(id) into l_total_registros
+        from core.plantas
+        where p_planta_id = id;   
+
+        if l_total_registros = 0  then
+            raise exception 'no existe una planta con ese ID';
+        end if;           
+
+        if p_produccion <= 0  then
+               raise exception 'La producción de la planta debe ser mayor que 0 MW';
+        end if;        
+
+        -- Validación de cantidad de registros para esa planta y esa fecha
+        select count(id) into l_total_registros
+        from core.produccion
+        where p_planta_id = planta_id
+        and p_fecha = fecha;
+
+        if l_total_registros != 0  then
+            raise exception 'ya existe ese registro de producción para esa planta en esa fecha';
+        end if;
+
+        insert into core.produccion(planta_id, fecha, produccion)
+        values (p_planta_id, p_fecha, p_produccion);
+    end;
+$$;
+
+
+-- p_actualiza_produccion
+create procedure core.p_actualiza_produccion(
+                            in p_id             uuid,
+                            in p_planta_id      uuid, 
+                            in p_fecha          date, 
+                            in p_produccion     decimal)
+language plpgsql as
+$$
+    declare
+        l_total_registros integer;
+
+    begin
+        -- Validamos que la planta sea válida
+        select count(id) into l_total_registros
+        from core.plantas
+        where p_planta_id = id;   
+
+        if l_total_registros = 0  then
+            raise exception 'no existe una planta con ese ID';
+        end if;           
+
+        if p_produccion <= 0  then
+               raise exception 'La producción de la planta debe ser mayor que 0 MW';
+        end if;        
+
+        -- Validación de cantidad de registros para esa planta y esa fecha diferentes al evento
+        select count(id) into l_total_registros
+        from core.produccion
+        where p_planta_id = planta_id
+        and p_fecha = fecha
+        and p_id != id;
+
+        if l_total_registros != 0  then
+            raise exception 'ya existe otro registro de producción para esa planta en esa fecha';
+        end if;
+
+        update core.produccion 
+        set 
+            planta_id = p_planta_id,
+            fecha = p_fecha,
+            produccion = p_produccion
+        where id = p_id;
+
+        insert into core.produccion(planta_id, fecha, produccion)
+        values (p_planta_id, p_fecha, p_produccion);
+    end;
+$$;
+
+
+-- p_elimina_produccion
+create procedure core.p_elimina_produccion(
+                            in p_id uuid)
+language plpgsql as
+$$
+    declare
+        l_total_registros integer;
+
+    begin
+
+        -- Cuantos eventos de producción existen con el uuid proporcionado
+        select count(id) into l_total_registros
+        from core.produccion
+        where id = p_id;
+
+        if l_total_registros = 0  then
+            raise exception 'No existe registro de producción para una planta registrada con ese Guid';
+        end if;
+
+        delete from core.produccion
         where id = p_id;
 
     end;

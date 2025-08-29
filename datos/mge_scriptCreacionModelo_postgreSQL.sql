@@ -80,7 +80,7 @@ create table core.produccion
 create unique index planta_produccion_dia on core.produccion (planta_id,fecha);
 
 comment on table core.produccion is 'Registro de la generación diaria de cada planta';
-comment on column core.produccion.id is 'ID del registro de generación';
+comment on column core.produccion.id is 'ID del evento de generación';
 comment on column core.produccion.fecha is 'Fecha en la que se produce el registro de generación';
 comment on column core.produccion.planta_id is 'ID de la planta que está produciendo energía';
 comment on column core.produccion.produccion  is 'Energía generada por la planta en este día';
