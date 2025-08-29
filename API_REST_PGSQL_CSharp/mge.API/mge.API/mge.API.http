@@ -1,0 +1,6 @@
+@mge.API_HostAddress = https://localhost:7000
+
+GET {{mge.API_HostAddress}}/v1/estadisticas/
+Accept: application/json
+
+###

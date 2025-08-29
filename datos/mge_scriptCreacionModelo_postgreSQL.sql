@@ -54,7 +54,7 @@ create table core.plantas
 (
     id              uuid default gen_random_uuid() not null constraint plantas_pk primary key,
     nombre          text not null,
-    tipo_id         uuid not null constraint plantas_tipo_fk references tipo,
+    tipo_id         uuid not null constraint plantas_tipo_fk references tipos,
     ubicacion_id    uuid not null constraint plantas_ubicacion_fk references ubicaciones,
     capacidad       decimal not null
 );
@@ -98,7 +98,7 @@ select distinct
     t.nombre tipo_nombre,
     t.esrenovable,
     p.ubicacion_id,
-    (u.nombre_municipio || '. '||  u.nombre_departamento) ubicacion    
+    (u.nombre_municipio || ', '||  u.nombre_departamento) ubicacion    
 from core.plantas p
     join core.tipos t on p.tipo_id = t.id
     join core.ubicaciones u on p.ubicacion_id = u.id
