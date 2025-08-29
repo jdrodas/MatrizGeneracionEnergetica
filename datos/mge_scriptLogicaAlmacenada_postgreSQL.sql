@@ -16,9 +16,9 @@
 
 -- p_inserta_tipo
 create procedure core.p_inserta_tipo(
-                            in p_nombre text, 
-                            in p_descripcion text, 
-                            in p_esrenovable boolean)
+                            in p_nombre         text, 
+                            in p_descripcion    text, 
+                            in p_esrenovable    boolean)
 language plpgsql as
 $$
     declare
@@ -49,10 +49,10 @@ $$;
 
 -- p_actualiza_tipo
 create procedure core.p_actualiza_tipo(
-                            in p_id uuid,
-                            in p_nombre text,
-                            in p_descripcion text,
-                            in p_esrenovable boolean)
+                            in p_id             uuid,
+                            in p_nombre         text,
+                            in p_descripcion    text,
+                            in p_esrenovable    boolean)
 language plpgsql as
 $$
     declare
@@ -123,6 +123,178 @@ $$
         end if;
 
         delete from core.tipos
+        where id = p_id;
+
+    end;
+$$;
+
+
+-- ### Plantas de Generación ####
+
+-- p_inserta_planta
+create procedure core.p_inserta_planta(
+                            in p_nombre         text, 
+                            in p_tipo_id        uuid, 
+                            in p_ubicacion_id   uuid, 
+                            in p_capacidad      decimal)
+language plpgsql as
+$$
+    declare
+        l_total_registros integer;
+
+    begin
+        if p_nombre is null or        
+           length(p_nombre) = 0  then
+               raise exception 'El nombre de la planta no puede ser nulo';
+        end if;
+
+        if p_capacidad <= 0  then
+               raise exception 'La capacidad de la planta debe ser mayor que 0 MW';
+        end if;        
+
+        -- Validación de cantidad de registros con ese nombre y tipo de fuente
+        select count(id) into l_total_registros
+        from core.plantas
+        where lower(p_nombre) = lower(nombre)
+        and p_tipo_id = tipo_id;
+
+        if l_total_registros != 0  then
+            raise exception 'ya existe ese una planta con ese nombre con ese tipo de fuente';
+        end if;
+
+        -- Validamos que el tipo de fuente sea válido
+        select count(id) into l_total_registros
+        from core.tipos
+        where p_tipo_id = id;        
+
+        if l_total_registros = 0  then
+            raise exception 'no existe un tipo de fuente con ese ID';
+        end if;        
+
+        -- Validamos que la ubicación se válida
+        select count(id) into l_total_registros
+        from core.ubicaciones
+        where p_ubicacion_id = id;        
+
+        if l_total_registros = 0  then
+            raise exception 'no existe una ubicación con ese ID';
+        end if;        
+
+
+        insert into core.plantas(nombre, capacidad, tipo_id, ubicacion_id)
+        values (initcap(p_nombre), p_capacidad, p_tipo_id, p_ubicacion_id);
+    end;
+$$;
+
+
+-- p_actualiza_planta
+create procedure core.p_actualiza_planta(
+                            in p_id             uuid,    
+                            in p_nombre         text, 
+                            in p_tipo_id        uuid, 
+                            in p_ubicacion_id   uuid, 
+                            in p_capacidad      decimal)
+language plpgsql as
+$$
+    declare
+        l_total_registros integer;
+
+    begin
+        select count(id) into l_total_registros
+        from core.plantas
+        where id = p_id;
+
+        if l_total_registros = 0  then
+            raise exception 'No existe una planta registrada con ese Id';
+        end if;
+
+        -- Validamos que el tipo de fuente sea válido
+        select count(id) into l_total_registros
+        from core.tipos
+        where p_tipo_id = id;        
+
+        if l_total_registros = 0  then
+            raise exception 'no existe un tipo de fuente con ese ID';
+        end if;        
+
+        -- Validamos que la ubicación se válida
+        select count(id) into l_total_registros
+        from core.ubicaciones
+        where p_ubicacion_id = id;        
+
+        if l_total_registros = 0  then
+            raise exception 'no existe una ubicación con ese ID';
+        end if;          
+
+        if p_nombre is null or        
+           length(p_nombre) = 0  then
+               raise exception 'El nombre de la planta no puede ser nulo';
+        end if;
+
+        if p_capacidad <= 0  then
+               raise exception 'La capacidad de la planta debe ser mayor que 0 MW';
+        end if;        
+
+        -- Validación de cantidad de registros con ese nombre y tipo de fuente,
+        -- diferentes al que estamos actualizando
+        select count(id) into l_total_registros
+        from core.plantas
+        where lower(p_nombre) = lower(nombre)
+        and p_tipo_id = tipo_id
+        and p_id != id;
+
+        if l_total_registros != 0  then
+            raise exception 'ya existe ese otra planta con ese nombre con ese tipo de fuente';
+        end if;
+
+        -- Validamos que el tipo de fuente sea válido
+        select count(id) into l_total_registros
+        from core.tipos
+        where p_tipo_id = id;        
+
+        if l_total_registros = 0  then
+            raise exception 'no existe un tipo de fuente con ese ID';
+        end if;   
+
+        update core.plantas
+        set
+            nombre = initcap(p_nombre),
+            capacidad = p_capacidad,
+            ubicacion_id = p_ubicacion_id,
+            tipo_id = p_tipo_id
+        where p_id = id;     
+    end;
+$$;
+
+-- p_elimina_planta
+create procedure core.p_elimina_planta(
+                            in p_id uuid)
+language plpgsql as
+$$
+    declare
+        l_total_registros integer;
+
+    begin
+
+        -- Cuantos tipos existen con el uuid proporcionado
+        select count(id) into l_total_registros
+        from core.plantas
+        where id = p_id;
+
+        if l_total_registros = 0  then
+            raise exception 'No existe una planta registrada con ese Guid';
+        end if;
+
+        -- Hay producción para esta planta
+        select count(planta_id) into l_total_registros
+        from core.v_info_produccion_planta
+        where planta_id = p_id;
+
+        if l_total_registros != 0  then
+            raise exception 'No se puede eliminar, hay producción registrada para esta planta.';
+        end if;
+
+        delete from core.plantas
         where id = p_id;
 
     end;

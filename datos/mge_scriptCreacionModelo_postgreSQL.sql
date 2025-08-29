@@ -104,6 +104,16 @@ from core.plantas p
     join core.ubicaciones u on p.ubicacion_id = u.id
 );
 
+create view core.v_info_produccion_planta as (
+select distinct
+    pdn.planta_id,
+    p.nombre planta_nombre,
+    pdn.produccion,
+    pdn.fecha
+from core.plantas p
+    join core.produccion pdn on p.id = pdn.planta_id
+);
+
 create view core.v_produccion_tipo_dia as
 (
 select distinct pl.tipo_id,
