@@ -96,10 +96,12 @@ Registro diario de producción energética.
 
 ### Ubicaciones
 
+El versionamiento de los endpoints utilizará parámetro en el encabezado, en lugar de incluirlo en el URL
+
 ```http
-GET    /api/ubicaciones                            # Listar todos
-GET    /api/ubicaciones/{id}                       # Obtener por ID
-GET    /api/ubicaciones/{id}/plantas               # Obtener plantas asociadas por ID de la ubicación
+GET    /api/ubicaciones                      # Listar todos
+GET    /api/ubicaciones/{id}                 # Obtener por ID
+GET    /api/ubicaciones/{id}/plantas         # Obtener plantas asociadas por ID de la ubicación
 ```
 
 ### Tipos de Fuente
