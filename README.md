@@ -94,45 +94,43 @@ Registro diario de producción energética.
 
 ## Endpoints API
 
-### Versión 1.0
-
 #### Tipos de Fuente
 
 ```http
-GET    /api/v1/tipos                            # Listar todos
-GET    /api/v1/tipos/{id}                       # Obtener por ID
-POST   /api/v1/tipos                            # Crear nuevo
-PUT    /api/v1/tipos/{id}                       # Actualizar completo
-DELETE /api/v1/tipos/{id}                       # Eliminar
+GET    /api/tipos                            # Listar todos
+GET    /api/tipos/{id}                       # Obtener por ID
+POST   /api/tipos                            # Crear nuevo
+PUT    /api/tipos/{id}                       # Actualizar completo
+DELETE /api/tipos/{id}                       # Eliminar
 ```
 
 #### Plantas de Generación
 
 ```http
-GET    /api/v1/plantas                          # Listar todas
-GET    /api/v1/plantas/{id}                     # Obtener por ID
-POST   /api/v1/plantas                          # Crear nueva
-PUT    /api/v1/plantas/{id}                     # Actualizar completa
-DELETE /api/v1/plantas/{id}                     # Eliminar
+GET    /api/plantas                          # Listar todas
+GET    /api/plantas/{id}                     # Obtener por ID
+POST   /api/plantas                          # Crear nueva
+PUT    /api/plantas/{id}                     # Actualizar completa
+DELETE /api/plantas/{id}                     # Eliminar
 ```
 
 #### Producción Diaria
 
 ```http
-GET    /api/v1/produccion                       # Listar registros
-POST   /api/v1/produccion                       # Crear registro
-PUT    /api/v1/produccion/{id}                  # Actualizar completo
-DELETE /api/v1/produccion/{id}                  # Eliminar
-GET    /api/v1/produccion/planta/{id}           # Por planta
-GET    /api/v1/produccion/Ubicacion/{id}        # Por Ubicación
-GET    /api/v1/produccion/fecha/{fecha}         # Por fecha
+GET    /api/produccion                       # Listar registros
+POST   /api/produccion                       # Crear registro
+PUT    /api/produccion/{id}                  # Actualizar completo
+DELETE /api/produccion/{id}                  # Eliminar
+GET    /api/produccion/planta/{id}           # Por planta
+GET    /api/produccion/Ubicacion/{id}        # Por Ubicación
+GET    /api/produccion/fecha/{fecha}         # Por fecha
 ```
 
 #### Estadísticas
 
 ```http
-GET    /api/v1/estadisticas/diarias/{fecha}                             # Resumen diario
-GET    /api/v1/estadisticas/tipo/{fecha}                                # Por tipo de fuente
-GET    /api/v1/estadisticas/ubicaciones/{fecha}                         # Por ubicación geográfica
-GET    /api/v1/estadisticas/rango-fechas?inicio={fecha}&fin={fecha}     # Por rango de fechas
+GET    /api/estadisticas/diarias/{fecha}                             # Resumen diario
+GET    /api/estadisticas/tipo/{fecha}                                # Por tipo de fuente
+GET    /api/estadisticas/ubicaciones/{fecha}                         # Por ubicación geográfica
+GET    /api/estadisticas/rango-fechas?inicio={fecha}&fin={fecha}     # Por rango de fechas
 ```

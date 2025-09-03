@@ -1,8 +1,9 @@
+using Asp.Versioning;
 using mge.API.DbContexts;
 using mge.API.Interfaces;
+using mge.API.Models;
 using mge.API.Repositories;
 using mge.API.Services;
-using mge.API.Models;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,6 +62,27 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API para la gestión de Información sobre la Generación de Energía"
     });
 });
+
+// ***********************************************************
+// --- Configuración del control de versiones para el API  --
+// ***********************************************************
+
+builder.Services.AddApiVersioning(opt =>
+    {
+        opt.DefaultApiVersion = new ApiVersion(1, 0);
+        opt.AssumeDefaultVersionWhenUnspecified = true;
+        opt.ReportApiVersions = true;
+        opt.ApiVersionReader = new HeaderApiVersionReader("api-version");
+    }
+)
+    .AddMvc()
+    .AddApiExplorer(setup =>
+        {
+            setup.GroupNameFormat = "'v'VVV";
+            setup.SubstituteApiVersionInUrl = true;
+            setup.DefaultApiVersion = new ApiVersion(1, 0);
+            setup.AssumeDefaultVersionWhenUnspecified = true;
+        });
 
 var app = builder.Build();
 

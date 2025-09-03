@@ -1,6 +1,6 @@
 id;nombre;descripcion;esrenovable
 2e17feeb-82e9-4c6f-b0c5-6674b6f1dd31;Hidroeléctrica;Generación en embalses en rios;true
 1ac6466a-a4a0-454f-aeb8-a174af3c01aa;Solar Fotovoltáica;Generación a través paneles solares;true
-b773b21f-f1f8-4c7a-b749-e8f16922bf73;Eólica;Generación a través de turbinas;true
+b773b21f-f1f8-4c7a-b749-e8f16922bf73;Eólica;Generación a través de turbinas impulsadas por viento;true
 22badb43-410b-48a8-b176-69d199727b00;Termoeléctrica por Combustibles Fósiles;Generación a través de combustión de carbón o gas;false
 59bfd47d-fc1b-444e-b44e-fc3b936c941c;Nuclear;Generación a través de reactores nucleares;false

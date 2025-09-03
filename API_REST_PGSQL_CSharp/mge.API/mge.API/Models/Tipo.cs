@@ -13,7 +13,7 @@ namespace mge.API.Models
         [JsonPropertyName("descripcion")]
         public string? Descripcion { get; set; } = string.Empty;
 
-        [JsonPropertyName("esrenovable")]
+        [JsonPropertyName("esRenovable")]
         public bool EsRenovable { get; set; } = false;
     }
 }

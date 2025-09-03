@@ -1,11 +1,13 @@
-﻿using mge.API.Exceptions;
+﻿using Asp.Versioning;
+using mge.API.Exceptions;
 using mge.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace mge.API.Controllers
 {
     [ApiController]
-    [Route("api/v1/tipos")]
+    [ApiVersion("1.0")]
+    [Route("api/tipos")]
     public class TiposController(TipoService tipoService) : Controller
     {
         private readonly TipoService _tipoService = tipoService;
