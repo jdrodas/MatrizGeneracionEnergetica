@@ -94,17 +94,26 @@ Registro diario de producción energética.
 
 ## Endpoints API
 
-#### Tipos de Fuente
+### Ubicaciones
+
+```http
+GET    /api/ubicaciones                            # Listar todos
+GET    /api/ubicaciones/{id}                       # Obtener por ID
+GET    /api/ubicaciones/{id}/plantas               # Obtener plantas asociadas por ID de la ubicación
+```
+
+### Tipos de Fuente
 
 ```http
 GET    /api/tipos                            # Listar todos
 GET    /api/tipos/{id}                       # Obtener por ID
+GET    /api/tipos/{id}/plantas               # Obtener plantas asociadas por ID del tipo de fuente
 POST   /api/tipos                            # Crear nuevo
 PUT    /api/tipos/{id}                       # Actualizar completo
 DELETE /api/tipos/{id}                       # Eliminar
 ```
 
-#### Plantas de Generación
+### Plantas de Generación
 
 ```http
 GET    /api/plantas                          # Listar todas
@@ -114,7 +123,7 @@ PUT    /api/plantas/{id}                     # Actualizar completa
 DELETE /api/plantas/{id}                     # Eliminar
 ```
 
-#### Producción Diaria
+### Producción Diaria
 
 ```http
 GET    /api/produccion                       # Listar registros
@@ -126,7 +135,7 @@ GET    /api/produccion/Ubicacion/{id}        # Por Ubicación
 GET    /api/produccion/fecha/{fecha}         # Por fecha
 ```
 
-#### Estadísticas
+### Estadísticas
 
 ```http
 GET    /api/estadisticas/diarias/{fecha}                             # Resumen diario

@@ -7,16 +7,19 @@ namespace mge.API.Models
         [JsonPropertyName("id")]
         public Guid Id { get; set; } = Guid.Empty;
 
-        [JsonPropertyName("codigo_departamento")]
+        [JsonPropertyName("codigoDepartamento")]
         public string? CodigoDepartamento { get; set; } = string.Empty;
 
-        [JsonPropertyName("nombre_departamento")]
+        [JsonPropertyName("isoDepartamento")]
+        public string? IsoDepartamento { get; set; } = string.Empty;
+
+        [JsonPropertyName("nombreDepartamento")]
         public string? NombreDepartamento { get; set; } = string.Empty;
 
-        [JsonPropertyName("codigo_municipio")]
+        [JsonPropertyName("codigoMunicipio")]
         public string? CodigoMunicipio { get; set; } = string.Empty;
 
-        [JsonPropertyName("nombre_municipio")]
+        [JsonPropertyName("nombreMunicipio")]
         public string? NombreMunicipio { get; set; } = string.Empty;
     }
 }

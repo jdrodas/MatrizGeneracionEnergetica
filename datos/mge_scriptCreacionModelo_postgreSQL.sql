@@ -17,11 +17,12 @@
 
 create table core.ubicaciones
 (
-    id          uuid default gen_random_uuid() constraint ubicaciones_pk primary key,    
-    codigo_departamento text not null,
-    codigo_municipio text not null,
-    nombre_departamento text not null,
-    nombre_municipio text not null
+    id                      uuid default gen_random_uuid() constraint ubicaciones_pk primary key,    
+    codigo_departamento     text not null,
+    codigo_municipio        text not null,
+    nombre_departamento     text not null,
+    nombre_municipio        text not null,
+    departamento            text default 'CO-000' not null
 );
 
 alter table ubicaciones add constraint ubicaciones_codigo_municipio_uk unique (codigo_municipio);
@@ -33,6 +34,7 @@ comment on column core.ubicaciones.codigo_departamento is 'Código DIVIPOLA del 
 comment on column core.ubicaciones.codigo_municipio is 'Código DIVIPOLA del municipio';
 comment on column core.ubicaciones.nombre_departamento is 'Nombre oficial del departamento según DIVIPOLA';
 comment on column core.ubicaciones.nombre_municipio  is 'Nombre oficial del municipio según DIVIPOLA';
+comment on column core.ubicaciones.iso_departamento is 'Código ISO 3166-2:CO del departamento';
 
 
 create table core.tipos

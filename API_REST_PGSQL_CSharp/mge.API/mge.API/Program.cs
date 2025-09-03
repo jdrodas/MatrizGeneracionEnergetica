@@ -19,7 +19,7 @@ var databaseSettings = builder.Configuration
     .GetSection("DatabaseSettings")
     .Get<DatabaseSettings>();
 
-var pgsqlConnectionString = databaseSettings?.BuildConnectionString();    
+var pgsqlConnectionString = databaseSettings?.BuildConnectionString();
 
 //Agregar la cadena de conexión a la configuración
 builder.Configuration["ConnectionStrings:mgePL"] = pgsqlConnectionString;
@@ -36,6 +36,7 @@ builder.Services.AddSingleton<PgsqlDbContext>();
 
 builder.Services.AddScoped<ITipoRepository, TipoRepository>();
 builder.Services.AddScoped<IPlantaRepository, PlantaRepository>();
+builder.Services.AddScoped<IUbicacionRepository, UbicacionRepository>();
 
 // ************************************************
 // --- Configuración de los servicios asociados  --
@@ -43,6 +44,7 @@ builder.Services.AddScoped<IPlantaRepository, PlantaRepository>();
 
 builder.Services.AddScoped<TipoService>();
 builder.Services.AddScoped<PlantaService>();
+builder.Services.AddScoped<UbicacionService>();
 
 
 // Add services to the container.

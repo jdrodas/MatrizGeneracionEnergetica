@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace mge.API.Models
-{    
+{
     public class Planta
     {
         [JsonPropertyName("id")]

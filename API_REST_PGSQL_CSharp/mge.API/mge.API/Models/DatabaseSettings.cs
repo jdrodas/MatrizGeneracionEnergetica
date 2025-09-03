@@ -14,6 +14,6 @@ namespace mge.API.Models
             $"Database={Database};" +
             $"Username={Username};" +
             $"Password={Password};";
-        }        
+        }
     }
 }
