@@ -59,8 +59,10 @@ grant execute on all functions in schema core to mge_usr;
 -- privilegios sobre procedimientos existentes
 grant execute on all procedures in schema core to mge_usr;
 
-alter default privileges for user mge_usr in schema core grant insert, update, delete, select on tables to mge_usr;
-alter default privileges for user mge_usr in schema core grant execute on routines TO mge_usr;
+-- privilegios sobre objetos futuros
+alter default privileges in schema core grant select, insert, update, delete on tables TO mge_usr;
+alter default privileges in schema core grant execute on routines to mge_usr;
+
 alter user mge_usr set search_path to core;
 
 -- Activar la extensión que permite el uso de UUID

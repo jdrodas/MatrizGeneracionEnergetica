@@ -35,12 +35,15 @@ builder.Services.AddSingleton<PgsqlDbContext>();
 // ****************************************
 
 builder.Services.AddScoped<ITipoRepository, TipoRepository>();
+builder.Services.AddScoped<IPlantaRepository, PlantaRepository>();
 
 // ************************************************
 // --- Configuración de los servicios asociados  --
 // ************************************************
 
 builder.Services.AddScoped<TipoService>();
+builder.Services.AddScoped<PlantaService>();
+
 
 // Add services to the container.
 builder.Services.AddControllers()

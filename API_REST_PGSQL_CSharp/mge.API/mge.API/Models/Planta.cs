@@ -13,16 +13,16 @@ namespace mge.API.Models
         [JsonPropertyName("capacidad")]
         public double Capacidad { get; set; } = 0.0d;
 
-        [JsonPropertyName("ubicacion_id")]
+        [JsonPropertyName("ubicacionId")]
         public Guid UbicacionId { get; set; } = Guid.Empty;
 
-        [JsonPropertyName("ubicacion_nombre")]
+        [JsonPropertyName("ubicacionNombre")]
         public string? UbicacionNombre { get; set; } = string.Empty;
 
-        [JsonPropertyName("tipo_id")]
+        [JsonPropertyName("tipoId")]
         public Guid TipoId { get; set; } = Guid.Empty;
 
-        [JsonPropertyName("tipo_nombre")]
+        [JsonPropertyName("tipoNombre")]
         public string? TipoNombre { get; set; } = string.Empty;
     }
 }
