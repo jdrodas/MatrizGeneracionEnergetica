@@ -100,6 +100,7 @@ select distinct
     t.nombre tipo_nombre,
     t.esrenovable,
     p.ubicacion_id,
+    u.iso_departamento,
     (u.nombre_municipio || ', '||  u.nombre_departamento) ubicacion_nombre    
 from core.plantas p
     join core.tipos t on p.tipo_id = t.id

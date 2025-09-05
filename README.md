@@ -42,10 +42,11 @@ Controllers → Services → Repositories (via Interfaces) → DB Context
 Ubicaciones geográficas para las plantas de generación
 
 - `Id` (UUID): Identificador único.
-- `codigo_municipio` (TEXT): Código DIVIPOLA del departamento.
-- `codigo_departamento` (TEXT): Código DIVIPOLA del municipio.
-- `Nombre_departamento` (TEXT): Nombre oficial del departamento según DIVIPOLA.
-- `Nombre_municipio` (TEXT): Nombre oficial del municipio según DIVIPOLA.
+- `CodigoMunicipio` (TEXT): Código DIVIPOLA del departamento.
+- `CodigoDepartamento` (TEXT): Código DIVIPOLA del municipio.
+- `IsoDepartamento` (TEXT): Código ISO 3166-2:CO del departamento.
+- `NombreDepartamento` (TEXT): Nombre oficial del departamento según DIVIPOLA.
+- `NombreMunicipio` (TEXT): Nombre oficial del municipio según DIVIPOLA.
 
 #### Tipos
 
@@ -94,14 +95,16 @@ Registro diario de producción energética.
 
 ## Endpoints API
 
-### Ubicaciones
-
 El versionamiento de los endpoints utilizará parámetro en el encabezado, en lugar de incluirlo en el URL
+
+### Ubicaciones
 
 ```http
 GET    /api/ubicaciones                      # Listar todos
 GET    /api/ubicaciones/{id}                 # Obtener por ID
 GET    /api/ubicaciones/{id}/plantas         # Obtener plantas asociadas por ID de la ubicación
+GET    /api/ubicaciones/{depto_iso}          # Obtener ubicaciones por ISO del Departamento
+GET    /api/ubicaciones/{depto_iso}/plantas  # Obtener plantas en ubicaciones asociadas al ISO del Departamento
 ```
 
 ### Tipos de Fuente
@@ -111,7 +114,7 @@ GET    /api/tipos                            # Listar todos
 GET    /api/tipos/{id}                       # Obtener por ID
 GET    /api/tipos/{id}/plantas               # Obtener plantas asociadas por ID del tipo de fuente
 POST   /api/tipos                            # Crear nuevo
-PUT    /api/tipos/{id}                       # Actualizar completo
+PUT    /api/tipos                            # Actualizar completo
 DELETE /api/tipos/{id}                       # Eliminar
 ```
 

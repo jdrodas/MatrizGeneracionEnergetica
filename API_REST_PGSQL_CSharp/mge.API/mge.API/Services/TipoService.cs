@@ -83,6 +83,46 @@ namespace mge.API.Services
             return tipoExistente;
         }
 
+        public async Task<Tipo> UpdateAsync(Tipo unTipo)
+        {
+            unTipo.Nombre = unTipo.Nombre!.Trim();
+            unTipo.Descripcion = unTipo.Descripcion!.Trim();
+
+            string resultadoValidacion = EvaluateTypeDetailsAsync(unTipo);
+
+            if (!string.IsNullOrEmpty(resultadoValidacion))
+                throw new AppValidationException(resultadoValidacion);
+
+            //Validamos primero si existe con ese Id
+            var tipoExistente = await _tipoRepository
+                .GetByIdAsync(unTipo.Id);
+
+            if (tipoExistente.Id == Guid.Empty)
+                throw new AppValidationException($"No existe un tipo con el Guid {unTipo.Id} que se pueda actualizar");
+
+            //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
+            if (tipoExistente.Equals(unTipo))
+                return tipoExistente;
+
+            try
+            {
+                bool resultadoAccion = await _tipoRepository
+                    .UpdateAsync(unTipo);
+
+                if (!resultadoAccion)
+                    throw new AppValidationException("Operación ejecutada pero no generó cambios en la DB");
+
+                tipoExistente = await _tipoRepository
+                    .GetByIdAsync(unTipo.Id);
+            }
+            catch (DbOperationException)
+            {
+                throw;
+            }
+
+            return tipoExistente;
+        }
+
         private static string EvaluateTypeDetailsAsync(Tipo unTipo)
         {
             if (unTipo.Nombre!.Length == 0)

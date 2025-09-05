@@ -109,5 +109,38 @@ namespace mge.API.Repositories
 
             return resultadoAccion;
         }
+
+        public async Task<bool> UpdateAsync(Tipo unTipo)
+        {
+            bool resultadoAccion = false;
+
+            try
+            {
+                var conexion = contextoDB.CreateConnection();
+
+                string procedimiento = "core.p_actualiza_tipo";
+                var parametros = new
+                {
+                    p_id = unTipo.Id,
+                    p_nombre = unTipo.Nombre,
+                    p_descripcion = unTipo.Descripcion,
+                    p_esrenovable = unTipo.EsRenovable
+                };
+
+                var cantidad_filas = await conexion.ExecuteAsync(
+                    procedimiento,
+                    parametros,
+                    commandType: CommandType.StoredProcedure);
+
+                if (cantidad_filas != 0)
+                    resultadoAccion = true;
+            }
+            catch (NpgsqlException error)
+            {
+                throw new DbOperationException(error.Message);
+            }
+
+            return resultadoAccion;
+        }
     }
 }
