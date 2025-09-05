@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using mge.API.Exceptions;
+using mge.API.Models;
 using mge.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,6 +51,26 @@ namespace mge.API.Controllers
             catch (AppValidationException error)
             {
                 return NotFound(error.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAsync(Tipo unTipo)
+        {
+            try
+            {
+                var tipoCreado = await _tipoService
+                    .CreateAsync(unTipo);
+
+                return Ok(tipoCreado);
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest($"Error de validación: {error.Message}");
+            }
+            catch (DbOperationException error)
+            {
+                return BadRequest($"Error de operacion en DB: {error.Message}");
             }
         }
     }

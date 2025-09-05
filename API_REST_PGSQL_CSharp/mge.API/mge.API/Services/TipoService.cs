@@ -43,5 +43,55 @@ namespace mge.API.Services
 
             return plantasAsociadas;
         }
+
+        public async Task<Tipo> CreateAsync(Tipo unTipo)
+        {
+            unTipo.Nombre = unTipo.Nombre!.Trim();
+            unTipo.Descripcion = unTipo.Descripcion!.Trim();
+            
+            string resultadoValidacion = EvaluateTypeDetailsAsync(unTipo);
+
+            if (!string.IsNullOrEmpty(resultadoValidacion))
+                throw new AppValidationException(resultadoValidacion);
+
+            //Validamos primero si existe con ese nombre y descripcion
+            var tipoExistente = await _tipoRepository
+                .GetByDetailsAsync(unTipo);
+
+            //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
+            if (tipoExistente.Nombre == unTipo.Nombre! &&
+                tipoExistente.Descripcion == unTipo.Descripcion &&
+                tipoExistente.EsRenovable == unTipo.EsRenovable)
+                return tipoExistente;
+
+            try
+            {
+                bool resultadoAccion = await _tipoRepository
+                    .CreateAsync(unTipo);
+
+                if (!resultadoAccion)
+                    throw new AppValidationException("Operación ejecutada pero no generó cambios en la DB");
+
+                tipoExistente = await _tipoRepository
+                .GetByDetailsAsync(unTipo);
+            }
+            catch (DbOperationException)
+            {
+                throw;
+            }
+
+            return tipoExistente;
+        }
+
+        private static string EvaluateTypeDetailsAsync(Tipo unTipo)
+        {
+            if (unTipo.Nombre!.Length == 0)
+                return "No se puede insertar un tipo con nombre nulo";
+
+            if (unTipo.Descripcion!.Length == 0)
+                return "No se puede insertar un tipo con la descripción nula.";
+
+            return string.Empty;
+        }
     }
 }
