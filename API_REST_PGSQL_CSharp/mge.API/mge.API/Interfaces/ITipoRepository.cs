@@ -9,5 +9,6 @@ namespace mge.API.Interfaces
         public Task<Tipo> GetByDetailsAsync(Tipo unTipo);
         public Task<bool> CreateAsync(Tipo unTipo);
         public Task<bool> UpdateAsync(Tipo unTipo);
+        public Task<bool> RemoveAsync(Guid tipo_id);
     }
 }

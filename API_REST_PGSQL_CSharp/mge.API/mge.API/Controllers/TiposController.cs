@@ -94,5 +94,25 @@ namespace mge.API.Controllers
             }
         }
 
+        [HttpDelete("{tipo_id:Guid}")]
+        public async Task<IActionResult> RemoveAsync(Guid tipo_id)
+        {
+            try
+            {
+                var nombreTipoBorrado = await _tipoService
+                    .RemoveAsync(tipo_id);
+
+                return Ok($"El tipo {nombreTipoBorrado} fue eliminado correctamente!");
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest($"Error de validación: {error.Message}");
+            }
+            catch (DbOperationException error)
+            {
+                return BadRequest($"Error de operacion en DB: {error.Message}");
+            }
+        }
+
     }
 }

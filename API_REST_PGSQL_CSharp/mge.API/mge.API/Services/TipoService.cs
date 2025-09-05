@@ -123,6 +123,32 @@ namespace mge.API.Services
             return tipoExistente;
         }
 
+        public async Task<string> RemoveAsync(Guid tipo_id)
+        {
+            Tipo unTipo = await _tipoRepository
+                .GetByIdAsync(tipo_id);
+
+            if (unTipo.Id == Guid.Empty)
+                throw new AppValidationException($"Tipo no encontrado con el id {tipo_id}");
+
+            string nombreTipoEliminado = unTipo.Nombre!;
+
+            try
+            {
+                bool resultadoAccion = await _tipoRepository
+                    .RemoveAsync(tipo_id);
+
+                if (!resultadoAccion)
+                    throw new DbOperationException("Operación ejecutada pero no generó cambios en la DB");
+            }
+            catch (DbOperationException)
+            {
+                throw;
+            }
+
+            return nombreTipoEliminado;
+        }
+
         private static string EvaluateTypeDetailsAsync(Tipo unTipo)
         {
             if (unTipo.Nombre!.Length == 0)
