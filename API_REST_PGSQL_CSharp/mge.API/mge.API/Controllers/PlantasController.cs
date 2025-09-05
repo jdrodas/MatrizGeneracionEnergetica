@@ -22,7 +22,7 @@ namespace mge.API.Controllers
         }
 
         [HttpGet("{planta_id:Guid}")]
-        public async Task<IActionResult> GetByGuidAsync(Guid planta_id)
+        public async Task<IActionResult> GetByIdAsync(Guid planta_id)
         {
             try
             {

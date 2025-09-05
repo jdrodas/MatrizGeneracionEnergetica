@@ -22,7 +22,7 @@ namespace mge.API.Controllers
         }
 
         [HttpGet("{tipo_id:Guid}")]
-        public async Task<IActionResult> GetByGuidAsync(Guid tipo_id)
+        public async Task<IActionResult> GetByIdAsync(Guid tipo_id)
         {
             try
             {
@@ -30,6 +30,22 @@ namespace mge.API.Controllers
                     .GetByIdAsync(tipo_id);
 
                 return Ok(unTipo);
+            }
+            catch (AppValidationException error)
+            {
+                return NotFound(error.Message);
+            }
+        }
+
+        [HttpGet("{tipo_id:Guid}/plantas")]
+        public async Task<IActionResult> GetAssociatedPlantsAsync(Guid tipo_id)
+        {
+            try
+            {
+                var lasPlantasAsociadas = await _tipoService
+                    .GetAssociatedPlantsAsync(tipo_id);
+
+                return Ok(lasPlantasAsociadas);
             }
             catch (AppValidationException error)
             {

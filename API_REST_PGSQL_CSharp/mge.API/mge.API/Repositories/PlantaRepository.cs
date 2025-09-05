@@ -51,6 +51,29 @@ namespace mge.API.Repositories
             return [.. resultadoPlantas];
         }
 
+        public async Task<List<Planta>> GetAllByTypeIdAsync(Guid tipo_id)
+        {
+            var conexion = contextoDB.CreateConnection();
+
+            DynamicParameters parametrosSentencia = new();
+            parametrosSentencia.Add("@tipo_id", tipo_id,
+                                    DbType.Guid, ParameterDirection.Input);
+
+            string sentenciaSQL =
+                "SELECT DISTINCT " +
+                "planta_id id, planta_nombre nombre, capacidad, " +
+                "ubicacion_id ubicacionId, ubicacion_nombre ubicacionNombre, " +
+                "tipo_id tipoId, tipo_nombre tipoNombre " +
+                "FROM core.v_info_plantas " +
+                "WHERE tipo_id = @tipo_id " +
+                "ORDER BY planta_nombre";
+
+            var resultadoPlantas = await conexion
+                .QueryAsync<Planta>(sentenciaSQL, parametrosSentencia);
+
+            return [.. resultadoPlantas];
+        }
+
 
         public async Task<Planta> GetByIdAsync(Guid planta_id)
         {
