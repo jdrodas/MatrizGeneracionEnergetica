@@ -51,5 +51,27 @@ namespace mge.API.Repositories
 
             return unTipo;
         }
+
+        public async Task<List<Ubicacion>> GetAllByDeptoIsoAsync(string depto_iso)
+        {
+            var conexion = contextoDB.CreateConnection();
+
+            DynamicParameters parametrosSentencia = new();
+            parametrosSentencia.Add("@depto_iso", depto_iso,
+                                    DbType.String, ParameterDirection.Input);
+
+            string sentenciaSQL =
+                "SELECT DISTINCT u.id, u.codigo_departamento codigoDepartamento, u.iso_departamento isoDepartamento, " +
+                "u.nombre_departamento nombreDepartamento, u.codigo_municipio codigoMunicipio, " +
+                "u.nombre_municipio nombreMunicipio " +
+                "FROM core.ubicaciones u " +
+                "WHERE LOWER(u.iso_departamento) = LOWER(@depto_iso) " +
+                "ORDER BY u.codigo_departamento, u.nombre_departamento";
+
+            var resultadoTipos = await conexion
+                .QueryAsync<Ubicacion>(sentenciaSQL, parametrosSentencia);
+
+            return [.. resultadoTipos];
+        }
     }
 }

@@ -26,6 +26,37 @@ namespace mge.API.Services
             return unaUbicacion;
         }
 
+        public async Task<List<Ubicacion>> GetAllByDeptoIsoAsync(string depto_iso)
+        {
+            if (string.IsNullOrEmpty(depto_iso))
+                throw new AppValidationException("El parametro depto_iso no puede ser nulo o vacío.");
+            
+            var lasUbicaciones = await _ubicacionRepository
+                .GetAllByDeptoIsoAsync(depto_iso);
+
+            if (lasUbicaciones.Count == 0)
+                throw new AppValidationException($"Código ISO de departamento {depto_iso} no tiene plantas asociadas");
+
+
+            return lasUbicaciones;
+        }
+
+        public async Task<List<Planta>> GetAllAssociatedPlantsByDeptoIsoAsync(string depto_iso)
+        {
+            if (string.IsNullOrEmpty(depto_iso))
+                throw new AppValidationException("El parametro depto_iso no puede ser nulo o vacío.");
+
+            var plantasAsociadas = await _plantaRepository
+                .GetAllByDeptoIsoAsync(depto_iso);
+
+            if (plantasAsociadas.Count == 0)
+                throw new AppValidationException($"En el departamento {depto_iso} no hay plantas asociadas");
+
+            return plantasAsociadas;
+        }
+
+
+
         public async Task<List<Planta>> GetAssociatedPlantsAsync(Guid ubicacion_id)
         {
             Ubicacion unaUbicacion = await _ubicacionRepository

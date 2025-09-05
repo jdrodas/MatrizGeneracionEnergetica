@@ -37,6 +37,38 @@ namespace mge.API.Controllers
             }
         }
 
+        [HttpGet("{depto_iso:length(6)}")]
+        public async Task<IActionResult> GetAllByDeptoIsoAsync(string depto_iso)
+        {
+            try
+            {
+                var lasUbicaciones = await _ubicacionService
+                    .GetAllByDeptoIsoAsync(depto_iso);
+
+                return Ok(lasUbicaciones);
+            }
+            catch (AppValidationException error)
+            {
+                return NotFound(error.Message);
+            }
+        }
+
+        [HttpGet("{depto_iso:length(6)}/plantas")]
+        public async Task<IActionResult> GetAllAssociatedPlantsByDeptoIsoAsync(string depto_iso)
+        {
+            try
+            {
+                var lasPlantas = await _ubicacionService
+                    .GetAllAssociatedPlantsByDeptoIsoAsync(depto_iso);
+
+                return Ok(lasPlantas);
+            }
+            catch (AppValidationException error)
+            {
+                return NotFound(error.Message);
+            }
+        }
+
         [HttpGet("{ubicacion_id:Guid}/plantas")]
         public async Task<IActionResult> GetAssociatedPlantsAsync(Guid ubicacion_id)
         {
