@@ -131,6 +131,13 @@ namespace mge.API.Services
             if (unTipo.Id == Guid.Empty)
                 throw new AppValidationException($"Tipo no encontrado con el id {tipo_id}");
 
+            //Validar si el tipo de fuente tiene plantas asociadas
+            var plantasAsociadas = await _plantaRepository
+                .GetAllByTypeIdAsync(tipo_id);
+
+            if (plantasAsociadas.Any())
+                throw new AppValidationException($"El tipo {unTipo.Nombre} no se puede eliminar porque tiene plantas asociadas");
+
             string nombreTipoEliminado = unTipo.Nombre!;
 
             try
