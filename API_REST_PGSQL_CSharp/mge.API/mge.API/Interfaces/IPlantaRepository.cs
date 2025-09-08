@@ -6,8 +6,10 @@ namespace mge.API.Interfaces
     {
         public Task<List<Planta>> GetAllAsync();
         public Task<List<Planta>> GetAllByLocationIdAsync(Guid ubicacion_id);
-        public Task<List<Planta>> GetAllByDeptoIsoAsync(string depto_iso);        
+        public Task<List<Planta>> GetAllByDeptoIsoAsync(string depto_iso);
         public Task<List<Planta>> GetAllByTypeIdAsync(Guid tipo_id);
         public Task<Planta> GetByIdAsync(Guid tipo_id);
+        public Task<Planta> GetByDetailsAsync(string planta_nombre, Guid ubicacion_id, Guid tipo_id);
+        public Task<bool> CreateAsync(Planta unaPlanta);
     }
 }

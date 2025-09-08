@@ -4,9 +4,13 @@ using mge.API.Models;
 
 namespace mge.API.Services
 {
-    public class PlantaService(IPlantaRepository plantaRepository)
+    public class PlantaService(IPlantaRepository plantaRepository,
+                                ITipoRepository tipoRepository,
+                                IUbicacionRepository ubicacionRepository)
     {
         private readonly IPlantaRepository _plantaRepository = plantaRepository;
+        private readonly ITipoRepository _tipoRepository = tipoRepository;
+        private readonly IUbicacionRepository _ubicacionRepository = ubicacionRepository;
 
         public async Task<List<Planta>> GetAllAsync()
         {
@@ -23,6 +27,79 @@ namespace mge.API.Services
                 throw new AppValidationException($"Planta no encontrada con el Id {planta_id}");
 
             return unaPlanta;
+        }
+
+        public async Task<Planta> CreateAsync(Planta unaPlanta)
+        {
+            unaPlanta.Nombre = unaPlanta.Nombre!.Trim();
+            unaPlanta.UbicacionNombre = unaPlanta.UbicacionNombre!.Trim();
+            unaPlanta.TipoNombre = unaPlanta.TipoNombre!.Trim();
+
+            string resultadoValidacion = EvaluatePlantDetailsAsync(unaPlanta);
+
+            if (!string.IsNullOrEmpty(resultadoValidacion))
+                throw new AppValidationException(resultadoValidacion);
+
+            //Validamos si los datos del tipo son válidos
+            var tipoExistente = await _tipoRepository
+                .GetByDetailsAsync(unaPlanta.TipoId, unaPlanta.TipoNombre);
+
+            //Si el tipo no es válido, no se puede insertar la planta
+            if (tipoExistente.Id == Guid.Empty)
+                throw new AppValidationException($"Inserción fallida - Datos del tipo de fuente son inválidos");
+
+            //Validamos si los datos de la ubicación son válidos
+            var ubicacionExistente = await _ubicacionRepository
+                .GetByDetailsAsync(unaPlanta.Id, unaPlanta.UbicacionNombre);
+
+            //Si la ubicación no es válida, no se puede insertar la planta
+            if (ubicacionExistente.Id == Guid.Empty)
+                throw new AppValidationException($"Inserción fallida - Datos de la ubicación de la planta son inválidos");
+
+            unaPlanta.UbicacionId = ubicacionExistente.Id;
+            unaPlanta.TipoId = tipoExistente.Id;
+
+            var plantaExistente = await _plantaRepository
+                .GetByDetailsAsync(unaPlanta.Nombre, unaPlanta.UbicacionId, unaPlanta.TipoId);
+
+            //Si ya existe una planta con ese nombre, de ese tipo en esa ubicación, se devuelve el objeto encontrado
+            if (plantaExistente.Id != Guid.Empty)
+                return plantaExistente;
+
+            try
+            {
+                bool resultadoAccion = await _plantaRepository
+                    .CreateAsync(unaPlanta);
+
+                if (!resultadoAccion)
+                    throw new AppValidationException("Operación ejecutada pero no generó cambios en la DB");
+
+                plantaExistente = await _plantaRepository
+                    .GetByDetailsAsync(unaPlanta.Nombre, unaPlanta.UbicacionId, unaPlanta.TipoId);
+            }
+            catch (DbOperationException)
+            {
+                throw;
+            }
+
+            return plantaExistente;
+        }
+
+        private static string EvaluatePlantDetailsAsync(Planta unaPlanta)
+        {
+            if (unaPlanta.Nombre!.Length == 0)
+                return "No se puede insertar una planta con nombre nulo";
+
+            if (unaPlanta.TipoNombre!.Length == 0 && unaPlanta.TipoId == Guid.Empty)
+                return "No se puede insertar una planta sin información del tipo de fuente";
+
+            if (unaPlanta.UbicacionNombre!.Length == 0 && unaPlanta.UbicacionId == Guid.Empty)
+                return "No se puede insertar una planta sin información de la ubicación";
+
+            if (unaPlanta.Capacidad <= 0)
+                return "La capacidad de la planta en MW debe ser mayor que 0";
+
+            return string.Empty;
         }
     }
 }

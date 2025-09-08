@@ -58,7 +58,7 @@ create table core.plantas
     nombre          text not null,
     tipo_id         uuid not null constraint plantas_tipo_fk references tipos,
     ubicacion_id    uuid not null constraint plantas_ubicacion_fk references ubicaciones,
-    capacidad       decimal not null
+    capacidad       double precision not null
 );
 
 create unique index planta_tipo_uk on core.plantas (lower(nombre), tipo_id);

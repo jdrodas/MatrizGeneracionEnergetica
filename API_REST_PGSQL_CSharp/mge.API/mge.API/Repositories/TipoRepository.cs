@@ -40,8 +40,8 @@ namespace mge.API.Repositories
                 "FROM core.tipos " +
                 "WHERE id = @tipo_id";
 
-            var resultado = await conexion.QueryAsync<Tipo>(sentenciaSQL,
-                parametrosSentencia);
+            var resultado = await conexion
+                .QueryAsync<Tipo>(sentenciaSQL, parametrosSentencia);
 
             if (resultado.Any())
                 unTipo = resultado.First();
@@ -69,8 +69,46 @@ namespace mge.API.Repositories
                 "AND LOWER(descripcion) = LOWER(@tipo_descripcion) " +
                 "AND esrenovable = @tipo_esrenovable";
 
-            var resultado = await conexion.QueryAsync<Tipo>(sentenciaSQL,
-                parametrosSentencia);
+            var resultado = await conexion
+                .QueryAsync<Tipo>(sentenciaSQL, parametrosSentencia);
+
+            if (resultado.Any())
+                tipoExistente = resultado.First();
+
+            return tipoExistente;
+        }
+        public async Task<Tipo> GetByDetailsAsync(Guid tipo_id, string tipo_nombre)
+        {
+            Tipo tipoExistente = new();
+            var conexion = contextoDB.CreateConnection();
+
+            if (string.IsNullOrEmpty(tipo_nombre) && tipo_id == Guid.Empty)
+                throw new AppValidationException("Datos insuficientes para obtener el tipo de fuente");
+
+            DynamicParameters parametrosSentencia = new();
+
+            string sentenciaSQL =
+                "SELECT DISTINCT id, nombre, descripcion, esrenovable " +
+                "FROM core.tipos ";
+
+            if (!string.IsNullOrEmpty(tipo_nombre) && tipo_id == Guid.Empty)
+            {
+                parametrosSentencia.Add("@tipo_nombre", tipo_nombre,
+                                        DbType.String, ParameterDirection.Input);
+
+                sentenciaSQL += "WHERE LOWER(nombre) = LOWER(@tipo_nombre) ";
+            }
+
+            if (tipo_id != Guid.Empty)
+            {
+                parametrosSentencia.Add("@tipo_id", tipo_id,
+                                        DbType.Guid, ParameterDirection.Input);
+
+                sentenciaSQL += "WHERE id = @tipo_id";
+            }
+
+            var resultado = await conexion
+                .QueryAsync<Tipo>(sentenciaSQL, parametrosSentencia);
 
             if (resultado.Any())
                 tipoExistente = resultado.First();
@@ -172,5 +210,7 @@ namespace mge.API.Repositories
 
             return resultadoAccion;
         }
+
+
     }
 }

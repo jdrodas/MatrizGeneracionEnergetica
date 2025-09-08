@@ -1,7 +1,6 @@
 ﻿using mge.API.Exceptions;
 using mge.API.Interfaces;
 using mge.API.Models;
-using mge.API.Repositories;
 
 namespace mge.API.Services
 {
@@ -48,7 +47,7 @@ namespace mge.API.Services
         {
             unTipo.Nombre = unTipo.Nombre!.Trim();
             unTipo.Descripcion = unTipo.Descripcion!.Trim();
-            
+
             string resultadoValidacion = EvaluateTypeDetailsAsync(unTipo);
 
             if (!string.IsNullOrEmpty(resultadoValidacion))

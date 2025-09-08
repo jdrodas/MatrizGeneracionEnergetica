@@ -26,22 +26,22 @@ namespace mge.API.Services
             return unaUbicacion;
         }
 
-        public async Task<List<Ubicacion>> GetAllByDeptoIsoAsync(string depto_iso)
+        public async Task<Ubicacion> GetByNameAsync(string ubicacion_nombre)
         {
-            if (string.IsNullOrEmpty(depto_iso))
-                throw new AppValidationException("El parametro depto_iso no puede ser nulo o vacío.");
-            
-            var lasUbicaciones = await _ubicacionRepository
-                .GetAllByDeptoIsoAsync(depto_iso);
+            if (string.IsNullOrEmpty(ubicacion_nombre))
+                throw new AppValidationException("El parametro ubicacion_nombre no puede ser nulo o vacío.");
 
-            if (lasUbicaciones.Count == 0)
-                throw new AppValidationException($"Código ISO de departamento {depto_iso} no tiene plantas asociadas");
+            Ubicacion unaUbicacion = await _ubicacionRepository
+                .GetByNameAsync(ubicacion_nombre);
+
+            if (unaUbicacion.Id == Guid.Empty)
+                throw new AppValidationException($"Ubicación no encontrada con el nombre {ubicacion_nombre}");
 
 
-            return lasUbicaciones;
+            return unaUbicacion;
         }
 
-        public async Task<List<Planta>> GetAllAssociatedPlantsByDeptoIsoAsync(string depto_iso)
+        public async Task<List<Planta>> GetAssociatedPlantsByDeptoIsoAsync(string depto_iso)
         {
             if (string.IsNullOrEmpty(depto_iso))
                 throw new AppValidationException("El parametro depto_iso no puede ser nulo o vacío.");
@@ -55,9 +55,7 @@ namespace mge.API.Services
             return plantasAsociadas;
         }
 
-
-
-        public async Task<List<Planta>> GetAssociatedPlantsAsync(Guid ubicacion_id)
+        public async Task<List<Planta>> GetAssociatedPlantsByIdAsync(Guid ubicacion_id)
         {
             Ubicacion unaUbicacion = await _ubicacionRepository
                 .GetByIdAsync(ubicacion_id);

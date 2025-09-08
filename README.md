@@ -100,11 +100,11 @@ El versionamiento de los endpoints utilizará parámetro en el encabezado, en lu
 ### Ubicaciones
 
 ```http
-GET    /api/ubicaciones                      # Listar todos
-GET    /api/ubicaciones/{id}                 # Obtener por ID
-GET    /api/ubicaciones/{id}/plantas         # Obtener plantas asociadas por ID de la ubicación
-GET    /api/ubicaciones/{depto_iso}          # Obtener ubicaciones por ISO del Departamento
-GET    /api/ubicaciones/{depto_iso}/plantas  # Obtener plantas en ubicaciones asociadas al ISO del Departamento
+GET    /api/ubicaciones                             # Listar todos
+GET    /api/ubicaciones/{id}                        # Obtener por ID
+GET    /api/ubicaciones/{id}/plantas                # Obtener plantas asociadas por ID de la ubicación
+GET    /api/ubicaciones/{ubicacion_nombre}          # Obtener por nombre de municipio,departamento
+GET    /api/ubicaciones/{depto_iso}/plantas         # Obtener plantas por código ISO del Departamento
 ```
 
 ### Tipos de Fuente
@@ -124,7 +124,7 @@ DELETE /api/tipos/{id}                       # Eliminar
 GET    /api/plantas                          # Listar todas
 GET    /api/plantas/{id}                     # Obtener por ID
 POST   /api/plantas                          # Crear nueva
-PUT    /api/plantas/{id}                     # Actualizar completa
+PUT    /api/plantas/                         # Actualizar completa
 DELETE /api/plantas/{id}                     # Eliminar
 ```
 
@@ -132,19 +132,19 @@ DELETE /api/plantas/{id}                     # Eliminar
 
 ```http
 GET    /api/produccion                       # Listar registros
-POST   /api/produccion                       # Crear registro
-PUT    /api/produccion/{id}                  # Actualizar completo
-DELETE /api/produccion/{id}                  # Eliminar
 GET    /api/produccion/planta/{id}           # Por planta
 GET    /api/produccion/Ubicacion/{id}        # Por Ubicación
 GET    /api/produccion/fecha/{fecha}         # Por fecha
+POST   /api/produccion                       # Crear registro
+PUT    /api/produccion/                      # Actualizar completo
+DELETE /api/produccion/{id}                  # Eliminar
 ```
 
 ### Estadísticas
 
 ```http
-GET    /api/estadisticas/diarias/{fecha}                             # Resumen diario
-GET    /api/estadisticas/tipo/{fecha}                                # Por tipo de fuente
-GET    /api/estadisticas/ubicaciones/{fecha}                         # Por ubicación geográfica
-GET    /api/estadisticas/rango-fechas?inicio={fecha}&fin={fecha}     # Por rango de fechas
+GET    /api/estadisticas/{fecha}                                  # Resumen diario
+GET    /api/estadisticas/{fecha}/tipo/                            # Por tipo de fuente
+GET    /api/estadisticas/{fecha}/ubicaciones                      # Por ubicación geográfica
+GET    /api/estadisticas/rango-fechas?inicio={fecha}&fin={fecha}  # Por rango de fechas
 ```

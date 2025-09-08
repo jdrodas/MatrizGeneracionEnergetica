@@ -8,9 +8,9 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ******************************************
+// ***************************************************************************
 // --- Configuración de la base de datos --
-// ******************************************
+// ***************************************************************************
 
 builder.Services.Configure<DatabaseSettings>(
     builder.Configuration.GetSection("DatabaseSettings"));
@@ -24,23 +24,23 @@ var pgsqlConnectionString = databaseSettings?.BuildConnectionString();
 //Agregar la cadena de conexión a la configuración
 builder.Configuration["ConnectionStrings:mgePL"] = pgsqlConnectionString;
 
-// ***********************************
+// ***************************************************************************
 // --- Configuración del DB Context --
-// ***********************************
+// ***************************************************************************
 
 builder.Services.AddSingleton<PgsqlDbContext>();
 
-// ****************************************
+// ***************************************************************************
 // --- Configuración de los repositorios --
-// ****************************************
+// ***************************************************************************
 
 builder.Services.AddScoped<ITipoRepository, TipoRepository>();
 builder.Services.AddScoped<IPlantaRepository, PlantaRepository>();
 builder.Services.AddScoped<IUbicacionRepository, UbicacionRepository>();
 
-// ************************************************
+// ***************************************************************************
 // --- Configuración de los servicios asociados  --
-// ************************************************
+// ***************************************************************************
 
 builder.Services.AddScoped<TipoService>();
 builder.Services.AddScoped<PlantaService>();
@@ -68,9 +68,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// ***********************************************************
-// --- Configuración del control de versiones para el API  --
-// ***********************************************************
+// ***************************************************************************
+// --- Configuración del versionamiento para el API  --
+// ***************************************************************************
 
 builder.Services.AddApiVersioning(opt =>
     {

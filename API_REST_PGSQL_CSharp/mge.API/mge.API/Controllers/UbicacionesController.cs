@@ -37,15 +37,15 @@ namespace mge.API.Controllers
             }
         }
 
-        [HttpGet("{depto_iso:length(6)}")]
-        public async Task<IActionResult> GetAllByDeptoIsoAsync(string depto_iso)
+        [HttpGet("{ubicacion_nombre:maxlength(100)}")]
+        public async Task<IActionResult> GetByNameAsync(string ubicacion_nombre)
         {
             try
             {
-                var lasUbicaciones = await _ubicacionService
-                    .GetAllByDeptoIsoAsync(depto_iso);
+                var unaUbicacion = await _ubicacionService
+                    .GetByNameAsync(ubicacion_nombre);
 
-                return Ok(lasUbicaciones);
+                return Ok(unaUbicacion);
             }
             catch (AppValidationException error)
             {
@@ -54,14 +54,14 @@ namespace mge.API.Controllers
         }
 
         [HttpGet("{depto_iso:length(6)}/plantas")]
-        public async Task<IActionResult> GetAllAssociatedPlantsByDeptoIsoAsync(string depto_iso)
+        public async Task<IActionResult> GetAssociatedPlantsByDeptoIsoAsync(string depto_iso)
         {
             try
             {
-                var lasPlantas = await _ubicacionService
-                    .GetAllAssociatedPlantsByDeptoIsoAsync(depto_iso);
+                var lasPlantasAsociadas = await _ubicacionService
+                    .GetAssociatedPlantsByDeptoIsoAsync(depto_iso);
 
-                return Ok(lasPlantas);
+                return Ok(lasPlantasAsociadas);
             }
             catch (AppValidationException error)
             {
@@ -70,12 +70,12 @@ namespace mge.API.Controllers
         }
 
         [HttpGet("{ubicacion_id:Guid}/plantas")]
-        public async Task<IActionResult> GetAssociatedPlantsAsync(Guid ubicacion_id)
+        public async Task<IActionResult> GetAssociatedPlantsByIdAsync(Guid ubicacion_id)
         {
             try
             {
                 var lasPlantasAsociadas = await _ubicacionService
-                    .GetAssociatedPlantsAsync(ubicacion_id);
+                    .GetAssociatedPlantsByIdAsync(ubicacion_id);
 
                 return Ok(lasPlantasAsociadas);
             }

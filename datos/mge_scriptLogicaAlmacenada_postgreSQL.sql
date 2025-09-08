@@ -136,7 +136,7 @@ create procedure core.p_inserta_planta(
                             in p_nombre         text, 
                             in p_tipo_id        uuid, 
                             in p_ubicacion_id   uuid, 
-                            in p_capacidad      decimal)
+                            in p_capacidad      double precision)
 language plpgsql as
 $$
     declare
@@ -159,7 +159,7 @@ $$
         and p_tipo_id = tipo_id;
 
         if l_total_registros != 0  then
-            raise exception 'ya existe ese una planta con ese nombre con ese tipo de fuente';
+            raise exception 'ya existe una planta con ese nombre y con ese tipo de fuente';
         end if;
 
         -- Validamos que el tipo de fuente sea válido

@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using mge.API.DbContexts;
+using mge.API.Exceptions;
 using mge.API.Interfaces;
 using mge.API.Models;
+using Npgsql;
 using System.Data;
 
 namespace mge.API.Repositories
@@ -97,7 +99,6 @@ namespace mge.API.Repositories
             return [.. resultadoPlantas];
         }
 
-
         public async Task<Planta> GetByIdAsync(Guid planta_id)
         {
             Planta unaPlanta = new();
@@ -115,13 +116,78 @@ namespace mge.API.Repositories
                 "FROM core.v_info_plantas " +
                 "WHERE planta_id = @planta_id";
 
-            var resultado = await conexion.QueryAsync<Planta>(sentenciaSQL,
-                parametrosSentencia);
+            var resultado = await conexion
+                .QueryAsync<Planta>(sentenciaSQL, parametrosSentencia);
 
             if (resultado.Any())
                 unaPlanta = resultado.First();
 
             return unaPlanta;
+        }
+
+        public async Task<Planta> GetByDetailsAsync(string planta_nombre, Guid ubicacion_id, Guid tipo_id)
+        {
+            Planta unaPlanta = new();
+            var conexion = contextoDB.CreateConnection();
+
+            DynamicParameters parametrosSentencia = new();
+            parametrosSentencia.Add("@planta_nombre", planta_nombre,
+                                    DbType.String, ParameterDirection.Input);
+            parametrosSentencia.Add("@ubicacion_id", ubicacion_id,
+                                    DbType.Guid, ParameterDirection.Input);
+            parametrosSentencia.Add("@tipo_id", tipo_id,
+                                    DbType.Guid, ParameterDirection.Input);
+
+            string sentenciaSQL =
+                "SELECT DISTINCT " +
+                "planta_id id, planta_nombre nombre, capacidad, " +
+                "ubicacion_id ubicacionId, ubicacion_nombre ubicacionNombre, " +
+                "tipo_id tipoId, tipo_nombre tipoNombre " +
+                "FROM core.v_info_plantas " +
+                "WHERE LOWER(planta_nombre) = LOWER(@planta_nombre) " +
+                "AND ubicacion_id = @ubicacion_id " +
+                "AND tipo_id = @tipo_id";
+
+            var resultado = await conexion
+                .QueryAsync<Planta>(sentenciaSQL, parametrosSentencia);
+
+            if (resultado.Any())
+                unaPlanta = resultado.First();
+
+            return unaPlanta;
+        }
+
+        public async Task<bool> CreateAsync(Planta unaPlanta)
+        {
+            bool resultadoAccion = false;
+
+            try
+            {
+                var conexion = contextoDB.CreateConnection();
+
+                string procedimiento = "core.p_inserta_planta";
+                var parametros = new
+                {
+                    p_nombre = unaPlanta.Nombre,
+                    p_tipo_id = unaPlanta.TipoId,
+                    p_ubicacion_id = unaPlanta.UbicacionId,
+                    p_capacidad = unaPlanta.Capacidad
+                };
+
+                var cantidad_filas = await conexion.ExecuteAsync(
+                    procedimiento,
+                    parametros,
+                    commandType: CommandType.StoredProcedure);
+
+                if (cantidad_filas != 0)
+                    resultadoAccion = true;
+            }
+            catch (NpgsqlException error)
+            {
+                throw new DbOperationException(error.Message);
+            }
+
+            return resultadoAccion;
         }
     }
 }
