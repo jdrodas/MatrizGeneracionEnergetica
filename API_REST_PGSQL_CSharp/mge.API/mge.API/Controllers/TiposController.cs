@@ -113,6 +113,5 @@ namespace mge.API.Controllers
                 return BadRequest($"Error de operacion en DB: {error.Message}");
             }
         }
-
     }
 }

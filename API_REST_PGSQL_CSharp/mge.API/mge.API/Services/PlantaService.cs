@@ -6,11 +6,13 @@ namespace mge.API.Services
 {
     public class PlantaService(IPlantaRepository plantaRepository,
                                 ITipoRepository tipoRepository,
-                                IUbicacionRepository ubicacionRepository)
+                                IUbicacionRepository ubicacionRepository,
+                                IProduccionRepository produccionRepository)
     {
         private readonly IPlantaRepository _plantaRepository = plantaRepository;
         private readonly ITipoRepository _tipoRepository = tipoRepository;
         private readonly IUbicacionRepository _ubicacionRepository = ubicacionRepository;
+        private readonly IProduccionRepository _produccionRepository = produccionRepository;
 
         public async Task<List<Planta>> GetAllAsync()
         {
@@ -140,6 +142,39 @@ namespace mge.API.Services
             }
 
             return plantaExistente;
+        }
+
+        public async Task<string> RemoveAsync(Guid planta_id)
+        {
+            Planta unaPlanta = await _plantaRepository
+                .GetByIdAsync(planta_id);
+
+            if (unaPlanta.Id == Guid.Empty)
+                throw new AppValidationException($"Planta no encontrada con el id {planta_id}");
+
+            //Validar si la planta tiene producción asociada
+            var produccion_asociada = await _produccionRepository
+                .GetAllByPlantIdAsync(planta_id);
+
+            if (produccion_asociada.Any())
+                throw new AppValidationException($"la planta {unaPlanta.Nombre} no se puede eliminar porque tiene producción asociada");
+
+            string nombrePlantaEliminada = unaPlanta.Nombre!;
+
+            try
+            {
+                bool resultadoAccion = await _plantaRepository
+                    .RemoveAsync(planta_id);
+
+                if (!resultadoAccion)
+                    throw new DbOperationException("Operación ejecutada pero no generó cambios en la DB");
+            }
+            catch (DbOperationException)
+            {
+                throw;
+            }
+
+            return nombrePlantaEliminada;
         }
 
         private static string EvaluatePlantDetailsAsync(Planta unaPlanta)

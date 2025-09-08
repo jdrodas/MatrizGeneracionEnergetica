@@ -37,6 +37,7 @@ builder.Services.AddSingleton<PgsqlDbContext>();
 builder.Services.AddScoped<ITipoRepository, TipoRepository>();
 builder.Services.AddScoped<IPlantaRepository, PlantaRepository>();
 builder.Services.AddScoped<IUbicacionRepository, UbicacionRepository>();
+builder.Services.AddScoped<IProduccionRepository, ProduccionRepository>();
 
 // ***************************************************************************
 // --- Configuración de los servicios asociados  --

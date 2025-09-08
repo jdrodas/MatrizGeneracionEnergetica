@@ -68,7 +68,7 @@ comment on column core.plantas.id is 'ID de la planta generadora';
 comment on column core.plantas.nombre is 'Nombre de la planta';
 comment on column core.plantas.tipo_id is 'Tipo de fuente de energía utilizada por la planta';
 comment on column core.plantas.ubicacion_id is 'ID de la ubicación geográfica de la planta';
-comment on column core.plantas.capacidad is 'Capacidad instalada de generación en Megavatios';
+comment on column core.plantas.capacidad is 'Capacidad instalada en MW de generación en Megavatios';
 
 
 create table core.produccion
@@ -76,7 +76,7 @@ create table core.produccion
     id          uuid default gen_random_uuid() constraint produccion_pk primary key,
     planta_id   uuid not null constraint produccion_planta_fk references plantas,
     fecha       date not null,
-    produccion   decimal not null
+    valor       double precision not null
 );
 
 create unique index planta_produccion_dia on core.produccion (planta_id,fecha);
@@ -85,7 +85,7 @@ comment on table core.produccion is 'Registro de la generación diaria de cada p
 comment on column core.produccion.id is 'ID del evento de generación';
 comment on column core.produccion.fecha is 'Fecha en la que se produce el registro de generación';
 comment on column core.produccion.planta_id is 'ID de la planta que está produciendo energía';
-comment on column core.produccion.produccion  is 'Energía generada por la planta en este día';
+comment on column core.produccion.valor  is 'Energía generada en MW por la planta en este día';
 
 -- ****************************************
 -- Creación de Vistas
@@ -109,9 +109,10 @@ from core.plantas p
 
 create view core.v_info_produccion_planta as (
 select distinct
+    pdn.id,
     pdn.planta_id,
     p.nombre planta_nombre,
-    pdn.produccion,
+    pdn.valor,
     pdn.fecha
 from core.plantas p
     join core.produccion pdn on p.id = pdn.planta_id
@@ -123,7 +124,7 @@ select distinct pl.tipo_id,
                 t.nombre,
                 t.esrenovable,
                 pdn.fecha,
-                sum(pdn.produccion)
+                sum(pdn.valor)
 from core.produccion pdn
          inner join plantas pl on pdn.planta_id = pl.id
          inner join tipos t on pl.tipo_id = t.id

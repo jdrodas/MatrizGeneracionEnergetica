@@ -77,5 +77,25 @@ namespace mge.API.Controllers
                 return BadRequest($"Error de operacion en DB: {error.Message}");
             }
         }
+
+        [HttpDelete("{planta_id:Guid}")]
+        public async Task<IActionResult> RemoveAsync(Guid planta_id)
+        {
+            try
+            {
+                var nombrePlantaBorrada = await _plantaService
+                    .RemoveAsync(planta_id);
+
+                return Ok($"La planta {nombrePlantaBorrada} fue eliminada correctamente!");
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest($"Error de validación: {error.Message}");
+            }
+            catch (DbOperationException error)
+            {
+                return BadRequest($"Error de operacion en DB: {error.Message}");
+            }
+        }
     }
 }

@@ -307,7 +307,7 @@ $$;
 create procedure core.p_inserta_produccion(
                             in p_planta_id      uuid, 
                             in p_fecha          date, 
-                            in p_produccion     decimal)
+                            in p_valor          double precision)
 language plpgsql as
 $$
     declare
@@ -323,7 +323,7 @@ $$
             raise exception 'no existe una planta con ese ID';
         end if;           
 
-        if p_produccion <= 0  then
+        if p_valor <= 0  then
                raise exception 'La producción de la planta debe ser mayor que 0 MW';
         end if;        
 
@@ -337,8 +337,8 @@ $$
             raise exception 'ya existe ese registro de producción para esa planta en esa fecha';
         end if;
 
-        insert into core.produccion(planta_id, fecha, produccion)
-        values (p_planta_id, p_fecha, p_produccion);
+        insert into core.produccion(planta_id, fecha, valor)
+        values (p_planta_id, p_fecha, p_valor);
     end;
 $$;
 
@@ -348,7 +348,7 @@ create procedure core.p_actualiza_produccion(
                             in p_id             uuid,
                             in p_planta_id      uuid, 
                             in p_fecha          date, 
-                            in p_produccion     decimal)
+                            in p_valor          double precision)
 language plpgsql as
 $$
     declare
@@ -364,7 +364,7 @@ $$
             raise exception 'no existe una planta con ese ID';
         end if;           
 
-        if p_produccion <= 0  then
+        if p_valor <= 0  then
                raise exception 'La producción de la planta debe ser mayor que 0 MW';
         end if;        
 
@@ -383,14 +383,10 @@ $$
         set 
             planta_id = p_planta_id,
             fecha = p_fecha,
-            produccion = p_produccion
+            valor = p_valor
         where id = p_id;
-
-        insert into core.produccion(planta_id, fecha, produccion)
-        values (p_planta_id, p_fecha, p_produccion);
     end;
 $$;
-
 
 -- p_elimina_produccion
 create procedure core.p_elimina_produccion(
