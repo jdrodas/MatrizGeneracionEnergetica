@@ -193,7 +193,7 @@ create procedure core.p_actualiza_planta(
                             in p_nombre         text, 
                             in p_tipo_id        uuid, 
                             in p_ubicacion_id   uuid, 
-                            in p_capacidad      decimal)
+                            in p_capacidad      double precision)
 language plpgsql as
 $$
     declare

@@ -57,5 +57,25 @@ namespace mge.API.Controllers
                 return BadRequest($"Error de operacion en DB: {error.Message}");
             }
         }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateAsync(Planta unaPlanta)
+        {
+            try
+            {
+                var plantaActualizada = await _plantaService
+                    .UpdateAsync(unaPlanta);
+
+                return Ok(plantaActualizada);
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest($"Error de validación: {error.Message}");
+            }
+            catch (DbOperationException error)
+            {
+                return BadRequest($"Error de operacion en DB: {error.Message}");
+            }
+        }
     }
 }

@@ -89,7 +89,7 @@ namespace mge.API.Repositories
             Ubicacion ubicacionExistente = new();
 
             if (string.IsNullOrEmpty(ubicacion_nombre) && ubicacion_id == Guid.Empty)
-                throw new AppValidationException("Datos insuficientes para obtener la ubiación");
+                throw new AppValidationException("Datos insuficientes para obtener la ubicación");
 
             if (!string.IsNullOrEmpty(ubicacion_nombre) && ubicacion_id == Guid.Empty)
                 ubicacionExistente = await GetByNameAsync(ubicacion_nombre);

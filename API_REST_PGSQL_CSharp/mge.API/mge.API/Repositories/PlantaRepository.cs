@@ -189,5 +189,39 @@ namespace mge.API.Repositories
 
             return resultadoAccion;
         }
+
+        public async Task<bool> UpdateAsync(Planta unaPlanta)
+        {
+            bool resultadoAccion = false;
+
+            try
+            {
+                var conexion = contextoDB.CreateConnection();
+
+                string procedimiento = "core.p_actualiza_planta";
+                var parametros = new
+                {
+                    p_id = unaPlanta.Id,
+                    p_nombre = unaPlanta.Nombre,
+                    p_tipo_id = unaPlanta.TipoId,
+                    p_ubicacion_id = unaPlanta.UbicacionId,
+                    p_capacidad = unaPlanta.Capacidad
+                };
+
+                var cantidad_filas = await conexion.ExecuteAsync(
+                    procedimiento,
+                    parametros,
+                    commandType: CommandType.StoredProcedure);
+
+                if (cantidad_filas != 0)
+                    resultadoAccion = true;
+            }
+            catch (NpgsqlException error)
+            {
+                throw new DbOperationException(error.Message);
+            }
+
+            return resultadoAccion;
+        }
     }
 }

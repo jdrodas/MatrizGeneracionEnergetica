@@ -50,7 +50,7 @@ namespace mge.API.Services
 
             //Validamos si los datos de la ubicación son válidos
             var ubicacionExistente = await _ubicacionRepository
-                .GetByDetailsAsync(unaPlanta.Id, unaPlanta.UbicacionNombre);
+                .GetByDetailsAsync(unaPlanta.UbicacionId, unaPlanta.UbicacionNombre);
 
             //Si la ubicación no es válida, no se puede insertar la planta
             if (ubicacionExistente.Id == Guid.Empty)
@@ -76,6 +76,63 @@ namespace mge.API.Services
 
                 plantaExistente = await _plantaRepository
                     .GetByDetailsAsync(unaPlanta.Nombre, unaPlanta.UbicacionId, unaPlanta.TipoId);
+            }
+            catch (DbOperationException)
+            {
+                throw;
+            }
+
+            return plantaExistente;
+        }
+
+        public async Task<Planta> UpdateAsync(Planta unaPlanta)
+        {
+            unaPlanta.Nombre = unaPlanta.Nombre!.Trim();
+            unaPlanta.UbicacionNombre = unaPlanta.UbicacionNombre!.Trim();
+            unaPlanta.TipoNombre = unaPlanta.TipoNombre!.Trim();
+
+            string resultadoValidacion = EvaluatePlantDetailsAsync(unaPlanta);
+
+            //Validamos si los datos del tipo son válidos
+            var tipoExistente = await _tipoRepository
+                .GetByDetailsAsync(unaPlanta.TipoId, unaPlanta.TipoNombre);
+
+            //Si el tipo no es válido, no se puede insertar la planta
+            if (tipoExistente.Id == Guid.Empty)
+                throw new AppValidationException($"Actualización fallida - Datos del tipo de fuente son inválidos");
+
+            //Validamos si los datos de la ubicación son válidos
+            var ubicacionExistente = await _ubicacionRepository
+                .GetByDetailsAsync(unaPlanta.UbicacionId, unaPlanta.UbicacionNombre);
+
+            //Si la ubicación no es válida, no se puede insertar la planta
+            if (ubicacionExistente.Id == Guid.Empty)
+                throw new AppValidationException($"Actualización fallida - Datos de la ubicación de la planta son inválidos");
+
+            unaPlanta.UbicacionId = ubicacionExistente.Id;
+            unaPlanta.TipoId = tipoExistente.Id;
+
+            //Validamos si hay una planta con ese Id
+            var plantaExistente = await _plantaRepository
+                .GetByIdAsync(unaPlanta.Id);
+
+            if (plantaExistente.Id == Guid.Empty)
+                throw new AppValidationException($"Actualización fallida - No hay planta registrada con el Id {unaPlanta.Id}");
+
+            //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
+            if (plantaExistente.Equals(unaPlanta))
+                return plantaExistente;
+
+            try
+            {
+                bool resultadoAccion = await _plantaRepository
+                    .UpdateAsync(unaPlanta);
+
+                if (!resultadoAccion)
+                    throw new AppValidationException("Operación ejecutada pero no generó cambios en la DB");
+
+                plantaExistente = await _plantaRepository
+                    .GetByIdAsync(unaPlanta.Id);
             }
             catch (DbOperationException)
             {
