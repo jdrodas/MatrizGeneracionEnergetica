@@ -22,6 +22,22 @@ namespace mge.API.Controllers
             return Ok(lasProducciones);
         }
 
+        [HttpGet("planta/{planta_id:Guid}")]
+        public async Task<IActionResult> GetAllByPlantIdAsync(Guid planta_id)
+        {
+            try
+            {
+                var unEvento = await _produccionService
+                    .GetAllByPlantIdAsync(planta_id);
+
+                return Ok(unEvento);
+            }
+            catch (AppValidationException error)
+            {
+                return NotFound(error.Message);
+            }
+        }
+
         [HttpGet("{evento_id:Guid}")]
         public async Task<IActionResult> GetByIdAsync(Guid evento_id)
         {
@@ -37,5 +53,7 @@ namespace mge.API.Controllers
                 return NotFound(error.Message);
             }
         }
+
+
     }
 }

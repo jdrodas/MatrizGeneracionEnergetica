@@ -5,9 +5,11 @@ using mge.API.Repositories;
 
 namespace mge.API.Services
 {
-    public class ProducccionService(IProduccionRepository produccionRepository)
+    public class ProducccionService(IProduccionRepository produccionRepository,
+                                    IPlantaRepository plantaRepository)
     {
         private readonly IProduccionRepository _produccionRepository = produccionRepository;
+        private readonly IPlantaRepository _plantaRepository = plantaRepository;
 
         public async Task<List<Produccion>> GetAllAsync()
         {
@@ -24,6 +26,24 @@ namespace mge.API.Services
                 throw new AppValidationException($"Evento de producción no encontrado con el Id {evento_id}");
 
             return unEvento;
+        }
+
+        public async Task<List<Produccion>> GetAllByPlantIdAsync(Guid planta_id)
+        {
+            Planta unaPlanta = await _plantaRepository
+                .GetByIdAsync(planta_id);
+
+            if (unaPlanta.Id == Guid.Empty)
+                throw new AppValidationException($"No hay planta registrada con el Id {planta_id}");
+            
+            
+            var LosEventos = await _produccionRepository
+                .GetAllByPlantIdAsync(planta_id);
+
+            if (LosEventos.Count == 0)
+                throw new AppValidationException($"No hay producción asociada a la planta {unaPlanta.Nombre}");
+
+            return LosEventos;
         }
     }
 }

@@ -134,7 +134,6 @@ DELETE /api/plantas/{id}                     # Eliminar
 GET    /api/produccion                       # Listar todos
 GET    /api/produccion/{id}                  # Obtener por ID del evento
 GET    /api/produccion/planta/{id}           # Por planta
-GET    /api/produccion/Ubicacion/{id}        # Por Ubicación
 GET    /api/produccion/fecha/{fecha}         # Por fecha
 POST   /api/produccion                       # Crear registro
 PUT    /api/produccion/                      # Actualizar completo
