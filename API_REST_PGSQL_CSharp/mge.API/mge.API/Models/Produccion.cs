@@ -14,7 +14,7 @@ namespace mge.API.Models
         public string? PlantaNombre { get; set; } = string.Empty;
 
         [JsonPropertyName("fecha")]
-        public DateTime Fecha { get; set; } = new DateTime();
+        public string? Fecha { get; set; } = string.Empty;
 
         [JsonPropertyName("valor")]
         public double Valor { get; set; } = 0.0d;
@@ -29,7 +29,7 @@ namespace mge.API.Models
             return Id == otraProduccion.Id
                 && Valor!.Equals(otraProduccion.Valor)
                 && PlantaId.Equals(otraProduccion.PlantaId)
-                && Fecha.Equals(otraProduccion.Fecha);
+                && Fecha!.Equals(otraProduccion.Fecha);
         }
 
         public override int GetHashCode()
@@ -39,8 +39,8 @@ namespace mge.API.Models
                 int hash = 3;
                 hash = hash * 5 + Id.GetHashCode();
                 hash = hash * 5 + Valor.GetHashCode();
-                hash = hash * 5 + PlantaId.GetHashCode(); ;
-                hash = hash * 5 + Fecha.GetHashCode();
+                hash = hash * 5 + PlantaId.GetHashCode();
+                hash = hash * 5 + (Fecha?.GetHashCode() ?? 0);
 
                 return hash;
             }

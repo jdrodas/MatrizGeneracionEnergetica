@@ -100,11 +100,11 @@ El versionamiento de los endpoints utilizará parámetro en el encabezado, en lu
 ### Ubicaciones
 
 ```http
-GET    /api/ubicaciones                             # Listar todos
-GET    /api/ubicaciones/{id}                        # Obtener por ID
-GET    /api/ubicaciones/{id}/plantas                # Obtener plantas asociadas por ID de la ubicación
-GET    /api/ubicaciones/{ubicacion_nombre}          # Obtener por nombre de municipio,departamento
-GET    /api/ubicaciones/{depto_iso}/plantas         # Obtener plantas por código ISO del Departamento
+GET    /api/ubicaciones                      # Listar todas
+GET    /api/ubicaciones/{id}                 # Obtener por ID
+GET    /api/ubicaciones/{id}/plantas         # Obtener plantas asociadas por ID de la ubicación
+GET    /api/ubicaciones/{ubicacion_nombre}   # Obtener por nombre de municipio,departamento
+GET    /api/ubicaciones/{depto_iso}/plantas  # Obtener plantas por código ISO del Departamento
 ```
 
 ### Tipos de Fuente
@@ -128,10 +128,11 @@ PUT    /api/plantas/                         # Actualizar completa
 DELETE /api/plantas/{id}                     # Eliminar
 ```
 
-### Producción Diaria
+### Eventos de Producción Diaria
 
 ```http
-GET    /api/produccion                       # Listar registros
+GET    /api/produccion                       # Listar todos
+GET    /api/produccion/{id}                  # Obtener por ID del evento
 GET    /api/produccion/planta/{id}           # Por planta
 GET    /api/produccion/Ubicacion/{id}        # Por Ubicación
 GET    /api/produccion/fecha/{fecha}         # Por fecha
