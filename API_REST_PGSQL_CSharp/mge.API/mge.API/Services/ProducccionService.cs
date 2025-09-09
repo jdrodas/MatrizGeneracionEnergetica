@@ -1,7 +1,7 @@
 ﻿using mge.API.Exceptions;
 using mge.API.Interfaces;
 using mge.API.Models;
-using mge.API.Repositories;
+using System.Globalization;
 
 namespace mge.API.Services
 {
@@ -35,13 +35,33 @@ namespace mge.API.Services
 
             if (unaPlanta.Id == Guid.Empty)
                 throw new AppValidationException($"No hay planta registrada con el Id {planta_id}");
-            
-            
+
+
             var LosEventos = await _produccionRepository
                 .GetAllByPlantIdAsync(planta_id);
 
             if (LosEventos.Count == 0)
                 throw new AppValidationException($"No hay producción asociada a la planta {unaPlanta.Nombre}");
+
+            return LosEventos;
+        }
+
+        public async Task<List<Produccion>> GetAllByDateIdAsync(string fecha_id)
+        {
+
+            bool fechaValida = DateTime
+                .TryParseExact(fecha_id, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result);
+
+            if (!fechaValida)
+                throw new AppValidationException($"La fecha suministrada {fecha_id} no tiene el formato DD-MM-YYYY");
+
+
+
+            var LosEventos = await _produccionRepository
+                .GetAllByDateIdAsync(fecha_id);
+
+            if (LosEventos.Count == 0)
+                throw new AppValidationException($"No hay producción asociada a la fecha {fecha_id}");
 
             return LosEventos;
         }

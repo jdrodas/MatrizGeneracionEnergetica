@@ -1,6 +1,5 @@
 ﻿using Asp.Versioning;
 using mge.API.Exceptions;
-using mge.API.Models;
 using mge.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,10 +26,26 @@ namespace mge.API.Controllers
         {
             try
             {
-                var unEvento = await _produccionService
+                var ProduccionAsociada = await _produccionService
                     .GetAllByPlantIdAsync(planta_id);
 
-                return Ok(unEvento);
+                return Ok(ProduccionAsociada);
+            }
+            catch (AppValidationException error)
+            {
+                return NotFound(error.Message);
+            }
+        }
+
+        [HttpGet("fecha/{fecha_id:length(10)}")]
+        public async Task<IActionResult> GetAllByDateIdAsync(string fecha_id)
+        {
+            try
+            {
+                var ProduccionAsociada = await _produccionService
+                    .GetAllByDateIdAsync(fecha_id);
+
+                return Ok(ProduccionAsociada);
             }
             catch (AppValidationException error)
             {
