@@ -21,13 +21,13 @@ namespace mge.API.Controllers
             return Ok(lasUbicaciones);
         }
 
-        [HttpGet("{ubicacion_id:Guid}")]
-        public async Task<IActionResult> GetByIdAsync(Guid ubicacion_id)
+        [HttpGet("{ubicacionId:Guid}")]
+        public async Task<IActionResult> GetByIdAsync(Guid ubicacionId)
         {
             try
             {
                 var unaUbicacion = await _ubicacionService
-                    .GetByIdAsync(ubicacion_id);
+                    .GetByIdAsync(ubicacionId);
 
                 return Ok(unaUbicacion);
             }
@@ -35,31 +35,15 @@ namespace mge.API.Controllers
             {
                 return NotFound(error.Message);
             }
-        }
+        }       
 
-        [HttpGet("{ubicacion_nombre:maxlength(100)}")]
-        public async Task<IActionResult> GetByNameAsync(string ubicacion_nombre)
-        {
-            try
-            {
-                var unaUbicacion = await _ubicacionService
-                    .GetByNameAsync(ubicacion_nombre);
-
-                return Ok(unaUbicacion);
-            }
-            catch (AppValidationException error)
-            {
-                return NotFound(error.Message);
-            }
-        }
-
-        [HttpGet("{depto_iso:length(6)}/plantas")]
-        public async Task<IActionResult> GetAssociatedPlantsByDeptoIsoAsync(string depto_iso)
+        [HttpGet("{ubicacionId:Guid}/plantas")]
+        public async Task<IActionResult> GetAssociatedPlantsByIdAsync(Guid ubicacionId)
         {
             try
             {
                 var lasPlantasAsociadas = await _ubicacionService
-                    .GetAssociatedPlantsByDeptoIsoAsync(depto_iso);
+                    .GetAssociatedPlantsByIdAsync(ubicacionId);
 
                 return Ok(lasPlantasAsociadas);
             }
@@ -67,22 +51,6 @@ namespace mge.API.Controllers
             {
                 return NotFound(error.Message);
             }
-        }
-
-        [HttpGet("{ubicacion_id:Guid}/plantas")]
-        public async Task<IActionResult> GetAssociatedPlantsByIdAsync(Guid ubicacion_id)
-        {
-            try
-            {
-                var lasPlantasAsociadas = await _ubicacionService
-                    .GetAssociatedPlantsByIdAsync(ubicacion_id);
-
-                return Ok(lasPlantasAsociadas);
-            }
-            catch (AppValidationException error)
-            {
-                return NotFound(error.Message);
-            }
-        }
+        }        
     }
 }

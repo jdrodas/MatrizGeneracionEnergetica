@@ -15,62 +15,31 @@ namespace mge.API.Services
                 .GetAllAsync();
         }
 
-        public async Task<Ubicacion> GetByIdAsync(Guid ubicacion_id)
+        public async Task<Ubicacion> GetByIdAsync(Guid ubicacionId)
         {
             Ubicacion unaUbicacion = await _ubicacionRepository
-                .GetByIdAsync(ubicacion_id);
+                .GetByIdAsync(ubicacionId);
 
             if (unaUbicacion.Id == Guid.Empty)
-                throw new AppValidationException($"Ubicación no encontrada con el Id {ubicacion_id}");
+                throw new AppValidationException($"Ubicación no encontrada con el Id {ubicacionId}");
 
             return unaUbicacion;
         }
-
-        public async Task<Ubicacion> GetByNameAsync(string ubicacion_nombre)
-        {
-            if (string.IsNullOrEmpty(ubicacion_nombre))
-                throw new AppValidationException("El parametro ubicacion_nombre no puede ser nulo o vacío.");
-
-            Ubicacion unaUbicacion = await _ubicacionRepository
-                .GetByNameAsync(ubicacion_nombre);
-
-            if (unaUbicacion.Id == Guid.Empty)
-                throw new AppValidationException($"Ubicación no encontrada con el nombre {ubicacion_nombre}");
-
-
-            return unaUbicacion;
-        }
-
-        public async Task<List<Planta>> GetAssociatedPlantsByDeptoIsoAsync(string depto_iso)
-        {
-            if (string.IsNullOrEmpty(depto_iso))
-                throw new AppValidationException("El parametro depto_iso no puede ser nulo o vacío.");
-
-            var plantasAsociadas = await _plantaRepository
-                .GetAllByDeptoIsoAsync(depto_iso);
-
-            if (plantasAsociadas.Count == 0)
-                throw new AppValidationException($"En el departamento {depto_iso} no hay plantas asociadas");
-
-            return plantasAsociadas;
-        }
-
-        public async Task<List<Planta>> GetAssociatedPlantsByIdAsync(Guid ubicacion_id)
+        public async Task<List<Planta>> GetAssociatedPlantsByIdAsync(Guid ubicacionId)
         {
             Ubicacion unaUbicacion = await _ubicacionRepository
-                .GetByIdAsync(ubicacion_id);
+                .GetByIdAsync(ubicacionId);
 
             if (unaUbicacion.Id == Guid.Empty)
-                throw new AppValidationException($"Ubicación no encontrada con el Id {ubicacion_id}");
+                throw new AppValidationException($"Ubicación no encontrada con el Id {ubicacionId}");
 
             var plantasAsociadas = await _plantaRepository
-                .GetAllByLocationIdAsync(ubicacion_id);
+                .GetAllByLocationIdAsync(ubicacionId);
 
             if (plantasAsociadas.Count == 0)
                 throw new AppValidationException($"Ubicación {unaUbicacion.NombreMunicipio}, {unaUbicacion.NombreDepartamento} no tiene plantas asociadas");
 
             return plantasAsociadas;
         }
-
     }
 }

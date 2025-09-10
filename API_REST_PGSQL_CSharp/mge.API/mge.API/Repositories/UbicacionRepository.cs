@@ -22,19 +22,19 @@ namespace mge.API.Repositories
                 "FROM core.ubicaciones " +
                 "ORDER BY codigo_departamento, nombre_departamento";
 
-            var resultadoTipos = await conexion
+            var resultadoUbicaciones = await conexion
                 .QueryAsync<Ubicacion>(sentenciaSQL, new DynamicParameters());
 
-            return [.. resultadoTipos];
+            return [.. resultadoUbicaciones];
         }
 
-        public async Task<Ubicacion> GetByIdAsync(Guid ubicacion_id)
+        public async Task<Ubicacion> GetByIdAsync(Guid ubicacionId)
         {
-            Ubicacion unTipo = new();
+            Ubicacion unaUbicacion = new();
             var conexion = contextoDB.CreateConnection();
 
             DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@ubicacion_id", ubicacion_id,
+            parametrosSentencia.Add("@ubicacionId", ubicacionId,
                                     DbType.Guid, ParameterDirection.Input);
 
             string sentenciaSQL =
@@ -42,29 +42,29 @@ namespace mge.API.Repositories
                 "nombre_departamento nombreDepartamento, codigo_municipio codigoMunicipio, " +
                 "nombre_municipio nombreMunicipio " +
                 "FROM core.ubicaciones " +
-                "WHERE id = @ubicacion_id";
+                "WHERE id = @ubicacionId";
 
             var resultado = await conexion
                 .QueryAsync<Ubicacion>(sentenciaSQL, parametrosSentencia);
 
             if (resultado.Any())
-                unTipo = resultado.First();
+                unaUbicacion = resultado.First();
 
-            return unTipo;
+            return unaUbicacion;
         }
 
-        public async Task<Ubicacion> GetByNameAsync(string ubicacion_nombre)
+        public async Task<Ubicacion> GetByNameAsync(string ubicacionNombre)
         {
-            Ubicacion unTipo = new();
+            Ubicacion unaUbicacion = new();
             var conexion = contextoDB.CreateConnection();
 
-            string[] datosUbicacion = ubicacion_nombre.Split(',');
+            string[] datosUbicacion = ubicacionNombre.Split(',');
 
             DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@nombre_municipio", datosUbicacion[0].Trim(),
+            parametrosSentencia.Add("@nombreMunicipio", datosUbicacion[0].Trim(),
                                     DbType.String, ParameterDirection.Input);
 
-            parametrosSentencia.Add("@nombre_departamento", datosUbicacion[1].Trim(),
+            parametrosSentencia.Add("@nombreDepartamento", datosUbicacion[1].Trim(),
                                     DbType.String, ParameterDirection.Input);
 
             string sentenciaSQL =
@@ -72,30 +72,30 @@ namespace mge.API.Repositories
                 "nombre_departamento nombreDepartamento, codigo_municipio codigoMunicipio, " +
                 "nombre_municipio nombreMunicipio " +
                 "FROM core.ubicaciones " +
-                "WHERE LOWER(nombre_municipio) = LOWER(@nombre_municipio) " +
-                "AND  LOWER(nombre_departamento) = LOWER(@nombre_departamento)";
+                "WHERE LOWER(nombre_municipio) = LOWER(@nombreMunicipio) " +
+                "AND  LOWER(nombre_departamento) = LOWER(@nombreDepartamento)";
 
             var resultado = await conexion
                 .QueryAsync<Ubicacion>(sentenciaSQL, parametrosSentencia);
 
             if (resultado.Any())
-                unTipo = resultado.First();
+                unaUbicacion = resultado.First();
 
-            return unTipo;
+            return unaUbicacion;
         }
 
-        public async Task<Ubicacion> GetByDetailsAsync(Guid ubicacion_id, string ubicacion_nombre)
+        public async Task<Ubicacion> GetByDetailsAsync(Guid ubicacionId, string ubicacionNombre)
         {
             Ubicacion ubicacionExistente = new();
 
-            if (string.IsNullOrEmpty(ubicacion_nombre) && ubicacion_id == Guid.Empty)
+            if (string.IsNullOrEmpty(ubicacionNombre) && ubicacionId == Guid.Empty)
                 throw new AppValidationException("Datos insuficientes para obtener la ubicación");
 
-            if (!string.IsNullOrEmpty(ubicacion_nombre) && ubicacion_id == Guid.Empty)
-                ubicacionExistente = await GetByNameAsync(ubicacion_nombre);
+            if (!string.IsNullOrEmpty(ubicacionNombre) && ubicacionId == Guid.Empty)
+                ubicacionExistente = await GetByNameAsync(ubicacionNombre);
 
-            if (ubicacion_id != Guid.Empty)
-                ubicacionExistente = await GetByIdAsync(ubicacion_id);
+            if (ubicacionId != Guid.Empty)
+                ubicacionExistente = await GetByIdAsync(ubicacionId);
 
             return ubicacionExistente;
         }

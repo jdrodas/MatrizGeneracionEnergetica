@@ -103,8 +103,6 @@ El versionamiento de los endpoints utilizará parámetro en el encabezado, en lu
 GET    /api/ubicaciones                      # Listar todas
 GET    /api/ubicaciones/{id}                 # Obtener por ID
 GET    /api/ubicaciones/{id}/plantas         # Obtener plantas asociadas por ID de la ubicación
-GET    /api/ubicaciones/{ubicacion_nombre}   # Obtener por nombre de municipio,departamento
-GET    /api/ubicaciones/{depto_iso}/plantas  # Obtener plantas por código ISO del Departamento
 ```
 
 ### Tipos de Fuente

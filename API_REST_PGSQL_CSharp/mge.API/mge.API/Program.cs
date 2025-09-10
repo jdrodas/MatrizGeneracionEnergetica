@@ -46,7 +46,7 @@ builder.Services.AddScoped<IProduccionRepository, ProduccionRepository>();
 builder.Services.AddScoped<TipoService>();
 builder.Services.AddScoped<PlantaService>();
 builder.Services.AddScoped<UbicacionService>();
-builder.Services.AddScoped<ProducccionService>();
+builder.Services.AddScoped<ProduccionService>();
 
 
 // Add services to the container.

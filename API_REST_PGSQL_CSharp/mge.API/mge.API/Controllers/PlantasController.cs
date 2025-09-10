@@ -22,13 +22,13 @@ namespace mge.API.Controllers
             return Ok(lasPlantas);
         }
 
-        [HttpGet("{planta_id:Guid}")]
-        public async Task<IActionResult> GetByIdAsync(Guid planta_id)
+        [HttpGet("{plantaId:Guid}")]
+        public async Task<IActionResult> GetByIdAsync(Guid plantaId)
         {
             try
             {
                 var unaPlanta = await _plantaService
-                    .GetByIdAsync(planta_id);
+                    .GetByIdAsync(plantaId);
 
                 return Ok(unaPlanta);
             }
@@ -78,13 +78,13 @@ namespace mge.API.Controllers
             }
         }
 
-        [HttpDelete("{planta_id:Guid}")]
-        public async Task<IActionResult> RemoveAsync(Guid planta_id)
+        [HttpDelete("{plantaId:Guid}")]
+        public async Task<IActionResult> RemoveAsync(Guid plantaId)
         {
             try
             {
                 var nombrePlantaBorrada = await _plantaService
-                    .RemoveAsync(planta_id);
+                    .RemoveAsync(plantaId);
 
                 return Ok($"La planta {nombrePlantaBorrada} fue eliminada correctamente!");
             }

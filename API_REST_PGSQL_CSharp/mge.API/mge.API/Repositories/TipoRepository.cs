@@ -26,19 +26,42 @@ namespace mge.API.Repositories
             return [.. resultadoTipos];
         }
 
-        public async Task<Tipo> GetByIdAsync(Guid tipo_id)
+        public async Task<Tipo> GetByIdAsync(Guid tipoId)
         {
             Tipo unTipo = new();
             var conexion = contextoDB.CreateConnection();
 
             DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@tipo_id", tipo_id,
+            parametrosSentencia.Add("@tipoId", tipoId,
                                     DbType.Guid, ParameterDirection.Input);
 
             string sentenciaSQL =
                 "SELECT DISTINCT id, nombre, descripcion, esrenovable " +
                 "FROM core.tipos " +
-                "WHERE id = @tipo_id";
+                "WHERE id = @tipoId";
+
+            var resultado = await conexion
+                .QueryAsync<Tipo>(sentenciaSQL, parametrosSentencia);
+
+            if (resultado.Any())
+                unTipo = resultado.First();
+
+            return unTipo;
+        }
+
+        public async Task<Tipo> GetByNameAsync(string tipoNombre)
+        {
+            Tipo unTipo = new();
+            var conexion = contextoDB.CreateConnection();
+
+            DynamicParameters parametrosSentencia = new();
+            parametrosSentencia.Add("@tipoNombre", tipoNombre,
+                                    DbType.String, ParameterDirection.Input);
+
+            string sentenciaSQL =
+                "SELECT DISTINCT id, nombre, descripcion, esrenovable " +
+                "FROM core.tipos " +
+                "WHERE nombre = @tipoNombre";
 
             var resultado = await conexion
                 .QueryAsync<Tipo>(sentenciaSQL, parametrosSentencia);
@@ -55,19 +78,20 @@ namespace mge.API.Repositories
             var conexion = contextoDB.CreateConnection();
 
             DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@tipo_nombre", unTipo.Nombre,
+            parametrosSentencia.Add("@tipoNombre", unTipo.Nombre,
                                     DbType.String, ParameterDirection.Input);
-            parametrosSentencia.Add("@tipo_descripcion", unTipo.Descripcion,
-                                    DbType.String, ParameterDirection.Input);
-            parametrosSentencia.Add("@tipo_esrenovable", unTipo.EsRenovable,
-                                    DbType.Boolean, ParameterDirection.Input);
+            parametrosSentencia.Add("@tipoDescripcion", unTipo.Descripcion,
+                        DbType.String, ParameterDirection.Input);
+            parametrosSentencia.Add("@tipoEsRenovable", unTipo.EsRenovable,
+                        DbType.Boolean, ParameterDirection.Input);
 
             string sentenciaSQL =
                 "SELECT DISTINCT id, nombre, descripcion, esrenovable " +
                 "FROM core.tipos " +
-                "WHERE LOWER(nombre) = LOWER(@tipo_nombre) " +
-                "AND LOWER(descripcion) = LOWER(@tipo_descripcion) " +
-                "AND esrenovable = @tipo_esrenovable";
+                "WHERE id = @tipoId " +
+                "AND LOWER(nombre) = LOWER(@tipoNombre) " +
+                "AND LOWER(descripcion) = LOWER(@tipoDescripcion) " +
+                "AND esrenovable = @tipoEsRenovable";
 
             var resultado = await conexion
                 .QueryAsync<Tipo>(sentenciaSQL, parametrosSentencia);
@@ -77,41 +101,19 @@ namespace mge.API.Repositories
 
             return tipoExistente;
         }
-        public async Task<Tipo> GetByDetailsAsync(Guid tipo_id, string tipo_nombre)
+
+        public async Task<Tipo> GetByDetailsAsync(Guid tipoId, string tipoNombre)
         {
             Tipo tipoExistente = new();
-            var conexion = contextoDB.CreateConnection();
 
-            if (string.IsNullOrEmpty(tipo_nombre) && tipo_id == Guid.Empty)
-                throw new AppValidationException("Datos insuficientes para obtener el tipo de fuente");
+            if (string.IsNullOrEmpty(tipoNombre) && tipoId == Guid.Empty)
+                throw new AppValidationException("Datos insuficientes para obtener el tipo");
 
-            DynamicParameters parametrosSentencia = new();
+            if (!string.IsNullOrEmpty(tipoNombre) && tipoId == Guid.Empty)
+                tipoExistente = await GetByNameAsync(tipoNombre!);
 
-            string sentenciaSQL =
-                "SELECT DISTINCT id, nombre, descripcion, esrenovable " +
-                "FROM core.tipos ";
-
-            if (!string.IsNullOrEmpty(tipo_nombre) && tipo_id == Guid.Empty)
-            {
-                parametrosSentencia.Add("@tipo_nombre", tipo_nombre,
-                                        DbType.String, ParameterDirection.Input);
-
-                sentenciaSQL += "WHERE LOWER(nombre) = LOWER(@tipo_nombre) ";
-            }
-
-            if (tipo_id != Guid.Empty)
-            {
-                parametrosSentencia.Add("@tipo_id", tipo_id,
-                                        DbType.Guid, ParameterDirection.Input);
-
-                sentenciaSQL += "WHERE id = @tipo_id";
-            }
-
-            var resultado = await conexion
-                .QueryAsync<Tipo>(sentenciaSQL, parametrosSentencia);
-
-            if (resultado.Any())
-                tipoExistente = resultado.First();
+            if (tipoId != Guid.Empty)
+                tipoExistente = await GetByIdAsync(tipoId);
 
             return tipoExistente;
         }
@@ -181,7 +183,7 @@ namespace mge.API.Repositories
             return resultadoAccion;
         }
 
-        public async Task<bool> RemoveAsync(Guid tipo_id)
+        public async Task<bool> RemoveAsync(Guid tipoId)
         {
             bool resultadoAccion = false;
 
@@ -192,7 +194,7 @@ namespace mge.API.Repositories
                 string procedimiento = "core.p_elimina_tipo";
                 var parametros = new
                 {
-                    p_id = tipo_id
+                    p_id = tipoId
                 };
 
                 var cantidad_filas = await conexion.ExecuteAsync(

@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace mge.API.Services
 {
-    public class ProducccionService(IProduccionRepository produccionRepository,
+    public class ProduccionService(IProduccionRepository produccionRepository,
                                     IPlantaRepository plantaRepository)
     {
         private readonly IProduccionRepository _produccionRepository = produccionRepository;
@@ -17,28 +17,28 @@ namespace mge.API.Services
                 .GetAllAsync();
         }
 
-        public async Task<Produccion> GetByIdAsync(Guid evento_id)
+        public async Task<Produccion> GetByIdAsync(Guid eventoId)
         {
             Produccion unEvento = await _produccionRepository
-                .GetByIdAsync(evento_id);
+                .GetByIdAsync(eventoId);
 
             if (unEvento.Id == Guid.Empty)
-                throw new AppValidationException($"Evento de producción no encontrado con el Id {evento_id}");
+                throw new AppValidationException($"Evento de producción no encontrado con el Id {eventoId}");
 
             return unEvento;
         }
 
-        public async Task<List<Produccion>> GetAllByPlantIdAsync(Guid planta_id)
+        public async Task<List<Produccion>> GetAllByPlantIdAsync(Guid plantaId)
         {
             Planta unaPlanta = await _plantaRepository
-                .GetByIdAsync(planta_id);
+                .GetByIdAsync(plantaId);
 
             if (unaPlanta.Id == Guid.Empty)
-                throw new AppValidationException($"No hay planta registrada con el Id {planta_id}");
+                throw new AppValidationException($"No hay planta registrada con el Id {plantaId}");
 
 
             var LosEventos = await _produccionRepository
-                .GetAllByPlantIdAsync(planta_id);
+                .GetAllByPlantIdAsync(plantaId);
 
             if (LosEventos.Count == 0)
                 throw new AppValidationException($"No hay producción asociada a la planta {unaPlanta.Nombre}");
@@ -46,22 +46,19 @@ namespace mge.API.Services
             return LosEventos;
         }
 
-        public async Task<List<Produccion>> GetAllByDateIdAsync(string fecha_id)
+        public async Task<List<Produccion>> GetAllByDateIdAsync(string fechaId)
         {
-
             bool fechaValida = DateTime
-                .TryParseExact(fecha_id, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result);
+                .TryParseExact(fechaId, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime fechaResultante);
 
             if (!fechaValida)
-                throw new AppValidationException($"La fecha suministrada {fecha_id} no tiene el formato DD-MM-YYYY");
-
-
+                throw new AppValidationException($"La fecha suministrada {fechaId} no tiene el formato DD-MM-YYYY");
 
             var LosEventos = await _produccionRepository
-                .GetAllByDateIdAsync(fecha_id);
+                .GetAllByDateIdAsync(fechaId);
 
             if (LosEventos.Count == 0)
-                throw new AppValidationException($"No hay producción asociada a la fecha {fecha_id}");
+                throw new AppValidationException($"No hay producción asociada a la fecha {fechaResultante}");
 
             return LosEventos;
         }

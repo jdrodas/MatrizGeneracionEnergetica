@@ -5,13 +5,12 @@ namespace mge.API.Interfaces
     public interface IPlantaRepository
     {
         public Task<List<Planta>> GetAllAsync();
-        public Task<List<Planta>> GetAllByLocationIdAsync(Guid ubicacion_id);
-        public Task<List<Planta>> GetAllByDeptoIsoAsync(string depto_iso);
-        public Task<List<Planta>> GetAllByTypeIdAsync(Guid tipo_id);
-        public Task<Planta> GetByIdAsync(Guid tipo_id);
-        public Task<Planta> GetByDetailsAsync(string planta_nombre, Guid ubicacion_id, Guid tipo_id);
+        public Task<List<Planta>> GetAllByLocationIdAsync(Guid ubicacionId);
+        public Task<List<Planta>> GetAllByTypeIdAsync(Guid tipoId);
+        public Task<Planta> GetByIdAsync(Guid tipoId);
+        public Task<Planta> GetByDetailsAsync(string planta_nombre, Guid ubicacionId, Guid tipoId);
         public Task<bool> CreateAsync(Planta unaPlanta);
         public Task<bool> UpdateAsync(Planta unaPlanta);
-        public Task<bool> RemoveAsync(Guid planta_id);
+        public Task<bool> RemoveAsync(Guid plantaId);
     }
 }

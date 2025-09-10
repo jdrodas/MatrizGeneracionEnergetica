@@ -15,27 +15,27 @@ namespace mge.API.Services
                 .GetAllAsync();
         }
 
-        public async Task<Tipo> GetByIdAsync(Guid tipo_id)
+        public async Task<Tipo> GetByIdAsync(Guid tipoId)
         {
             Tipo unTipo = await _tipoRepository
-                .GetByIdAsync(tipo_id);
+                .GetByIdAsync(tipoId);
 
             if (unTipo.Id == Guid.Empty)
-                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipo_id}");
+                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
 
             return unTipo;
         }
 
-        public async Task<List<Planta>> GetAssociatedPlantsAsync(Guid tipo_id)
+        public async Task<List<Planta>> GetAssociatedPlantsAsync(Guid tipoId)
         {
             Tipo unTipo = await _tipoRepository
-                .GetByIdAsync(tipo_id);
+                .GetByIdAsync(tipoId);
 
             if (unTipo.Id == Guid.Empty)
-                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipo_id}");
+                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
 
             var plantasAsociadas = await _plantaRepository
-                .GetAllByTypeIdAsync(tipo_id);
+                .GetAllByTypeIdAsync(tipoId);
 
             if (plantasAsociadas.Count == 0)
                 throw new AppValidationException($"Tipo {unTipo.Nombre} no tiene plantas asociadas");
@@ -53,7 +53,7 @@ namespace mge.API.Services
             if (!string.IsNullOrEmpty(resultadoValidacion))
                 throw new AppValidationException(resultadoValidacion);
 
-            //Validamos primero si existe con ese nombre y descripcion
+            //Validamos primero si existe con ese nombre, descripcion y si es renovable
             var tipoExistente = await _tipoRepository
                 .GetByDetailsAsync(unTipo);
 
@@ -92,7 +92,7 @@ namespace mge.API.Services
             if (!string.IsNullOrEmpty(resultadoValidacion))
                 throw new AppValidationException(resultadoValidacion);
 
-            //Validamos primero si existe con ese Id
+            //Validamos primero si existe un tipo con ese Id
             var tipoExistente = await _tipoRepository
                 .GetByIdAsync(unTipo.Id);
 
@@ -122,19 +122,19 @@ namespace mge.API.Services
             return tipoExistente;
         }
 
-        public async Task<string> RemoveAsync(Guid tipo_id)
+        public async Task<string> RemoveAsync(Guid tipoId)
         {
             Tipo unTipo = await _tipoRepository
-                .GetByIdAsync(tipo_id);
+                .GetByIdAsync(tipoId);
 
             if (unTipo.Id == Guid.Empty)
-                throw new AppValidationException($"Tipo no encontrado con el id {tipo_id}");
+                throw new AppValidationException($"Tipo no encontrado con el id {tipoId}");
 
             //Validar si el tipo de fuente tiene plantas asociadas
             var plantasAsociadas = await _plantaRepository
-                .GetAllByTypeIdAsync(tipo_id);
+                .GetAllByTypeIdAsync(tipoId);
 
-            if (plantasAsociadas.Any())
+            if (plantasAsociadas.Count == 0)
                 throw new AppValidationException($"El tipo {unTipo.Nombre} no se puede eliminar porque tiene plantas asociadas");
 
             string nombreTipoEliminado = unTipo.Nombre!;
@@ -142,7 +142,7 @@ namespace mge.API.Services
             try
             {
                 bool resultadoAccion = await _tipoRepository
-                    .RemoveAsync(tipo_id);
+                    .RemoveAsync(tipoId);
 
                 if (!resultadoAccion)
                     throw new DbOperationException("Operación ejecutada pero no generó cambios en la DB");

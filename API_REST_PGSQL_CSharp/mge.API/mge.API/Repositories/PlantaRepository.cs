@@ -30,12 +30,12 @@ namespace mge.API.Repositories
             return [.. resultadoPlantas];
         }
 
-        public async Task<List<Planta>> GetAllByLocationIdAsync(Guid ubicacion_id)
+        public async Task<List<Planta>> GetAllByLocationIdAsync(Guid ubicacionId)
         {
             var conexion = contextoDB.CreateConnection();
 
             DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@ubicacion_id", ubicacion_id,
+            parametrosSentencia.Add("@ubicacionId", ubicacionId,
                                     DbType.Guid, ParameterDirection.Input);
 
             string sentenciaSQL =
@@ -44,7 +44,7 @@ namespace mge.API.Repositories
                 "ubicacion_id ubicacionId, ubicacion_nombre ubicacionNombre, " +
                 "tipo_id tipoId, tipo_nombre tipoNombre " +
                 "FROM core.v_info_plantas " +
-                "WHERE ubicacion_id = @ubicacion_id " +
+                "WHERE ubicacion_id = @ubicacionId " +
                 "ORDER BY planta_nombre";
 
             var resultadoPlantas = await conexion
@@ -53,12 +53,12 @@ namespace mge.API.Repositories
             return [.. resultadoPlantas];
         }
 
-        public async Task<List<Planta>> GetAllByTypeIdAsync(Guid tipo_id)
+        public async Task<List<Planta>> GetAllByTypeIdAsync(Guid tipoId)
         {
             var conexion = contextoDB.CreateConnection();
 
             DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@tipo_id", tipo_id,
+            parametrosSentencia.Add("@tipoId", tipoId,
                                     DbType.Guid, ParameterDirection.Input);
 
             string sentenciaSQL =
@@ -67,7 +67,7 @@ namespace mge.API.Repositories
                 "ubicacion_id ubicacionId, ubicacion_nombre ubicacionNombre, " +
                 "tipo_id tipoId, tipo_nombre tipoNombre " +
                 "FROM core.v_info_plantas " +
-                "WHERE tipo_id = @tipo_id " +
+                "WHERE tipo_id = @tipoId " +
                 "ORDER BY planta_nombre";
 
             var resultadoPlantas = await conexion
@@ -76,36 +76,14 @@ namespace mge.API.Repositories
             return [.. resultadoPlantas];
         }
 
-        public async Task<List<Planta>> GetAllByDeptoIsoAsync(string depto_iso)
-        {
-            var conexion = contextoDB.CreateConnection();
 
-            DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@depto_iso", depto_iso,
-                                    DbType.String, ParameterDirection.Input);
-
-            string sentenciaSQL =
-                "SELECT DISTINCT " +
-                "planta_id id, planta_nombre nombre, capacidad, " +
-                "ubicacion_id ubicacionId, ubicacion_nombre ubicacionNombre, " +
-                "tipo_id tipoId, tipo_nombre tipoNombre " +
-                "FROM core.v_info_plantas " +
-                "WHERE LOWER(iso_departamento) = LOWER(@depto_iso) " +
-                "ORDER BY planta_nombre";
-
-            var resultadoPlantas = await conexion
-                .QueryAsync<Planta>(sentenciaSQL, parametrosSentencia);
-
-            return [.. resultadoPlantas];
-        }
-
-        public async Task<Planta> GetByIdAsync(Guid planta_id)
+        public async Task<Planta> GetByIdAsync(Guid plantaId)
         {
             Planta unaPlanta = new();
             var conexion = contextoDB.CreateConnection();
 
             DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@planta_id", planta_id,
+            parametrosSentencia.Add("@plantaId", plantaId,
                                     DbType.Guid, ParameterDirection.Input);
 
             string sentenciaSQL =
@@ -114,7 +92,7 @@ namespace mge.API.Repositories
                 "ubicacion_id ubicacionId, ubicacion_nombre ubicacionNombre, " +
                 "tipo_id tipoId, tipo_nombre tipoNombre " +
                 "FROM core.v_info_plantas " +
-                "WHERE planta_id = @planta_id";
+                "WHERE planta_id = @plantaId";
 
             var resultado = await conexion
                 .QueryAsync<Planta>(sentenciaSQL, parametrosSentencia);
@@ -125,7 +103,7 @@ namespace mge.API.Repositories
             return unaPlanta;
         }
 
-        public async Task<Planta> GetByDetailsAsync(string planta_nombre, Guid ubicacion_id, Guid tipo_id)
+        public async Task<Planta> GetByDetailsAsync(string planta_nombre, Guid ubicacionId, Guid tipoId)
         {
             Planta unaPlanta = new();
             var conexion = contextoDB.CreateConnection();
@@ -133,9 +111,9 @@ namespace mge.API.Repositories
             DynamicParameters parametrosSentencia = new();
             parametrosSentencia.Add("@planta_nombre", planta_nombre,
                                     DbType.String, ParameterDirection.Input);
-            parametrosSentencia.Add("@ubicacion_id", ubicacion_id,
+            parametrosSentencia.Add("@ubicacionId", ubicacionId,
                                     DbType.Guid, ParameterDirection.Input);
-            parametrosSentencia.Add("@tipo_id", tipo_id,
+            parametrosSentencia.Add("@tipoId", tipoId,
                                     DbType.Guid, ParameterDirection.Input);
 
             string sentenciaSQL =
@@ -145,8 +123,8 @@ namespace mge.API.Repositories
                 "tipo_id tipoId, tipo_nombre tipoNombre " +
                 "FROM core.v_info_plantas " +
                 "WHERE LOWER(planta_nombre) = LOWER(@planta_nombre) " +
-                "AND ubicacion_id = @ubicacion_id " +
-                "AND tipo_id = @tipo_id";
+                "AND ubicacion_id = @ubicacionId " +
+                "AND tipo_id = @tipoId";
 
             var resultado = await conexion
                 .QueryAsync<Planta>(sentenciaSQL, parametrosSentencia);
@@ -224,7 +202,7 @@ namespace mge.API.Repositories
             return resultadoAccion;
         }
 
-        public async Task<bool> RemoveAsync(Guid planta_id)
+        public async Task<bool> RemoveAsync(Guid plantaId)
         {
             bool resultadoAccion = false;
 
@@ -235,7 +213,7 @@ namespace mge.API.Repositories
                 string procedimiento = "core.p_elimina_planta";
                 var parametros = new
                 {
-                    p_id = planta_id
+                    p_id = plantaId
                 };
 
                 var cantidad_filas = await conexion.ExecuteAsync(

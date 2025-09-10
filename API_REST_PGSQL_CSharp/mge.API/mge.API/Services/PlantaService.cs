@@ -20,13 +20,13 @@ namespace mge.API.Services
                 .GetAllAsync();
         }
 
-        public async Task<Planta> GetByIdAsync(Guid planta_id)
+        public async Task<Planta> GetByIdAsync(Guid plantaId)
         {
             Planta unaPlanta = await _plantaRepository
-                .GetByIdAsync(planta_id);
+                .GetByIdAsync(plantaId);
 
             if (unaPlanta.Id == Guid.Empty)
-                throw new AppValidationException($"Planta no encontrada con el Id {planta_id}");
+                throw new AppValidationException($"Planta no encontrada con el Id {plantaId}");
 
             return unaPlanta;
         }
@@ -95,6 +95,9 @@ namespace mge.API.Services
 
             string resultadoValidacion = EvaluatePlantDetailsAsync(unaPlanta);
 
+            if (!string.IsNullOrEmpty(resultadoValidacion))
+                throw new AppValidationException(resultadoValidacion);
+
             //Validamos si los datos del tipo son válidos
             var tipoExistente = await _tipoRepository
                 .GetByDetailsAsync(unaPlanta.TipoId, unaPlanta.TipoNombre);
@@ -109,7 +112,7 @@ namespace mge.API.Services
 
             //Si la ubicación no es válida, no se puede insertar la planta
             if (ubicacionExistente.Id == Guid.Empty)
-                throw new AppValidationException($"Actualización fallida - Datos de la ubicación de la planta son inválidos");
+                throw new AppValidationException($"Inserción fallida - Datos de la ubicación de la planta son inválidos");
 
             unaPlanta.UbicacionId = ubicacionExistente.Id;
             unaPlanta.TipoId = tipoExistente.Id;
@@ -144,19 +147,19 @@ namespace mge.API.Services
             return plantaExistente;
         }
 
-        public async Task<string> RemoveAsync(Guid planta_id)
+        public async Task<string> RemoveAsync(Guid plantaId)
         {
             Planta unaPlanta = await _plantaRepository
-                .GetByIdAsync(planta_id);
+                .GetByIdAsync(plantaId);
 
             if (unaPlanta.Id == Guid.Empty)
-                throw new AppValidationException($"Planta no encontrada con el id {planta_id}");
+                throw new AppValidationException($"Planta no encontrada con el id {plantaId}");
 
             //Validar si la planta tiene producción asociada
             var produccion_asociada = await _produccionRepository
-                .GetAllByPlantIdAsync(planta_id);
+                .GetAllByPlantIdAsync(plantaId);
 
-            if (produccion_asociada.Any())
+            if (produccion_asociada.Count == 0)
                 throw new AppValidationException($"la planta {unaPlanta.Nombre} no se puede eliminar porque tiene producción asociada");
 
             string nombrePlantaEliminada = unaPlanta.Nombre!;
@@ -164,7 +167,7 @@ namespace mge.API.Services
             try
             {
                 bool resultadoAccion = await _plantaRepository
-                    .RemoveAsync(planta_id);
+                    .RemoveAsync(plantaId);
 
                 if (!resultadoAccion)
                     throw new DbOperationException("Operación ejecutada pero no generó cambios en la DB");

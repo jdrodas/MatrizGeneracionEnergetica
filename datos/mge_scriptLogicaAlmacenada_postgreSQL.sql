@@ -306,7 +306,7 @@ $$;
 -- p_inserta_produccion
 create procedure core.p_inserta_produccion(
                             in p_planta_id      uuid, 
-                            in p_fecha          date, 
+                            in p_fecha          text,
                             in p_valor          double precision)
 language plpgsql as
 $$
@@ -347,7 +347,7 @@ $$;
 create procedure core.p_actualiza_produccion(
                             in p_id             uuid,
                             in p_planta_id      uuid, 
-                            in p_fecha          date, 
+                            in p_fecha          text, 
                             in p_valor          double precision)
 language plpgsql as
 $$

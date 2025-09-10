@@ -8,9 +8,9 @@ namespace mge.API.Controllers
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/produccion")]
-    public class ProduccionController(ProducccionService produccionService) : Controller
+    public class ProduccionController(ProduccionService produccionService) : Controller
     {
-        private readonly ProducccionService _produccionService = produccionService;
+        private readonly ProduccionService _produccionService = produccionService;
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
@@ -21,13 +21,13 @@ namespace mge.API.Controllers
             return Ok(lasProducciones);
         }
 
-        [HttpGet("planta/{planta_id:Guid}")]
-        public async Task<IActionResult> GetAllByPlantIdAsync(Guid planta_id)
+        [HttpGet("planta/{plantaId:Guid}")]
+        public async Task<IActionResult> GetAllByPlantIdAsync(Guid plantaId)
         {
             try
             {
                 var ProduccionAsociada = await _produccionService
-                    .GetAllByPlantIdAsync(planta_id);
+                    .GetAllByPlantIdAsync(plantaId);
 
                 return Ok(ProduccionAsociada);
             }
@@ -37,13 +37,13 @@ namespace mge.API.Controllers
             }
         }
 
-        [HttpGet("fecha/{fecha_id:length(10)}")]
-        public async Task<IActionResult> GetAllByDateIdAsync(string fecha_id)
+        [HttpGet("fecha/{fechaId:length(10)}")]
+        public async Task<IActionResult> GetAllByDateIdAsync(string fechaId)
         {
             try
             {
                 var ProduccionAsociada = await _produccionService
-                    .GetAllByDateIdAsync(fecha_id);
+                    .GetAllByDateIdAsync(fechaId);
 
                 return Ok(ProduccionAsociada);
             }
@@ -53,13 +53,13 @@ namespace mge.API.Controllers
             }
         }
 
-        [HttpGet("{evento_id:Guid}")]
-        public async Task<IActionResult> GetByIdAsync(Guid evento_id)
+        [HttpGet("{eventoId:Guid}")]
+        public async Task<IActionResult> GetByIdAsync(Guid eventoId)
         {
             try
             {
                 var unEvento = await _produccionService
-                    .GetByIdAsync(evento_id);
+                    .GetByIdAsync(eventoId);
 
                 return Ok(unEvento);
             }
@@ -68,7 +68,5 @@ namespace mge.API.Controllers
                 return NotFound(error.Message);
             }
         }
-
-
     }
 }

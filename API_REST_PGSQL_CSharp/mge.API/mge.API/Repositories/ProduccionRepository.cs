@@ -16,7 +16,7 @@ namespace mge.API.Repositories
 
             string sentenciaSQL =
                 "SELECT DISTINCT " +
-                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
+                "id, plantaId plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
                 "FROM core.v_info_produccion_planta " +
                 "ORDER BY fecha";
 
@@ -26,19 +26,19 @@ namespace mge.API.Repositories
             return [.. resultadoProduccion];
         }
 
-        public async Task<List<Produccion>> GetAllByPlantIdAsync(Guid planta_id)
+        public async Task<List<Produccion>> GetAllByPlantIdAsync(Guid plantaId)
         {
             var conexion = contextoDB.CreateConnection();
 
             DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@planta_id", planta_id,
+            parametrosSentencia.Add("@plantaId", plantaId,
                                     DbType.Guid, ParameterDirection.Input);
 
             string sentenciaSQL =
                 "SELECT DISTINCT " +
-                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
+                "id, plantaId plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
                 "FROM core.v_info_produccion_planta " +
-                "WHERE planta_id = @planta_id " +
+                "WHERE plantaId = @plantaId " +
                 "ORDER BY fecha";
 
             var resultadoProduccion = await conexion
@@ -47,19 +47,19 @@ namespace mge.API.Repositories
             return [.. resultadoProduccion];
         }
 
-        public async Task<List<Produccion>> GetAllByDateIdAsync(string fecha_id)
+        public async Task<List<Produccion>> GetAllByDateIdAsync(string fechaId)
         {
             var conexion = contextoDB.CreateConnection();
 
             DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@fecha_id", fecha_id,
+            parametrosSentencia.Add("@fechaId", fechaId,
                                     DbType.String, ParameterDirection.Input);
 
             string sentenciaSQL =
                 "SELECT DISTINCT " +
-                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
+                "id, plantaId plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
                 "FROM core.v_info_produccion_planta " +
-                "WHERE to_char(fecha,'DD-MM-YYYY') = @fecha_id " +
+                "WHERE to_char(fecha,'DD-MM-YYYY') = @fechaId " +
                 "ORDER BY fecha";
 
             var resultadoProduccion = await conexion
@@ -68,20 +68,20 @@ namespace mge.API.Repositories
             return [.. resultadoProduccion];
         }
 
-        public async Task<Produccion> GetByIdAsync(Guid evento_id)
+        public async Task<Produccion> GetByIdAsync(Guid eventoId)
         {
             Produccion unEvento = new();
             var conexion = contextoDB.CreateConnection();
 
             DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@evento_id", evento_id,
+            parametrosSentencia.Add("@eventoId", eventoId,
                                     DbType.Guid, ParameterDirection.Input);
 
             string sentenciaSQL =
                 "SELECT DISTINCT " +
-                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
+                "id, plantaId plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
                 "FROM core.v_info_produccion_planta " +
-                "WHERE id = @evento_id ";
+                "WHERE id = @eventoId ";
 
             var resultado = await conexion
                 .QueryAsync<Produccion>(sentenciaSQL, parametrosSentencia);

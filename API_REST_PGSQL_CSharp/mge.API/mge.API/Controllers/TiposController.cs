@@ -22,13 +22,13 @@ namespace mge.API.Controllers
             return Ok(losTipos);
         }
 
-        [HttpGet("{tipo_id:Guid}")]
-        public async Task<IActionResult> GetByIdAsync(Guid tipo_id)
+        [HttpGet("{tipoId:Guid}")]
+        public async Task<IActionResult> GetByIdAsync(Guid tipoId)
         {
             try
             {
                 var unTipo = await _tipoService
-                    .GetByIdAsync(tipo_id);
+                    .GetByIdAsync(tipoId);
 
                 return Ok(unTipo);
             }
@@ -38,13 +38,13 @@ namespace mge.API.Controllers
             }
         }
 
-        [HttpGet("{tipo_id:Guid}/plantas")]
-        public async Task<IActionResult> GetAssociatedPlantsAsync(Guid tipo_id)
+        [HttpGet("{tipoId:Guid}/plantas")]
+        public async Task<IActionResult> GetAssociatedPlantsAsync(Guid tipoId)
         {
             try
             {
                 var lasPlantasAsociadas = await _tipoService
-                    .GetAssociatedPlantsAsync(tipo_id);
+                    .GetAssociatedPlantsAsync(tipoId);
 
                 return Ok(lasPlantasAsociadas);
             }
@@ -94,13 +94,13 @@ namespace mge.API.Controllers
             }
         }
 
-        [HttpDelete("{tipo_id:Guid}")]
-        public async Task<IActionResult> RemoveAsync(Guid tipo_id)
+        [HttpDelete("{tipoId:Guid}")]
+        public async Task<IActionResult> RemoveAsync(Guid tipoId)
         {
             try
             {
                 var nombreTipoBorrado = await _tipoService
-                    .RemoveAsync(tipo_id);
+                    .RemoveAsync(tipoId);
 
                 return Ok($"El tipo {nombreTipoBorrado} fue eliminado correctamente!");
             }
