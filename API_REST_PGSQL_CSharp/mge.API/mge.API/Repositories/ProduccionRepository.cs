@@ -1,7 +1,10 @@
 ﻿using Dapper;
 using mge.API.DbContexts;
+using mge.API.Exceptions;
 using mge.API.Interfaces;
 using mge.API.Models;
+using Microsoft.Extensions.Logging;
+using Npgsql;
 using System.Data;
 
 namespace mge.API.Repositories
@@ -16,7 +19,7 @@ namespace mge.API.Repositories
 
             string sentenciaSQL =
                 "SELECT DISTINCT " +
-                "id, plantaId plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
+                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
                 "FROM core.v_info_produccion_planta " +
                 "ORDER BY fecha";
 
@@ -36,10 +39,9 @@ namespace mge.API.Repositories
 
             string sentenciaSQL =
                 "SELECT DISTINCT " +
-                "id, plantaId plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
+                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
                 "FROM core.v_info_produccion_planta " +
-                "WHERE plantaId = @plantaId " +
-                "ORDER BY fecha";
+                "WHERE planta_id = @plantaId ";
 
             var resultadoProduccion = await conexion
                 .QueryAsync<Produccion>(sentenciaSQL, parametrosSentencia);
@@ -57,7 +59,7 @@ namespace mge.API.Repositories
 
             string sentenciaSQL =
                 "SELECT DISTINCT " +
-                "id, plantaId plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
+                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
                 "FROM core.v_info_produccion_planta " +
                 "WHERE to_char(fecha,'DD-MM-YYYY') = @fechaId " +
                 "ORDER BY fecha";
@@ -79,7 +81,7 @@ namespace mge.API.Repositories
 
             string sentenciaSQL =
                 "SELECT DISTINCT " +
-                "id, plantaId plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
+                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
                 "FROM core.v_info_produccion_planta " +
                 "WHERE id = @eventoId ";
 
@@ -90,6 +92,68 @@ namespace mge.API.Repositories
                 unEvento = resultado.First();
 
             return unEvento;
+        }
+
+        public async Task<Produccion> GetByDetailsAsync(Produccion unEvento)
+        {
+            Produccion eventoExistente = new();
+            var conexion = contextoDB.CreateConnection();
+
+            DynamicParameters parametrosSentencia = new();
+            parametrosSentencia.Add("@plantaId", unEvento.PlantaId,
+                                    DbType.Guid, ParameterDirection.Input);
+            parametrosSentencia.Add("@valor", unEvento.Valor,
+                                    DbType.Double, ParameterDirection.Input);
+            parametrosSentencia.Add("@fecha", unEvento.Fecha,
+                                    DbType.String, ParameterDirection.Input);
+
+            string sentenciaSQL =
+                "SELECT DISTINCT " +
+                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
+                "FROM core.v_info_produccion_planta " +
+                "WHERE planta_id = @plantaId " +
+                "AND to_char(fecha,'DD-MM-YYYY') = @fecha " +
+                "AND valor = @valor";
+
+            var resultado = await conexion
+                .QueryAsync<Produccion>(sentenciaSQL, parametrosSentencia);
+
+            if (resultado.Any())
+                eventoExistente = resultado.First();
+
+            return eventoExistente;
+        }
+
+        public async Task<bool> CreateAsync(Produccion unEvento)
+        {
+            bool resultadoAccion = false;
+
+            try
+            {
+                var conexion = contextoDB.CreateConnection();
+
+                string procedimiento = "core.p_inserta_produccion";
+                var parametros = new
+                {
+                    p_planta_id = unEvento.PlantaId,
+                    p_fecha     = unEvento.Fecha,
+                    p_valor     = unEvento.Valor
+                };
+
+                var cantidad_filas = await conexion.ExecuteAsync(
+                    procedimiento,
+                    parametros,
+                    commandType: CommandType.StoredProcedure);
+
+                if (cantidad_filas != 0)
+                    resultadoAccion = true;
+            }
+            catch (NpgsqlException error)
+            {
+                throw new DbOperationException(error.Message);
+            }
+
+            return resultadoAccion;
         }
     }
 }

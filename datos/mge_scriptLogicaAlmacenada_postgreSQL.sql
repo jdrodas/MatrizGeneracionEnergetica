@@ -317,28 +317,28 @@ $$
         -- Validamos que la planta sea válida
         select count(id) into l_total_registros
         from core.plantas
-        where p_planta_id = id;   
+        where p_planta_id = id;
 
         if l_total_registros = 0  then
-            raise exception 'no existe una planta con ese ID';
-        end if;           
+            raise exception 'no existe una planta con ese Id';
+        end if;
 
         if p_valor <= 0  then
                raise exception 'La producción de la planta debe ser mayor que 0 MW';
-        end if;        
+        end if;
 
         -- Validación de cantidad de registros para esa planta y esa fecha
         select count(id) into l_total_registros
         from core.produccion
         where p_planta_id = planta_id
-        and p_fecha = fecha;
+        and to_date(p_fecha,'DD-MM-YYYY') = fecha;
 
         if l_total_registros != 0  then
-            raise exception 'ya existe ese registro de producción para esa planta en esa fecha';
+            raise exception 'ya existe un registro de producción para esa planta en esa fecha';
         end if;
 
         insert into core.produccion(planta_id, fecha, valor)
-        values (p_planta_id, p_fecha, p_valor);
+        values (p_planta_id, to_date(p_fecha,'DD-MM-YYYY'), p_valor);
     end;
 $$;
 
@@ -358,31 +358,31 @@ $$
         -- Validamos que la planta sea válida
         select count(id) into l_total_registros
         from core.plantas
-        where p_planta_id = id;   
+        where p_planta_id = id;
 
         if l_total_registros = 0  then
             raise exception 'no existe una planta con ese ID';
-        end if;           
+        end if;
 
         if p_valor <= 0  then
                raise exception 'La producción de la planta debe ser mayor que 0 MW';
-        end if;        
+        end if;
 
         -- Validación de cantidad de registros para esa planta y esa fecha diferentes al evento
         select count(id) into l_total_registros
         from core.produccion
         where p_planta_id = planta_id
-        and p_fecha = fecha
+        and to_date(p_fecha,'DD-MM-YYYY') = fecha
         and p_id != id;
 
         if l_total_registros != 0  then
             raise exception 'ya existe otro registro de producción para esa planta en esa fecha';
         end if;
 
-        update core.produccion 
-        set 
+        update core.produccion
+        set
             planta_id = p_planta_id,
-            fecha = p_fecha,
+            fecha = to_date(p_fecha,'DD-MM-YYYY'),
             valor = p_valor
         where id = p_id;
     end;

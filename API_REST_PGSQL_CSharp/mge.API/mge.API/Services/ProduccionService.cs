@@ -62,5 +62,86 @@ namespace mge.API.Services
 
             return LosEventos;
         }
+
+        public async Task<Produccion> CreateAsync(Produccion unEvento)
+        {
+            unEvento.PlantaNombre = unEvento.PlantaNombre!.Trim();
+            
+            string resultadoValidacion = EvaluateEventDetailsAsync(unEvento);
+
+            if (!string.IsNullOrEmpty(resultadoValidacion))
+                throw new AppValidationException(resultadoValidacion);
+
+            //Validamos si la planta existe
+            var plantaExistente = await _plantaRepository
+                .GetByDetailsAsync(unEvento.PlantaNombre, unEvento.PlantaId);
+
+            if (plantaExistente.Id == Guid.Empty)
+                throw new AppValidationException($"No hay planta registrada con esa identificación");
+
+            unEvento.PlantaId = plantaExistente.Id;
+
+            //Validamos si ya hay un evento de producción de esa planta para la fecha
+            var eventoExistente = await _produccionRepository
+                .GetByDetailsAsync(unEvento);
+            
+            
+            //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
+            if (eventoExistente.PlantaId == unEvento.PlantaId &&
+                eventoExistente.Fecha == unEvento.Fecha &&
+                eventoExistente.Valor == unEvento.Valor)
+                return eventoExistente;
+
+            //Validamos que la producción no supere la capacidad de la planta
+            if (unEvento.Valor > plantaExistente.Capacidad)
+                throw new AppValidationException($"El evento supera la capacidad de producción " +
+                    $"de la planta {plantaExistente.Nombre} de {plantaExistente.Capacidad} MW");
+
+
+            try
+            {
+                bool resultadoAccion = await _produccionRepository
+                    .CreateAsync(unEvento);
+
+                if (!resultadoAccion)
+                    throw new AppValidationException("Operación ejecutada pero no generó cambios en la DB");
+
+                eventoExistente = await _produccionRepository
+                .GetByDetailsAsync(unEvento);
+
+            }
+            catch (DbOperationException)
+            {
+                throw;
+            }
+
+            return eventoExistente;
+        }
+
+        private static string EvaluateEventDetailsAsync(Produccion unEvento)
+        {
+
+            //Se valida si viene con nombre y el guid es vacío
+            if (unEvento.PlantaNombre!.Length == 0 && unEvento.PlantaId == Guid.Empty)
+                return "no se puede insertar un evento sin información de la planta";
+
+            if (unEvento.Valor <= 0)
+                return "El valor de la producción registrada en MW debe ser mayor que 0";
+
+            bool fechaValida = DateTime
+                            .TryParseExact(
+                                unEvento.Fecha, "dd-MM-yyyy", 
+                                CultureInfo.InvariantCulture, DateTimeStyles.None, 
+                                out DateTime fechaResultante);
+
+            if (!fechaValida)
+                throw new AppValidationException($"La fecha suministrada {unEvento.Fecha} no tiene el formato DD-MM-YYYY");
+
+            if (fechaResultante >= DateTime.Now)
+                throw new AppValidationException($"No se puede registrar eventos de producción futuros. " +
+                    $"La fecha actual es {DateTime.Now:dd-MM-yyyy}");
+
+            return string.Empty;
+        }
     }
 }

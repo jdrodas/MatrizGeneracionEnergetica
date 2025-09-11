@@ -8,5 +8,7 @@ namespace mge.API.Interfaces
         public Task<List<Produccion>> GetAllByPlantIdAsync(Guid plantaId);
         public Task<List<Produccion>> GetAllByDateIdAsync(string fechaId);
         public Task<Produccion> GetByIdAsync(Guid eventoId);
+        public Task<Produccion> GetByDetailsAsync(Produccion unEvento);
+        public Task<bool> CreateAsync(Produccion unEvento);
     }
 }

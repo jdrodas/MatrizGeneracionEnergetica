@@ -76,7 +76,6 @@ namespace mge.API.Repositories
             return [.. resultadoPlantas];
         }
 
-
         public async Task<Planta> GetByIdAsync(Guid plantaId)
         {
             Planta unaPlanta = new();
@@ -103,13 +102,52 @@ namespace mge.API.Repositories
             return unaPlanta;
         }
 
-        public async Task<Planta> GetByDetailsAsync(string planta_nombre, Guid ubicacionId, Guid tipoId)
+        public async Task<Planta> GetByNameAsync(string plantaNombre)
         {
             Planta unaPlanta = new();
             var conexion = contextoDB.CreateConnection();
 
             DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@planta_nombre", planta_nombre,
+            parametrosSentencia.Add("@plantaNombre", plantaNombre,
+                                    DbType.String, ParameterDirection.Input);
+
+            string sentenciaSQL =
+                "SELECT DISTINCT " +
+                "planta_id id, planta_nombre nombre, capacidad, " +
+                "ubicacion_id ubicacionId, ubicacion_nombre ubicacionNombre, " +
+                "tipo_id tipoId, tipo_nombre tipoNombre " +
+                "FROM core.v_info_plantas " +
+                "WHERE LOWER(planta_nombre) = LOWER(@plantaNombre)";
+
+            var resultado = await conexion
+                .QueryAsync<Planta>(sentenciaSQL, parametrosSentencia);
+
+            if (resultado.Any())
+                unaPlanta = resultado.First();
+
+            return unaPlanta;
+        }
+
+        public async Task<Planta> GetByDetailsAsync(string plantaNombre, Guid plantaId)
+        {
+            Planta unaPlanta = new();
+
+            if (plantaId != Guid.Empty)
+                return await GetByIdAsync(plantaId);
+
+            if (!string.IsNullOrEmpty(plantaNombre))
+                return await GetByNameAsync(plantaNombre);
+
+            return unaPlanta;
+        }
+
+        public async Task<Planta> GetByDetailsAsync(string plantaNombre, Guid ubicacionId, Guid tipoId)
+        {
+            Planta unaPlanta = new();
+            var conexion = contextoDB.CreateConnection();
+
+            DynamicParameters parametrosSentencia = new();
+            parametrosSentencia.Add("@planta_nombre", plantaNombre,
                                     DbType.String, ParameterDirection.Input);
             parametrosSentencia.Add("@ubicacionId", ubicacionId,
                                     DbType.Guid, ParameterDirection.Input);
@@ -146,10 +184,10 @@ namespace mge.API.Repositories
                 string procedimiento = "core.p_inserta_planta";
                 var parametros = new
                 {
-                    p_nombre = unaPlanta.Nombre,
-                    p_tipo_id = unaPlanta.TipoId,
-                    p_ubicacion_id = unaPlanta.UbicacionId,
-                    p_capacidad = unaPlanta.Capacidad
+                    p_nombre        = unaPlanta.Nombre,
+                    p_tipo_id       = unaPlanta.TipoId,
+                    p_ubicacion_id  = unaPlanta.UbicacionId,
+                    p_capacidad     = unaPlanta.Capacidad
                 };
 
                 var cantidad_filas = await conexion.ExecuteAsync(
@@ -179,11 +217,11 @@ namespace mge.API.Repositories
                 string procedimiento = "core.p_actualiza_planta";
                 var parametros = new
                 {
-                    p_id = unaPlanta.Id,
-                    p_nombre = unaPlanta.Nombre,
-                    p_tipo_id = unaPlanta.TipoId,
-                    p_ubicacion_id = unaPlanta.UbicacionId,
-                    p_capacidad = unaPlanta.Capacidad
+                    p_id            = unaPlanta.Id,
+                    p_nombre        = unaPlanta.Nombre,
+                    p_tipo_id       = unaPlanta.TipoId,
+                    p_ubicacion_id  = unaPlanta.UbicacionId,
+                    p_capacidad     = unaPlanta.Capacidad
                 };
 
                 var cantidad_filas = await conexion.ExecuteAsync(
