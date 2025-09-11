@@ -173,6 +173,30 @@ namespace mge.API.Services
             return eventoExistente;
         }
 
+        public async Task<Produccion> RemoveAsync(Guid eventoId)
+        {
+            Produccion unEvento = await _produccionRepository
+                .GetByIdAsync(eventoId);
+
+            if (unEvento.Id == Guid.Empty)
+                throw new AppValidationException($"No se encontró evento con el Id {eventoId}");
+
+            try
+            {
+                bool resultadoAccion = await _produccionRepository
+                    .RemoveAsync(eventoId);
+
+                if (!resultadoAccion)
+                    throw new DbOperationException("Operación ejecutada pero no generó cambios en la DB");
+            }
+            catch (DbOperationException)
+            {
+                throw;
+            }
+
+            return unEvento;
+        }
+
         private static string EvaluateEventDetailsAsync(Produccion unEvento)
         {
 
