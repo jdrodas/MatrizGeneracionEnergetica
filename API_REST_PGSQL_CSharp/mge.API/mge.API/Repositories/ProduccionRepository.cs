@@ -3,7 +3,6 @@ using mge.API.DbContexts;
 using mge.API.Exceptions;
 using mge.API.Interfaces;
 using mge.API.Models;
-using Microsoft.Extensions.Logging;
 using Npgsql;
 using System.Data;
 
@@ -136,8 +135,41 @@ namespace mge.API.Repositories
                 var parametros = new
                 {
                     p_planta_id = unEvento.PlantaId,
-                    p_fecha     = unEvento.Fecha,
-                    p_valor     = unEvento.Valor
+                    p_fecha = unEvento.Fecha,
+                    p_valor = unEvento.Valor
+                };
+
+                var cantidad_filas = await conexion.ExecuteAsync(
+                    procedimiento,
+                    parametros,
+                    commandType: CommandType.StoredProcedure);
+
+                if (cantidad_filas != 0)
+                    resultadoAccion = true;
+            }
+            catch (NpgsqlException error)
+            {
+                throw new DbOperationException(error.Message);
+            }
+
+            return resultadoAccion;
+        }
+
+        public async Task<bool> UpdateAsync(Produccion unEvento)
+        {
+            bool resultadoAccion = false;
+
+            try
+            {
+                var conexion = contextoDB.CreateConnection();
+
+                string procedimiento = "core.p_actualiza_produccion";
+                var parametros = new
+                {
+                    p_id = unEvento.Id,
+                    p_planta_id = unEvento.PlantaId,
+                    p_fecha = unEvento.Fecha,
+                    p_valor = unEvento.Valor
                 };
 
                 var cantidad_filas = await conexion.ExecuteAsync(

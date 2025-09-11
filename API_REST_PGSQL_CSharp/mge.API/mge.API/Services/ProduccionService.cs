@@ -66,7 +66,7 @@ namespace mge.API.Services
         public async Task<Produccion> CreateAsync(Produccion unEvento)
         {
             unEvento.PlantaNombre = unEvento.PlantaNombre!.Trim();
-            
+
             string resultadoValidacion = EvaluateEventDetailsAsync(unEvento);
 
             if (!string.IsNullOrEmpty(resultadoValidacion))
@@ -84,8 +84,8 @@ namespace mge.API.Services
             //Validamos si ya hay un evento de producción de esa planta para la fecha
             var eventoExistente = await _produccionRepository
                 .GetByDetailsAsync(unEvento);
-            
-            
+
+
             //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
             if (eventoExistente.PlantaId == unEvento.PlantaId &&
                 eventoExistente.Fecha == unEvento.Fecha &&
@@ -118,6 +118,61 @@ namespace mge.API.Services
             return eventoExistente;
         }
 
+        public async Task<Produccion> UpdateAsync(Produccion unEvento)
+        {
+            unEvento.PlantaNombre = unEvento.PlantaNombre!.Trim();
+
+            string resultadoValidacion = EvaluateEventDetailsAsync(unEvento);
+
+            if (!string.IsNullOrEmpty(resultadoValidacion))
+                throw new AppValidationException(resultadoValidacion);
+
+            //Validamos si la planta existe
+            var plantaExistente = await _plantaRepository
+                .GetByDetailsAsync(unEvento.PlantaNombre, unEvento.PlantaId);
+
+            if (plantaExistente.Id == Guid.Empty)
+                throw new AppValidationException($"No hay planta registrada con esa identificación");
+
+            unEvento.PlantaId = plantaExistente.Id;
+
+            //Validamos si ya hay un evento de producción con ese Id
+            var eventoExistente = await _produccionRepository
+                .GetByIdAsync(unEvento.Id);
+
+            if (eventoExistente.Id == Guid.Empty)
+                throw new AppValidationException($"No existe un evento de producción registrado con ese Id");
+
+            //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
+            if (eventoExistente.PlantaId == unEvento.PlantaId &&
+                eventoExistente.Fecha == unEvento.Fecha &&
+                eventoExistente.Valor == unEvento.Valor)
+                return eventoExistente;
+
+            //Validamos que la producción no supere la capacidad de la planta
+            if (unEvento.Valor > plantaExistente.Capacidad)
+                throw new AppValidationException($"El evento supera la capacidad de producción " +
+                    $"de la planta {plantaExistente.Nombre} de {plantaExistente.Capacidad} MW");
+
+            try
+            {
+                bool resultadoAccion = await _produccionRepository
+                    .UpdateAsync(unEvento);
+
+                if (!resultadoAccion)
+                    throw new AppValidationException("Operación ejecutada pero no generó cambios en la DB");
+
+                eventoExistente = await _produccionRepository
+                    .GetByIdAsync(unEvento.Id);
+            }
+            catch (DbOperationException)
+            {
+                throw;
+            }
+
+            return eventoExistente;
+        }
+
         private static string EvaluateEventDetailsAsync(Produccion unEvento)
         {
 
@@ -130,8 +185,8 @@ namespace mge.API.Services
 
             bool fechaValida = DateTime
                             .TryParseExact(
-                                unEvento.Fecha, "dd-MM-yyyy", 
-                                CultureInfo.InvariantCulture, DateTimeStyles.None, 
+                                unEvento.Fecha, "dd-MM-yyyy",
+                                CultureInfo.InvariantCulture, DateTimeStyles.None,
                                 out DateTime fechaResultante);
 
             if (!fechaValida)

@@ -129,9 +129,9 @@ namespace mge.API.Repositories
                 string procedimiento = "core.p_inserta_tipo";
                 var parametros = new
                 {
-                    p_nombre        = unTipo.Nombre,
-                    p_descripcion   = unTipo.Descripcion,
-                    p_esrenovable   = unTipo.EsRenovable
+                    p_nombre = unTipo.Nombre,
+                    p_descripcion = unTipo.Descripcion,
+                    p_esrenovable = unTipo.EsRenovable
                 };
 
                 var cantidad_filas = await conexion.ExecuteAsync(
@@ -161,10 +161,10 @@ namespace mge.API.Repositories
                 string procedimiento = "core.p_actualiza_tipo";
                 var parametros = new
                 {
-                    p_id            = unTipo.Id,
-                    p_nombre        = unTipo.Nombre,
-                    p_descripcion   = unTipo.Descripcion,
-                    p_esrenovable   = unTipo.EsRenovable
+                    p_id = unTipo.Id,
+                    p_nombre = unTipo.Nombre,
+                    p_descripcion = unTipo.Descripcion,
+                    p_esrenovable = unTipo.EsRenovable
                 };
 
                 var cantidad_filas = await conexion.ExecuteAsync(

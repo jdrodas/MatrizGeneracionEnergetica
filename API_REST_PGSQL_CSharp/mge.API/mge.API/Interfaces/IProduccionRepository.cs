@@ -10,5 +10,6 @@ namespace mge.API.Interfaces
         public Task<Produccion> GetByIdAsync(Guid eventoId);
         public Task<Produccion> GetByDetailsAsync(Produccion unEvento);
         public Task<bool> CreateAsync(Produccion unEvento);
+        public Task<bool> UpdateAsync(Produccion unEvento);
     }
 }

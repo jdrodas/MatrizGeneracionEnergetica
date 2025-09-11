@@ -184,10 +184,10 @@ namespace mge.API.Repositories
                 string procedimiento = "core.p_inserta_planta";
                 var parametros = new
                 {
-                    p_nombre        = unaPlanta.Nombre,
-                    p_tipo_id       = unaPlanta.TipoId,
-                    p_ubicacion_id  = unaPlanta.UbicacionId,
-                    p_capacidad     = unaPlanta.Capacidad
+                    p_nombre = unaPlanta.Nombre,
+                    p_tipo_id = unaPlanta.TipoId,
+                    p_ubicacion_id = unaPlanta.UbicacionId,
+                    p_capacidad = unaPlanta.Capacidad
                 };
 
                 var cantidad_filas = await conexion.ExecuteAsync(
@@ -217,11 +217,11 @@ namespace mge.API.Repositories
                 string procedimiento = "core.p_actualiza_planta";
                 var parametros = new
                 {
-                    p_id            = unaPlanta.Id,
-                    p_nombre        = unaPlanta.Nombre,
-                    p_tipo_id       = unaPlanta.TipoId,
-                    p_ubicacion_id  = unaPlanta.UbicacionId,
-                    p_capacidad     = unaPlanta.Capacidad
+                    p_id = unaPlanta.Id,
+                    p_nombre = unaPlanta.Nombre,
+                    p_tipo_id = unaPlanta.TipoId,
+                    p_ubicacion_id = unaPlanta.UbicacionId,
+                    p_capacidad = unaPlanta.Capacidad
                 };
 
                 var cantidad_filas = await conexion.ExecuteAsync(
