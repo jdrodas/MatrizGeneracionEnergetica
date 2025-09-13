@@ -4,7 +4,7 @@ using mge.API.Models;
 using mge.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace mge.API.Controllers
+namespace mge.API.Controllers.V1
 {
     [ApiController]
     [ApiVersion("1.0")]

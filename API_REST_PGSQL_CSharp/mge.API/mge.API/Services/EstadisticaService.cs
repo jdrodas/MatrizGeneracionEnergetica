@@ -1,5 +1,4 @@
-﻿using mge.API.Exceptions;
-using mge.API.Interfaces;
+﻿using mge.API.Interfaces;
 using mge.API.Models;
 
 namespace mge.API.Services

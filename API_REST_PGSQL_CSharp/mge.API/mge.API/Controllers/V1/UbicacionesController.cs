@@ -3,7 +3,7 @@ using mge.API.Exceptions;
 using mge.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace mge.API.Controllers
+namespace mge.API.Controllers.V1
 {
     [ApiController]
     [ApiVersion("1.0")]
@@ -35,7 +35,7 @@ namespace mge.API.Controllers
             {
                 return BadRequest(error.Message);
             }
-        }       
+        }
 
         [HttpGet("{ubicacionId:Guid}/plantas")]
         public async Task<IActionResult> GetAssociatedPlantsByIdAsync(Guid ubicacionId)
@@ -51,6 +51,6 @@ namespace mge.API.Controllers
             {
                 return BadRequest(error.Message);
             }
-        }        
+        }
     }
 }
