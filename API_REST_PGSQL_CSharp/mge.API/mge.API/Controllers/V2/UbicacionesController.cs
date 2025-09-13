@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using mge.API.Exceptions;
+using mge.API.Models;
 using mge.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +14,65 @@ namespace mge.API.Controllers.V2
         private readonly UbicacionService _ubicacionService = ubicacionService;
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetDetailsByParameterAsync([FromQuery] UbicacionParametrosConsulta ubicacionParametrosConsulta)
         {
+            // Si se especifica por Id de la ubicación
+            if (ubicacionParametrosConsulta.Id != Guid.Empty)
+            {
+                try
+                {
+                    ubicacionParametrosConsulta.Criterio = "id";
+                    
+                    var unaUbicacion = await _ubicacionService
+                        .GetByIdAsync(ubicacionParametrosConsulta.Id);
+
+                    return Ok(unaUbicacion);
+                }
+                catch (AppValidationException error)
+                {
+                    return BadRequest(error.Message);
+                }
+            }
+
+            // Si se especifica por nombre de la ubicación (municipio, departamento)
+            if (!string.IsNullOrEmpty(ubicacionParametrosConsulta.Nombre))
+            {
+                try
+                {
+                    ubicacionParametrosConsulta.Criterio = "nombre";
+
+                    var unaUbicacion = await _ubicacionService
+                        .GetByNameAsync(ubicacionParametrosConsulta.Nombre);
+
+                    return Ok(unaUbicacion);
+                }
+                catch (AppValidationException error)
+                {
+                    return BadRequest(error.Message);
+                }
+            }
+
+            // Si se especifica por ISO del departamento
+            if (!string.IsNullOrEmpty(ubicacionParametrosConsulta.DeptoIso))
+            {
+                try
+                {
+                    ubicacionParametrosConsulta.Criterio = "deptoIso";
+
+                    var ubicacionesIsoDepto = await _ubicacionService
+                        .GetAllByDeptoIsoAsync(ubicacionParametrosConsulta.DeptoIso);
+
+                    return Ok(ubicacionesIsoDepto);
+                }
+                catch (AppValidationException error)
+                {
+                    return BadRequest(error.Message);
+                }
+            }
+
+            // De lo contrario, se obtienen todas las ubicaciones
             var lasUbicaciones = await _ubicacionService
-                .GetAllAsync();
+                    .GetAllAsync();
 
             return Ok(lasUbicaciones);
         }

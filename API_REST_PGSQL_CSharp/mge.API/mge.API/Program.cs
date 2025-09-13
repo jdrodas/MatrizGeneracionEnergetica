@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using mge.API.DbContexts;
 using mge.API.Interfaces;
 using mge.API.Models;
@@ -75,12 +76,12 @@ builder.Services.AddSwaggerGen(options =>
 // --- Configuración del versionamiento para el API  --
 // ***************************************************************************
 
-builder.Services.AddApiVersioning(opt =>
+builder.Services.AddApiVersioning(options =>
     {
-        opt.DefaultApiVersion = new ApiVersion(1, 0);
-        opt.AssumeDefaultVersionWhenUnspecified = true;
-        opt.ReportApiVersions = true;
-        opt.ApiVersionReader = new HeaderApiVersionReader("api-version");
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.ReportApiVersions = true;
+        options.ApiVersionReader = new HeaderApiVersionReader("api-version");
     }
 )
     .AddMvc()
@@ -88,8 +89,6 @@ builder.Services.AddApiVersioning(opt =>
         {
             setup.GroupNameFormat = "'v'VVV";
             setup.SubstituteApiVersionInUrl = true;
-            setup.DefaultApiVersion = new ApiVersion(1, 0);
-            setup.AssumeDefaultVersionWhenUnspecified = true;
         });
 
 var app = builder.Build();

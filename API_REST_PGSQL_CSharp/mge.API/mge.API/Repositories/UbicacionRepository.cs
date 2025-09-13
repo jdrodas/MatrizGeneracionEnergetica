@@ -28,6 +28,28 @@ namespace mge.API.Repositories
             return [.. resultadoUbicaciones];
         }
 
+        public async Task<List<Ubicacion>> GetAllByDeptoIsoAsync(string deptoIso)
+        {
+            var conexion = contextoDB.CreateConnection();
+
+            DynamicParameters parametrosSentencia = new();
+            parametrosSentencia.Add("@deptoIso", deptoIso,
+                                    DbType.String, ParameterDirection.Input);
+
+            string sentenciaSQL =
+                "SELECT DISTINCT id, codigo_departamento codigoDepartamento, iso_departamento isoDepartamento, " +
+                "nombre_departamento nombreDepartamento, codigo_municipio codigoMunicipio, " +
+                "nombre_municipio nombreMunicipio " +
+                "FROM core.ubicaciones " +
+                "WHERE LOWER(iso_departamento) = LOWER(@deptoIso) " +
+                "ORDER BY nombre_municipio";
+
+            var resultadoUbicaciones = await conexion
+                .QueryAsync<Ubicacion>(sentenciaSQL, parametrosSentencia);
+
+            return [.. resultadoUbicaciones];
+        }
+
         public async Task<Ubicacion> GetByIdAsync(Guid ubicacionId)
         {
             Ubicacion unaUbicacion = new();

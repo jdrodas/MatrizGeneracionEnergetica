@@ -30,8 +30,8 @@ Controllers → Services → Repositories (via Interfaces) → DB Context
 - **Services**: Lógica de negocio y reglas de dominio.
 - **Interfaces**: Contratos para desacoplamiento.
 - **Repositories**: Implementaciones de acceso a datos.
-- **Entities**: Modelos de dominio.
-- **Data**: Contextos y configuraciones de base de datos.
+- **Models**: Modelos de dominio.
+- **DBContext**: Contextos y configuraciones de base de datos.
 
 ## Modelo de Datos
 
@@ -65,7 +65,7 @@ Registro de plantas generadoras de energía
 - `Nombre` (TEXT): Nombre de la planta.
 - `TipoFuenteId` (UUID): Referencia al tipo de fuente.
 - `UbicacionId` (UUID): Referencia a la ubicación geográfica.
-- `CapacidadInstalada` (DECIMAL): Capacidad en Megavatios.
+- `Capacidad` (DOUBLE): Capacidad en Megavatios.
 
 #### Produccion
 
@@ -74,7 +74,7 @@ Registro diario de producción energética.
 - `Id` (UUID): Identificador único.
 - `PlantaId` (UUID): Referencia a la planta.
 - `Fecha` (DATE): Fecha del registro.
-- `ProduccionMW` (DECIMAL): Producción en Megavatios.
+- `Valor` (DOUBLE): Producción en Megavatios.
 
 ### Tipos de Fuentes Energéticas
 
