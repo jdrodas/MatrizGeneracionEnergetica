@@ -88,8 +88,7 @@ namespace mge.API.Repositories
             string sentenciaSQL =
                 "SELECT DISTINCT id, nombre, descripcion, esrenovable " +
                 "FROM core.tipos " +
-                "WHERE id = @tipoId " +
-                "AND LOWER(nombre) = LOWER(@tipoNombre) " +
+                "WHERE LOWER(nombre) = LOWER(@tipoNombre) " +
                 "AND LOWER(descripcion) = LOWER(@tipoDescripcion) " +
                 "AND esrenovable = @tipoEsRenovable";
 

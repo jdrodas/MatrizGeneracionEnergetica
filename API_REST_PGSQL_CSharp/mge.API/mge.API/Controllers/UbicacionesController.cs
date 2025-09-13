@@ -33,7 +33,7 @@ namespace mge.API.Controllers
             }
             catch (AppValidationException error)
             {
-                return NotFound(error.Message);
+                return BadRequest(error.Message);
             }
         }       
 
@@ -49,7 +49,7 @@ namespace mge.API.Controllers
             }
             catch (AppValidationException error)
             {
-                return NotFound(error.Message);
+                return BadRequest(error.Message);
             }
         }        
     }
