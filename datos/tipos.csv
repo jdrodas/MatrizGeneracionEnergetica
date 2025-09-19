@@ -1,6 +1,8 @@
 id;nombre;descripcion;esrenovable
-2e17feeb-82e9-4c6f-b0c5-6674b6f1dd31;Hidroeléctrica;Generación en embalses en rios;true
-1ac6466a-a4a0-454f-aeb8-a174af3c01aa;Solar Fotovoltáica;Generación a través paneles solares;true
+d1e0aa95-3c75-4c6f-a188-d739828fa98f;Acpm;aceite combustible para motores usado para producir electricidad a través de procesos termoquímicos;false
 b773b21f-f1f8-4c7a-b749-e8f16922bf73;Eólica;Generación a través de turbinas impulsadas por viento;true
-22badb43-410b-48a8-b176-69d199727b00;Termoeléctrica por Combustibles Fósiles;Generación a través de combustión de carbón o gas;false
+2e17feeb-82e9-4c6f-b0c5-6674b6f1dd31;Hidroeléctrica;Generación en embalses en rios;true
 59bfd47d-fc1b-444e-b44e-fc3b936c941c;Nuclear;Generación a través de reactores nucleares;false
+1ac6466a-a4a0-454f-aeb8-a174af3c01aa;Solar Fotovoltáica;Generación a través paneles solares;true
+8b00c210-3acf-4e04-b09b-d75d8854e4bf;Termoeléctrica Con Carbón;generación de energía usando carbón como combustible;false
+22badb43-410b-48a8-b176-69d199727b00;Termoeléctrica por Combustibles Fósiles;Generación a través de combustión de carbón o gas;false

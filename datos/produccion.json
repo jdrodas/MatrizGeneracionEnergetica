@@ -1,0 +1,56 @@
+[
+  {
+    "planta_id": "2de3b892-c71a-41eb-9618-415468124564",
+    "planta_nombre": "Termobarranquilla",
+    "valor": 600,
+    "fecha": "2025-08-27"
+  },
+  {
+    "planta_id": "5da122ac-55e4-4672-8cf1-f3c8f5e56030",
+    "planta_nombre": "Central Hidroeléctrica Hidromontañitas",
+    "valor": 10,
+    "fecha": "2025-09-12"
+  },
+  {
+    "planta_id": "2de3b892-c71a-41eb-9618-415468124564",
+    "planta_nombre": "Termobarranquilla",
+    "valor": 125,
+    "fecha": "2025-02-10"
+  },
+  {
+    "planta_id": "2de3b892-c71a-41eb-9618-415468124564",
+    "planta_nombre": "Termobarranquilla",
+    "valor": 1,
+    "fecha": "2025-09-10"
+  },
+  {
+    "planta_id": "b953b9c9-74cc-4f7f-96db-70cf78663860",
+    "planta_nombre": "Celsia Solar Yuma",
+    "valor": 2,
+    "fecha": "2025-08-27"
+  },
+  {
+    "planta_id": "41fc7f3c-d39d-419a-af39-787649aee230",
+    "planta_nombre": "Termoguajira",
+    "valor": 200,
+    "fecha": "2025-09-12"
+  },
+  {
+    "planta_id": "04d485c9-b567-42f3-8d69-209a5bc0dbc3",
+    "planta_nombre": "Caracolí",
+    "valor": 1.2,
+    "fecha": "2025-08-27"
+  },
+  {
+    "planta_id": "2de3b892-c71a-41eb-9618-415468124564",
+    "planta_nombre": "Termobarranquilla",
+    "valor": 1,
+    "fecha": "2025-09-08"
+  },
+  {
+    "planta_id": "2de3b892-c71a-41eb-9618-415468124564",
+    "planta_nombre": "Termobarranquilla",
+    "valor": 130,
+    "fecha": "2025-07-10"
+  }
+]
