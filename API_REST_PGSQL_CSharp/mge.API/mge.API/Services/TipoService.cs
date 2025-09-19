@@ -1,6 +1,7 @@
 ﻿using mge.API.Exceptions;
 using mge.API.Interfaces;
 using mge.API.Models;
+using mge.API.Repositories;
 
 namespace mge.API.Services
 {
@@ -25,6 +26,30 @@ namespace mge.API.Services
 
             return unTipo;
         }
+
+        public async Task<TipoDetallado> GetTypeDetailsByIdAsync(Guid tipoId)
+        {
+            Tipo unTipo = await _tipoRepository
+                .GetByIdAsync(tipoId);
+
+            if (unTipo.Id == Guid.Empty)
+                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
+
+            TipoDetallado unTipoDetallado = new()
+            {
+                Id = unTipo.Id,
+                Nombre = unTipo.Nombre,
+                Descripcion = unTipo.Descripcion,
+                EsRenovable = unTipo.EsRenovable,
+                Plantas = await _plantaRepository.GetAllByTypeIdAsync(tipoId)
+            };
+
+            unTipoDetallado.TotalPlantas = unTipoDetallado.Plantas.Count;
+
+            return unTipoDetallado;
+        }
+
+
 
         public async Task<List<Planta>> GetAssociatedPlantsAsync(Guid tipoId)
         {

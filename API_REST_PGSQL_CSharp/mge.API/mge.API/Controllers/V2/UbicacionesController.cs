@@ -22,11 +22,11 @@ namespace mge.API.Controllers.V2
                 try
                 {
                     ubicacionParametrosConsulta.Criterio = "id";
-                    
-                    var unaUbicacion = await _ubicacionService
-                        .GetByIdAsync(ubicacionParametrosConsulta.Id);
 
-                    return Ok(unaUbicacion);
+                    var unaUbicacionDetallada = await _ubicacionService
+                        .GetLocationDetailsByIdAsync(ubicacionParametrosConsulta.Id);
+
+                    return Ok(unaUbicacionDetallada);
                 }
                 catch (AppValidationException error)
                 {
@@ -82,10 +82,10 @@ namespace mge.API.Controllers.V2
         {
             try
             {
-                var unaUbicacion = await _ubicacionService
-                    .GetByIdAsync(ubicacionId);
+                var unaUbicacionDetallada = await _ubicacionService
+                    .GetLocationDetailsByIdAsync(ubicacionId);
 
-                return Ok(unaUbicacion);
+                return Ok(unaUbicacionDetallada);
             }
             catch (AppValidationException error)
             {

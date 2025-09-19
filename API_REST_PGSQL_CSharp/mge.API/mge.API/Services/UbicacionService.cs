@@ -32,6 +32,31 @@ namespace mge.API.Services
             return unaUbicacion;
         }
 
+        public async Task<UbicacionDetallada> GetLocationDetailsByIdAsync(Guid ubicacionId)
+        {
+            Ubicacion unaUbicacion = await _ubicacionRepository
+                .GetByIdAsync(ubicacionId);
+
+            if (unaUbicacion.Id == Guid.Empty)
+                throw new AppValidationException($"Ubicación no encontrada con el Id {ubicacionId}");
+
+            UbicacionDetallada unaUbicacionDetallada = new()
+            {
+                Id = unaUbicacion.Id,
+                CodigoDepartamento = unaUbicacion.CodigoDepartamento,
+                IsoDepartamento = unaUbicacion.IsoDepartamento,
+                NombreDepartamento = unaUbicacion.NombreDepartamento,
+                CodigoMunicipio = unaUbicacion.CodigoMunicipio,
+                NombreMunicipio = unaUbicacion.NombreMunicipio,
+                Plantas = await _plantaRepository.GetAllByLocationIdAsync(ubicacionId)
+            };
+
+            unaUbicacionDetallada.TotalPlantas = unaUbicacionDetallada.Plantas.Count;
+
+            return unaUbicacionDetallada;
+        }
+
+
         public async Task<Ubicacion> GetByNameAsync(string ubicacionNombre)
         {
             Ubicacion unaUbicacion = await _ubicacionRepository

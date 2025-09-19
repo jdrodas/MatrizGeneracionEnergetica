@@ -27,10 +27,10 @@ namespace mge.API.Controllers.V2
         {
             try
             {
-                var unTipo = await _tipoService
-                    .GetByIdAsync(tipoId);
+                var unTipoDetallado = await _tipoService
+                    .GetTypeDetailsByIdAsync(tipoId);
 
-                return Ok(unTipo);
+                return Ok(unTipoDetallado);
             }
             catch (AppValidationException error)
             {

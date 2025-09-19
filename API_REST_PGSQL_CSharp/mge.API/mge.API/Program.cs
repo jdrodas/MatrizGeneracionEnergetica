@@ -67,8 +67,15 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "MGE - Matriz Generación Energética - Versión en PostgreSQL",
-        Description = "API para la gestión de Información sobre la Generación de Energía"
+        Title = "mge.API v1 - PostgreSQL",
+        Description = "API para la gestión de Información sobre Matriz Generación Energética"
+    });
+
+    options.SwaggerDoc("v2", new OpenApiInfo
+    {
+        Version = "v2",
+        Title = "mge.API v2 - PostgreSQL",
+        Description = "API para la gestión de Información sobre Matriz Generación Energética"
     });
 });
 
@@ -81,7 +88,10 @@ builder.Services.AddApiVersioning(options =>
         options.DefaultApiVersion = new ApiVersion(1, 0);
         options.AssumeDefaultVersionWhenUnspecified = true;
         options.ReportApiVersions = true;
-        options.ApiVersionReader = new HeaderApiVersionReader("api-version");
+        options.ApiVersionReader = ApiVersionReader.Combine(
+            new HeaderApiVersionReader("api-version"),
+            new QueryStringApiVersionReader("api-version")
+        );
     }
 )
     .AddMvc()
@@ -98,7 +108,13 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(config =>
+        {
+            // Configuración manual de cada endpoint
+            config.SwaggerEndpoint("/swagger/v1/swagger.json", "mge.API v1");
+            config.SwaggerEndpoint("/swagger/v2/swagger.json", "mge.API v2");
+        }
+    );
 }
 
 //Modificamos el encabezado de las peticiones para ocultar el web server utilizado
