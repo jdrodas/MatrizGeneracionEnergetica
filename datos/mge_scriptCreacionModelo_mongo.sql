@@ -224,3 +224,149 @@ db.createCollection("plantas",{
         }
     }
 );
+
+
+-- Colección: produccion
+db.createCollection("produccion",{
+        validator:{
+            $jsonSchema:{
+                bsonType: 'object',
+                title: 'Los eventos de producción de las plantas de generación',
+                required: [
+                    "_id",
+                    "planta_id",
+                    "planta_nombre",
+                    "valor",
+                    "fecha"
+                ],
+                properties:{
+                    _id: {
+                        bsonType: 'objectId'
+                    },                    
+                    planta_id: {
+                        bsonType: ["objectId","string"],
+                        description: "Id del tipo de la planta de generación",
+                        minLength: 3
+                    },                    
+                    planta_nombre: {
+                        bsonType: 'string',
+                        description: "nombre del tipo de la planta de  geneneración",
+                        minLength: 3
+                    },                    
+                    valor: {
+                        bsonType:  ["double","int"],
+                        description: "Valor en MW del evento de generación de la planta",
+                        minimum: 0
+                    },                    
+                    fecha: {
+                        bsonType: 'string',
+                        description: "fecha en formato YYYY-MM-DD del evento de generación de la planta",
+                        minLength: 3
+                    }
+                }
+            }
+        }
+    }
+);
+
+
+
+-- ****************************************
+--   Creación de Vistas
+-- ****************************************
+
+db.createView("v_info_plantas", "plantas", [
+  {
+    $lookup: {
+      from: "tipos",
+      localField: "tipo_id",
+      foreignField: "_id",
+      as: "tipo_info"
+    }
+  },
+  {
+    $lookup: {
+      from: "ubicaciones",
+      localField: "ubicacion_id",
+      foreignField: "_id",
+      as: "ubicacion_info"
+    }
+  },
+  {
+    $unwind: "$tipo_info"
+  },
+  {
+    $unwind: "$ubicacion_info"
+  },
+  {
+    $project: {
+      _id: 1,
+      nombre: 1,
+      capacidad: 1,
+      tipo_id: 1,
+      tipo_nombre: "$tipo_info.nombre",
+      esRenovable: "$tipo_info.esRenovable",
+      ubicacion_id: 1,
+      iso_departamento: "$ubicacion_info.iso_departamento",
+      ubicacion_concatenada: {
+        $concat: [
+          "$ubicacion_info.nombre_municipio",
+          ", ",
+          "$ubicacion_info.nombre_departamento"
+        ]
+      }
+    }
+  }
+]);
+
+db.createView("v_produccion_tipo_dia", "produccion", [
+  {
+    $lookup: {
+      from: "plantas",
+      localField: "planta_id",
+      foreignField: "_id",
+      as: "planta_info"
+    }
+  },
+  {
+    $unwind: "$planta_info"
+  },
+  {
+    $lookup: {
+      from: "tipos",
+      localField: "planta_info.tipo_id",
+      foreignField: "_id",
+      as: "tipo_info"
+    }
+  },
+  {
+    $unwind: "$tipo_info"
+  },
+  {
+    $group: {
+      _id: {
+        tipo_id: "$tipo_info._id",
+        fecha: "$fecha"
+      },
+      nombre_tipo: { $first: "$tipo_info.nombre" },
+      esRenovable: { $first: "$tipo_info.esRenovable" },
+      suma_valor: { $sum: "$valor" }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      tipo_id: "$_id.tipo_id",
+      nombre_tipo: 1,
+      esRenovable: 1,
+      fecha: "$_id.fecha",
+      suma_valor: 1
+    }
+  },
+  {
+    $sort: {
+      fecha: 1,
+      nombre_tipo: 1
+    }
+  }
+]);

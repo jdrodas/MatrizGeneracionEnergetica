@@ -1,43 +1,43 @@
 [
   {
-    "id": "d1e0aa95-3c75-4c6f-a188-d739828fa98f",
-    "nombre": "Acpm",
+    "_id": { "$oid": "68cd7e64271bf7f32e68e4aa"},
+    "nombre":	 "Acpm",
     "descripcion": "aceite combustible para motores usado para producir electricidad a través de procesos termoquímicos",
     "esRenovable": false
   },
   {
-    "id": "b773b21f-f1f8-4c7a-b749-e8f16922bf73",
-    "nombre": "Eólica",
+    "_id": { "$oid": "68cd7e64271bf7f32e68e4ab"},
+    "nombre":	 "Eólica",
     "descripcion": "Generación a través de turbinas impulsadas por viento",
     "esRenovable": true
   },
   {
-    "id": "2e17feeb-82e9-4c6f-b0c5-6674b6f1dd31",
-    "nombre": "Hidroeléctrica",
+    "_id": { "$oid": "68cd7e64271bf7f32e68e4ac"},
+    "nombre":	 "Hidroeléctrica",
     "descripcion": "Generación en embalses en rios",
     "esRenovable": true
   },
   {
-    "id": "59bfd47d-fc1b-444e-b44e-fc3b936c941c",
-    "nombre": "Nuclear",
+    "_id": { "$oid": "68cd7e64271bf7f32e68e4ad"},
+    "nombre":	 "Nuclear",
     "descripcion": "Generación a través de reactores nucleares",
     "esRenovable": false
   },
   {
-    "id": "1ac6466a-a4a0-454f-aeb8-a174af3c01aa",
-    "nombre": "Solar Fotovoltáica",
+    "_id": { "$oid": "68cd7e64271bf7f32e68e4ae"},
+    "nombre":	 "Solar Fotovoltáica",
     "descripcion": "Generación a través paneles solares",
     "esRenovable": true
   },
   {
-    "id": "8b00c210-3acf-4e04-b09b-d75d8854e4bf",
-    "nombre": "Termoeléctrica Con Carbón",
+    "_id": { "$oid": "68cd7e64271bf7f32e68e4af"},
+    "nombre":	 "Termoeléctrica Con Carbón",
     "descripcion": "generación de energía usando carbón como combustible",
     "esRenovable": false
   },
   {
-    "id": "22badb43-410b-48a8-b176-69d199727b00",
-    "nombre": "Termoeléctrica por Combustibles Fósiles",
+    "_id": { "$oid": "68cd7e64271bf7f32e68e4b0"},
+    "nombre":	 "Termoeléctrica por Combustibles Fósiles",
     "descripcion": "Generación a través de combustión de carbón o gas",
     "esRenovable": false
   }

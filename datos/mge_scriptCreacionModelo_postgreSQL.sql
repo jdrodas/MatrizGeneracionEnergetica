@@ -17,12 +17,13 @@
 
 create table core.ubicaciones
 (
-    id                      uuid default gen_random_uuid() constraint ubicaciones_pk primary key,    
+    id                      uuid default gen_random_uuid() constraint ubicaciones_pk primary key,
     codigo_departamento     text not null,
     codigo_municipio        text not null,
     nombre_departamento     text not null,
     nombre_municipio        text not null,
-    departamento            text default 'CO-000' not null
+    iso_departamento        text default 'CO-000' not null,
+    object_id               text not null
 );
 
 alter table ubicaciones add constraint ubicaciones_codigo_municipio_uk unique (codigo_municipio);
@@ -35,14 +36,15 @@ comment on column core.ubicaciones.codigo_municipio is 'Código DIVIPOLA del mun
 comment on column core.ubicaciones.nombre_departamento is 'Nombre oficial del departamento según DIVIPOLA';
 comment on column core.ubicaciones.nombre_municipio  is 'Nombre oficial del municipio según DIVIPOLA';
 comment on column core.ubicaciones.iso_departamento is 'Código ISO 3166-2:CO del departamento';
-
+comment on column core.ubicaciones.object_id is 'PK alternativa para integración en MongoDB';
 
 create table core.tipos
 (
-    id          uuid default gen_random_uuid() constraint tipos_pk primary key,
-    nombre      text    not null,
-    descripcion text    not null,
-    esrenovable boolean not null
+    id                      uuid default gen_random_uuid() constraint tipos_pk primary key,
+    nombre                  text not null,
+    descripcion             text not null,
+    esrenovable             boolean not null,
+    object_id               text not null    
 );
 
 comment on table core.tipos is 'Catálogo de tipos de fuentes energéticas';
@@ -50,15 +52,19 @@ comment on column core.tipos.id is 'ID del tipo de fuente energética';
 comment on column core.tipos.nombre is 'Nombre el tipo e fuente';
 comment on column core.tipos.descripcion is 'descripcion detallada del tipo de fuente';
 comment on column core.tipos.esrenovable is 'Indica si es fuente renovable';
+comment on column core.tipos.object_id is 'PK alternativa para integración en MongoDB';
 
 
 create table core.plantas
 (
-    id              uuid default gen_random_uuid() not null constraint plantas_pk primary key,
-    nombre          text not null,
-    tipo_id         uuid not null constraint plantas_tipo_fk references tipos,
-    ubicacion_id    uuid not null constraint plantas_ubicacion_fk references ubicaciones,
-    capacidad       double precision not null
+    id                      uuid default gen_random_uuid() not null constraint plantas_pk primary key,
+    nombre                  text not null,
+    tipo_id                 uuid not null constraint plantas_tipo_fk references tipos,
+    ubicacion_id            uuid not null constraint plantas_ubicacion_fk references ubicaciones,
+    capacidad               double precision not null,
+    object_id               text not null,
+    tipo_object_id          text,
+    ubicacion_object_id     text
 );
 
 create unique index planta_tipo_uk on core.plantas (lower(nombre), tipo_id);
@@ -69,14 +75,19 @@ comment on column core.plantas.nombre is 'Nombre de la planta';
 comment on column core.plantas.tipo_id is 'Tipo de fuente de energía utilizada por la planta';
 comment on column core.plantas.ubicacion_id is 'ID de la ubicación geográfica de la planta';
 comment on column core.plantas.capacidad is 'Capacidad instalada en MW de generación en Megavatios';
+comment on column core.plantas.object_id is 'PK alternativa para integración en MongoDB';
+comment on column core.plantas.tipo_object_id is 'FK alternativa hacia tipos para integración en MongoDB';
+comment on column core.plantas.ubicacion_object_id is 'PK alternativa hacia ubicaciones para integración en MongoDB';
 
 
 create table core.produccion
 (
-    id          uuid default gen_random_uuid() constraint produccion_pk primary key,
-    planta_id   uuid not null constraint produccion_planta_fk references plantas,
-    fecha       date not null,
-    valor       double precision not null
+    id                      uuid default gen_random_uuid() constraint produccion_pk primary key,
+    planta_id               uuid not null constraint produccion_planta_fk references plantas,
+    fecha                   date not null,
+    valor                   double precision not null,
+    object_id               text,
+    planta_object_id        text  
 );
 
 create unique index planta_produccion_dia on core.produccion (planta_id,fecha);
@@ -86,6 +97,8 @@ comment on column core.produccion.id is 'ID del evento de generación';
 comment on column core.produccion.fecha is 'Fecha en la que se produce el registro de generación';
 comment on column core.produccion.planta_id is 'ID de la planta que está produciendo energía';
 comment on column core.produccion.valor  is 'Energía generada en MW por la planta en este día';
+comment on column core.produccion.object_id is 'PK alternativa para integración en MongoDB';
+comment on column core.produccion.planta_object_id is 'FK alternativa hacia tipos para integración en MongoDB';
 
 -- ****************************************
 -- Creación de Vistas
@@ -133,3 +146,29 @@ group by pl.tipo_id,
          t.esrenovable,
          pdn.fecha
     );
+
+-- ****************************************
+-- Zona de peligro: Borrado del modelo
+-- ****************************************
+
+-- Procedimientos
+drop procedure core.p_elimina_tipo;
+drop procedure core.p_elimina_planta;
+drop procedure core.p_elimina_produccion;
+drop procedure core.p_actualiza_tipo;
+drop procedure core.p_actualiza_planta;
+drop procedure core.p_actualiza_produccion;
+drop procedure core.p_inserta_tipo;
+drop procedure core.p_inserta_planta;
+drop procedure core.p_inserta_produccion;
+
+--Vistas
+drop view core.v_produccion_tipo_dia;
+drop view core.v_info_produccion_planta;
+drop view core.v_info_plantas;
+
+-- Tablas
+drop table core.produccion;
+drop table core.plantas;
+drop table core.tipos;
+drop table core.ubicaciones;

@@ -1,56 +1,56 @@
 [
   {
-    "id": "04d485c9-b567-42f3-8d69-209a5bc0dbc3",
+    "_id": { "$oid": "68cd8481271bf7f32e68e91c"},
     "nombre": "Caracolí",
     "capacidad": 2.6,
-    "tipo_id": "2e17feeb-82e9-4c6f-b0c5-6674b6f1dd31",
+    "tipo_id": { "$oid": "68cd7e64271bf7f32e68e4ac"},
     "tipo_nombre": "Hidroeléctrica",
-    "ubicacion_id": "ea35c204-121f-4b9c-99cb-4366654ae04d",
+    "ubicacion_id": { "$oid": "68cd80c6271bf7f32e68e4d7"},
     "ubicacion_nombre": "CARACOLÍ, ANTIOQUIA"
   },
   {
-    "id": "b953b9c9-74cc-4f7f-96db-70cf78663860",
+    "_id": { "$oid": "68cd8481271bf7f32e68e91d"},
     "nombre": "Celsia Solar Yuma",
     "capacidad": 9.9,
-    "tipo_id": "1ac6466a-a4a0-454f-aeb8-a174af3c01aa",
+    "tipo_id": { "$oid": "68cd7e64271bf7f32e68e4ae"},
     "tipo_nombre": "Solar Fotovoltáica",
-    "ubicacion_id": "5bee91b1-ce40-45ec-8d46-c935027146e3",
+    "ubicacion_id": { "$oid": "68cd80c6271bf7f32e68e8c0"},
     "ubicacion_nombre": "FLANDES, TOLIMA"
   },
   {
-    "id": "ba981943-f867-451f-83db-adf97faf6f9f",
+    "_id": { "$oid": "68cd8481271bf7f32e68e91e"},
     "nombre": "Central Hidroeléctrica Del Guavio",
     "capacidad": 1250,
-    "tipo_id": "2e17feeb-82e9-4c6f-b0c5-6674b6f1dd31",
+    "tipo_id": { "$oid": "68cd7e64271bf7f32e68e4ac"},
     "tipo_nombre": "Hidroeléctrica",
-    "ubicacion_id": "7bb07fb7-956d-4fe2-8de9-575729e9d5b3",
+    "ubicacion_id": { "$oid": "68cd80c6271bf7f32e68e726"},
     "ubicacion_nombre": "UBALÁ, CUNDINAMARCA"
   },
   {
-    "id": "5da122ac-55e4-4672-8cf1-f3c8f5e56030",
+    "_id": { "$oid": "68cd8481271bf7f32e68e91f"},
     "nombre": "Central Hidroeléctrica Hidromontañitas",
     "capacidad": 19.9,
-    "tipo_id": "2e17feeb-82e9-4c6f-b0c5-6674b6f1dd31",
+    "tipo_id": { "$oid": "68cd7e64271bf7f32e68e4ac"},
     "tipo_nombre": "Hidroeléctrica",
-    "ubicacion_id": "5d6c9f98-8736-44f5-8ff3-6d813183df00",
+    "ubicacion_id": { "$oid": "68cd80c6271bf7f32e68e522"},
     "ubicacion_nombre": "SANTA ROSA DE OSOS, ANTIOQUIA"
   },
   {
-    "id": "2de3b892-c71a-41eb-9618-415468124564",
+    "_id": { "$oid": "68cd8481271bf7f32e68e920"},
     "nombre": "Termobarranquilla",
     "capacidad": 918,
-    "tipo_id": "22badb43-410b-48a8-b176-69d199727b00",
+    "tipo_id": { "$oid": "68cd7e64271bf7f32e68e4b0"},
     "tipo_nombre": "Termoeléctrica por Combustibles Fósiles",
-    "ubicacion_id": "0f5a8a62-bf32-4af2-8982-3d23dafa0ae3",
+    "ubicacion_id": { "$oid": "68cd80c6271bf7f32e68e544"},
     "ubicacion_nombre": "BARRANQUILLA, ATLÁNTICO"
   },
   {
-    "id": "41fc7f3c-d39d-419a-af39-787649aee230",
+    "_id": { "$oid": "68cd8481271bf7f32e68e921"},
     "nombre": "Termoguajira",
     "capacidad": 290,
-    "tipo_id": "8b00c210-3acf-4e04-b09b-d75d8854e4bf",
+    "tipo_id": { "$oid": "68cd7e64271bf7f32e68e4af"},
     "tipo_nombre": "Termoeléctrica Con Carbón",
-    "ubicacion_id": "2e8068d9-0606-4dbc-b0d1-0ffeb0b2f55b",
+    "ubicacion_id": { "$oid": "68cd80c6271bf7f32e68e768"},
     "ubicacion_nombre": "DIBULLA, LA GUAJIRA"
   }
 ]
