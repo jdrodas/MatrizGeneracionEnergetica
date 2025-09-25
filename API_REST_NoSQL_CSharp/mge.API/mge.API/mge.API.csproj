@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\V1\PlantasController.cs" />
+    <Compile Remove="Controllers\V1\ProduccionController.cs" />
+    <Compile Remove="Controllers\V1\TiposController.cs" />
+    <Compile Remove="Controllers\V1\UbicacionesController.cs" />
+    <Compile Remove="Interfaces\IPlantaRepository.cs" />
+    <Compile Remove="Interfaces\IProduccionRepository.cs" />
+    <Compile Remove="Interfaces\ITipoRepository.cs" />
+    <Compile Remove="Interfaces\IUbicacionRepository.cs" />
+    <Compile Remove="Repositories\PlantaRepository.cs" />
+    <Compile Remove="Repositories\ProduccionRepository.cs" />
+    <Compile Remove="Repositories\TipoRepository.cs" />
+    <Compile Remove="Repositories\UbicacionRepository.cs" />
+    <Compile Remove="Services\PlantaService.cs" />
+    <Compile Remove="Services\ProduccionService.cs" />
+    <Compile Remove="Services\TipoService.cs" />
+    <Compile Remove="Services\UbicacionService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
+    <PackageReference Include="MongoDB.Bson" Version="3.5.0" />
+    <PackageReference Include="MongoDB.Driver" Version="3.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+  </ItemGroup>
+
+</Project>

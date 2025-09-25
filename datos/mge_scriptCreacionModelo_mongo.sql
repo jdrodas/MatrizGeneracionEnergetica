@@ -308,7 +308,7 @@ db.createView("v_info_plantas", "plantas", [
       esRenovable: "$tipo_info.esRenovable",
       ubicacion_id: 1,
       iso_departamento: "$ubicacion_info.iso_departamento",
-      ubicacion_concatenada: {
+      ubicacion_nombre: {
         $concat: [
           "$ubicacion_info.nombre_municipio",
           ", ",
