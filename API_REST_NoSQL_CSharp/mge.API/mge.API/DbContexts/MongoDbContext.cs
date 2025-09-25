@@ -5,30 +5,30 @@ namespace mge.API.DbContexts
 {
     public class MongoDbContext(IConfiguration unaConfiguracion)
     {
-        private readonly MGEDatabaseSettings _MGEDatabaseSettings = new(unaConfiguracion);
+        private readonly DatabaseSettings _databaseSettings = new(unaConfiguracion);
 
         public IMongoDatabase CreateConnection()
         {
-            var configuracion = unaConfiguracion.GetSection("MGEDatabaseSettings");
+            var configuracion = unaConfiguracion.GetSection("DatabaseSettings");
 
-            var baseDeDatos = configuracion.GetSection("BaseDeDatos").Value!;
-            var usuario = configuracion.GetSection("Usuario").Value!;
-            var password = configuracion.GetSection("PassWord").Value!;
-            var servidor = configuracion.GetSection("Servidor").Value!;
-            var puerto = configuracion.GetSection("Puerto").Value!;
-            var mecanismoAutenticacion = configuracion.GetSection("MecanismoAutenticacion").Value!;
+            var baseDeDatos = configuracion.GetSection("Database").Value!;
+            var usuario = configuracion.GetSection("Username").Value!;
+            var password = configuracion.GetSection("Password").Value!;
+            var servidor = configuracion.GetSection("Host").Value!;
+            var puerto = configuracion.GetSection("Port").Value!;
+            var mecanismoAutenticacion = configuracion.GetSection("AuthMechanism").Value!;
 
             var cadenaConexion = $"mongodb://{usuario}:{password}@{servidor}:{puerto}/{baseDeDatos}?authMechanism={mecanismoAutenticacion}";
 
             var clienteDB = new MongoClient(cadenaConexion);
-            var miDB = clienteDB.GetDatabase(_MGEDatabaseSettings.BaseDeDatos);
+            var miDB = clienteDB.GetDatabase(baseDeDatos);
 
             return miDB;
         }
 
-        public MGEDatabaseSettings ConfiguracionColecciones
+        public DatabaseSettings ConfiguracionColecciones
         {
-            get { return _MGEDatabaseSettings; }
+            get { return _databaseSettings; }
         }
     }
 }
