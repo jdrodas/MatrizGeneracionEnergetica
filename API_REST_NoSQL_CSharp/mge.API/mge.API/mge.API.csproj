@@ -9,20 +9,12 @@
   <ItemGroup>
     <Compile Remove="Controllers\V1\PlantasController.cs" />
     <Compile Remove="Controllers\V1\ProduccionController.cs" />
-    <Compile Remove="Controllers\V1\TiposController.cs" />
-    <Compile Remove="Controllers\V1\UbicacionesController.cs" />
     <Compile Remove="Interfaces\IPlantaRepository.cs" />
     <Compile Remove="Interfaces\IProduccionRepository.cs" />
-    <Compile Remove="Interfaces\ITipoRepository.cs" />
-    <Compile Remove="Interfaces\IUbicacionRepository.cs" />
     <Compile Remove="Repositories\PlantaRepository.cs" />
     <Compile Remove="Repositories\ProduccionRepository.cs" />
-    <Compile Remove="Repositories\TipoRepository.cs" />
-    <Compile Remove="Repositories\UbicacionRepository.cs" />
     <Compile Remove="Services\PlantaService.cs" />
     <Compile Remove="Services\ProduccionService.cs" />
-    <Compile Remove="Services\TipoService.cs" />
-    <Compile Remove="Services\UbicacionService.cs" />
   </ItemGroup>
 
   <ItemGroup>

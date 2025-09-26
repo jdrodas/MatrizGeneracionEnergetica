@@ -4,10 +4,10 @@ using mge.API.Models;
 using mge.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace mge.API.Controllers.V2
+namespace mge.API.Controllers.V1
 {
     [ApiController]
-    [ApiVersion("2.0")]
+    [ApiVersion("1.0")]
     [Route("api/tipos")]
     public class TiposController(TipoService tipoService) : Controller
     {
@@ -22,96 +22,96 @@ namespace mge.API.Controllers.V2
             return Ok(losTipos);
         }
 
-        [HttpGet("{tipoId:Guid}")]
-        public async Task<IActionResult> GetByIdAsync(Guid tipoId)
-        {
-            try
-            {
-                var unTipoDetallado = await _tipoService
-                    .GetTypeDetailsByIdAsync(tipoId);
+        //[HttpGet("{tipoId:Guid}")]
+        //public async Task<IActionResult> GetByIdAsync(Guid tipoId)
+        //{
+        //    try
+        //    {
+        //        var unTipoDetallado = await _tipoService
+        //            .GetTypeDetailsByIdAsync(tipoId);
 
-                return Ok(unTipoDetallado);
-            }
-            catch (AppValidationException error)
-            {
-                return BadRequest(error.Message);
-            }
-        }
+        //        return Ok(unTipoDetallado);
+        //    }
+        //    catch (AppValidationException error)
+        //    {
+        //        return BadRequest(error.Message);
+        //    }
+        //}
 
-        [HttpGet("{tipoId:Guid}/plantas")]
-        public async Task<IActionResult> GetAssociatedPlantsAsync(Guid tipoId)
-        {
-            try
-            {
-                var lasPlantasAsociadas = await _tipoService
-                    .GetAssociatedPlantsAsync(tipoId);
+        //[HttpGet("{tipoId:Guid}/plantas")]
+        //public async Task<IActionResult> GetAssociatedPlantsAsync(Guid tipoId)
+        //{
+        //    try
+        //    {
+        //        var lasPlantasAsociadas = await _tipoService
+        //            .GetAssociatedPlantsAsync(tipoId);
 
-                return Ok(lasPlantasAsociadas);
-            }
-            catch (AppValidationException error)
-            {
-                return BadRequest(error.Message);
-            }
-        }
+        //        return Ok(lasPlantasAsociadas);
+        //    }
+        //    catch (AppValidationException error)
+        //    {
+        //        return BadRequest(error.Message);
+        //    }
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> CreateAsync(Tipo unTipo)
-        {
-            try
-            {
-                var tipoCreado = await _tipoService
-                    .CreateAsync(unTipo);
+        //[HttpPost]
+        //public async Task<IActionResult> CreateAsync(Tipo unTipo)
+        //{
+        //    try
+        //    {
+        //        var tipoCreado = await _tipoService
+        //            .CreateAsync(unTipo);
 
-                return Ok(tipoCreado);
-            }
-            catch (AppValidationException error)
-            {
-                return BadRequest($"Error de validación: {error.Message}");
-            }
-            catch (DbOperationException error)
-            {
-                return BadRequest($"Error de operacion en DB: {error.Message}");
-            }
-        }
+        //        return Ok(tipoCreado);
+        //    }
+        //    catch (AppValidationException error)
+        //    {
+        //        return BadRequest($"Error de validación: {error.Message}");
+        //    }
+        //    catch (DbOperationException error)
+        //    {
+        //        return BadRequest($"Error de operacion en DB: {error.Message}");
+        //    }
+        //}
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateAsync(Tipo unTipo)
-        {
-            try
-            {
-                var tipoActualizado = await _tipoService
-                    .UpdateAsync(unTipo);
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateAsync(Tipo unTipo)
+        //{
+        //    try
+        //    {
+        //        var tipoActualizado = await _tipoService
+        //            .UpdateAsync(unTipo);
 
-                return Ok(tipoActualizado);
-            }
-            catch (AppValidationException error)
-            {
-                return BadRequest($"Error de validación: {error.Message}");
-            }
-            catch (DbOperationException error)
-            {
-                return BadRequest($"Error de operacion en DB: {error.Message}");
-            }
-        }
+        //        return Ok(tipoActualizado);
+        //    }
+        //    catch (AppValidationException error)
+        //    {
+        //        return BadRequest($"Error de validación: {error.Message}");
+        //    }
+        //    catch (DbOperationException error)
+        //    {
+        //        return BadRequest($"Error de operacion en DB: {error.Message}");
+        //    }
+        //}
 
-        [HttpDelete("{tipoId:Guid}")]
-        public async Task<IActionResult> RemoveAsync(Guid tipoId)
-        {
-            try
-            {
-                var nombreTipoBorrado = await _tipoService
-                    .RemoveAsync(tipoId);
+        //[HttpDelete("{tipoId:Guid}")]
+        //public async Task<IActionResult> RemoveAsync(Guid tipoId)
+        //{
+        //    try
+        //    {
+        //        var nombreTipoBorrado = await _tipoService
+        //            .RemoveAsync(tipoId);
 
-                return Ok($"El tipo {nombreTipoBorrado} fue eliminado correctamente!");
-            }
-            catch (AppValidationException error)
-            {
-                return BadRequest($"Error de validación: {error.Message}");
-            }
-            catch (DbOperationException error)
-            {
-                return BadRequest($"Error de operacion en DB: {error.Message}");
-            }
-        }
+        //        return Ok($"El tipo {nombreTipoBorrado} fue eliminado correctamente!");
+        //    }
+        //    catch (AppValidationException error)
+        //    {
+        //        return BadRequest($"Error de validación: {error.Message}");
+        //    }
+        //    catch (DbOperationException error)
+        //    {
+        //        return BadRequest($"Error de operacion en DB: {error.Message}");
+        //    }
+        //}
     }
 }

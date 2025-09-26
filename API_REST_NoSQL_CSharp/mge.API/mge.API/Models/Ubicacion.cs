@@ -12,27 +12,27 @@ namespace mge.API.Models
         public string? Id { get; set; } = string.Empty;
 
         [JsonPropertyName("codigoDepartamento")]
-        [BsonElement("codigoDepartamento")]
+        [BsonElement("codigo_departamento")]
         [BsonRepresentation(BsonType.String)]
         public string? CodigoDepartamento { get; set; } = string.Empty;
 
         [JsonPropertyName("isoDepartamento")]
-        [BsonElement("isoDepartamento")]
+        [BsonElement("iso_departamento")]
         [BsonRepresentation(BsonType.String)]
         public string? IsoDepartamento { get; set; } = string.Empty;
 
         [JsonPropertyName("nombreDepartamento")]
-        [BsonElement("nombreDepartamento")]
+        [BsonElement("nombre_departamento")]
         [BsonRepresentation(BsonType.String)]
         public string? NombreDepartamento { get; set; } = string.Empty;
 
         [JsonPropertyName("codigoMunicipio")]
-        [BsonElement("codigoMunicipio")]
+        [BsonElement("codigo_municipio")]
         [BsonRepresentation(BsonType.String)]
         public string? CodigoMunicipio { get; set; } = string.Empty;
 
         [JsonPropertyName("nombreMunicipio")]
-        [BsonElement("nombreMunicipio")]
+        [BsonElement("nombre_municipio")]
         [BsonRepresentation(BsonType.String)]
         public string? NombreMunicipio { get; set; } = string.Empty;
     }

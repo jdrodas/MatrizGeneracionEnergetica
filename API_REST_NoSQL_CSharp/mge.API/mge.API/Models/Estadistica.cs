@@ -4,19 +4,19 @@ namespace mge.API.Models
 {
     public class Estadistica
     {
-        [JsonPropertyName("tipos")]
+        [JsonPropertyName("totalTipos")]
         public long Tipos { get; set; } = 0;
 
-        [JsonPropertyName("plantas")]
+        [JsonPropertyName("totalPlantas")]
         public long Plantas { get; set; } = 0;
 
-        [JsonPropertyName("eventos")]
+        [JsonPropertyName("totalEventos")]
         public long Eventos { get; set; } = 0;
 
-        [JsonPropertyName("municipios")]
+        [JsonPropertyName("totalMunicipios")]
         public long Municipios { get; set; } = 0;
 
-        [JsonPropertyName("departamentos")]
+        [JsonPropertyName("totalDepartamentos")]
         public long Departamentos { get; set; } = 0;
     }
 }

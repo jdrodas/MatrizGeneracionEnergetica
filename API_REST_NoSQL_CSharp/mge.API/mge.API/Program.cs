@@ -19,9 +19,9 @@ builder.Services.AddSingleton<MongoDbContext>();
 // --- Configuración de los repositorios --
 // ***************************************************************************
 
-//builder.Services.AddScoped<ITipoRepository, TipoRepository>();
+builder.Services.AddScoped<ITipoRepository, TipoRepository>();
 //builder.Services.AddScoped<IPlantaRepository, PlantaRepository>();
-//builder.Services.AddScoped<IUbicacionRepository, UbicacionRepository>();
+builder.Services.AddScoped<IUbicacionRepository, UbicacionRepository>();
 //builder.Services.AddScoped<IProduccionRepository, ProduccionRepository>();
 builder.Services.AddScoped<IEstadisticaRepository, EstadisticaRepository>();
 
@@ -30,9 +30,9 @@ builder.Services.AddScoped<IEstadisticaRepository, EstadisticaRepository>();
 // --- Configuración de los servicios asociados  --
 // ***************************************************************************
 
-//builder.Services.AddScoped<TipoService>();
+builder.Services.AddScoped<TipoService>();
 //builder.Services.AddScoped<PlantaService>();
-//builder.Services.AddScoped<UbicacionService>();
+builder.Services.AddScoped<UbicacionService>();
 //builder.Services.AddScoped<ProduccionService>();
 builder.Services.AddScoped<EstadisticaService>();
 
