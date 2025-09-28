@@ -1,94 +1,78 @@
-﻿using Dapper;
-using mge.API.DbContexts;
-using mge.API.Exceptions;
+﻿using mge.API.DbContexts;
 using mge.API.Interfaces;
 using mge.API.Models;
-using Npgsql;
-using System.Data;
+using MongoDB.Driver;
 
 namespace mge.API.Repositories
 {
-    public class ProduccionRepository(PgsqlDbContext unContexto) : IProduccionRepository
+    public class ProduccionRepository(MongoDbContext unContexto) : IProduccionRepository
     {
-        private readonly PgsqlDbContext contextoDB = unContexto;
+        private readonly MongoDbContext contextoDB = unContexto;
 
         public async Task<List<Produccion>> GetAllAsync()
         {
-            var conexion = contextoDB.CreateConnection();
+            var conexion = contextoDB
+                .CreateConnection();
 
-            string sentenciaSQL =
-                "SELECT DISTINCT " +
-                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
-                "FROM core.v_info_produccion_planta " +
-                "ORDER BY fecha";
+            var coleccionProduccion = conexion
+                .GetCollection<Produccion>(contextoDB.ConfiguracionColecciones.ColeccionProduccion);
 
-            var resultadoProduccion = await conexion
-                .QueryAsync<Produccion>(sentenciaSQL, new DynamicParameters());
+            var losEventos = await coleccionProduccion
+                .Find(_ => true)
+                .SortBy(evento => evento.PlantaNombre)
+                .ToListAsync();
 
-            return [.. resultadoProduccion];
+            return losEventos;
         }
 
-        public async Task<List<Produccion>> GetAllByPlantIdAsync(Guid plantaId)
+        public async Task<List<Produccion>> GetAllByPlantIdAsync(string plantaId)
         {
-            var conexion = contextoDB.CreateConnection();
+            var conexion = contextoDB
+                .CreateConnection();
 
-            DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@plantaId", plantaId,
-                                    DbType.Guid, ParameterDirection.Input);
+            var coleccionProduccion = conexion
+                .GetCollection<Produccion>(contextoDB.ConfiguracionColecciones.ColeccionProduccion);
 
-            string sentenciaSQL =
-                "SELECT DISTINCT " +
-                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
-                "FROM core.v_info_produccion_planta " +
-                "WHERE planta_id = @plantaId ";
+            var losEventos = await coleccionProduccion
+                .Find(evento => evento.PlantaId == plantaId)
+                .SortBy(evento => evento.PlantaNombre)
+                .ToListAsync();
 
-            var resultadoProduccion = await conexion
-                .QueryAsync<Produccion>(sentenciaSQL, parametrosSentencia);
-
-            return [.. resultadoProduccion];
+            return losEventos;
         }
 
         public async Task<List<Produccion>> GetAllByDateIdAsync(string fechaId)
         {
-            var conexion = contextoDB.CreateConnection();
+            var conexion = contextoDB
+                .CreateConnection();
 
-            DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@fechaId", fechaId,
-                                    DbType.String, ParameterDirection.Input);
+            var coleccionProduccion = conexion
+                .GetCollection<Produccion>(contextoDB.ConfiguracionColecciones.ColeccionProduccion);
 
-            string sentenciaSQL =
-                "SELECT DISTINCT " +
-                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
-                "FROM core.v_info_produccion_planta " +
-                "WHERE to_char(fecha,'DD-MM-YYYY') = @fechaId " +
-                "ORDER BY fecha";
+            var losEventos = await coleccionProduccion
+                .Find(evento => evento.Fecha == fechaId)
+                .SortBy(evento => evento.PlantaNombre)
+                .ToListAsync();
 
-            var resultadoProduccion = await conexion
-                .QueryAsync<Produccion>(sentenciaSQL, parametrosSentencia);
-
-            return [.. resultadoProduccion];
+            return losEventos;
         }
 
-        public async Task<Produccion> GetByIdAsync(Guid eventoId)
+        public async Task<Produccion> GetByIdAsync(string eventoId)
         {
             Produccion unEvento = new();
-            var conexion = contextoDB.CreateConnection();
 
-            DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@eventoId", eventoId,
-                                    DbType.Guid, ParameterDirection.Input);
+            var conexion = contextoDB
+                .CreateConnection();
 
-            string sentenciaSQL =
-                "SELECT DISTINCT " +
-                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
-                "FROM core.v_info_produccion_planta " +
-                "WHERE id = @eventoId ";
+            var coleccionProduccion = conexion
+                .GetCollection<Produccion>(contextoDB.ConfiguracionColecciones.ColeccionProduccion);
 
-            var resultado = await conexion
-                .QueryAsync<Produccion>(sentenciaSQL, parametrosSentencia);
+            var resultado = await coleccionProduccion
+                .Find(evento => evento.Id == eventoId)
+                .FirstOrDefaultAsync();
 
-            if (resultado.Any())
-                unEvento = resultado.First();
+            if (resultado is not null)
+                unEvento = resultado;
 
             return unEvento;
         }
@@ -96,126 +80,122 @@ namespace mge.API.Repositories
         public async Task<Produccion> GetByDetailsAsync(Produccion unEvento)
         {
             Produccion eventoExistente = new();
-            var conexion = contextoDB.CreateConnection();
 
-            DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@plantaId", unEvento.PlantaId,
-                                    DbType.Guid, ParameterDirection.Input);
-            parametrosSentencia.Add("@valor", unEvento.Valor,
-                                    DbType.Double, ParameterDirection.Input);
-            parametrosSentencia.Add("@fecha", unEvento.Fecha,
-                                    DbType.String, ParameterDirection.Input);
+            var conexion = contextoDB
+                .CreateConnection();
 
-            string sentenciaSQL =
-                "SELECT DISTINCT " +
-                "id, planta_id plantaId, planta_nombre plantaNombre, valor, to_char(fecha,'DD-MM-YYYY') fecha " +
-                "FROM core.v_info_produccion_planta " +
-                "WHERE planta_id = @plantaId " +
-                "AND to_char(fecha,'DD-MM-YYYY') = @fecha " +
-                "AND valor = @valor";
+            var coleccionProduccion = conexion
+                .GetCollection<Produccion>(contextoDB.ConfiguracionColecciones.ColeccionProduccion);
 
-            var resultado = await conexion
-                .QueryAsync<Produccion>(sentenciaSQL, parametrosSentencia);
+            var builder = Builders<Produccion>.Filter;
+            var filtro = builder.And(
+                builder.Eq(evento => evento.PlantaId, unEvento.PlantaId),
+                builder.Eq(evento => evento.Valor, unEvento.Valor),
+                builder.Eq(evento => evento.Fecha, unEvento.Fecha));
 
-            if (resultado.Any())
-                eventoExistente = resultado.First();
+            var resultado = await coleccionProduccion
+                .Find(filtro)
+                .FirstOrDefaultAsync();
+
+            if (resultado is not null)
+                eventoExistente = resultado;
 
             return eventoExistente;
         }
 
-        public async Task<bool> CreateAsync(Produccion unEvento)
-        {
-            bool resultadoAccion = false;
+        //public async Task<bool> CreateAsync(Produccion unEvento)
+        //{
+        //    bool resultadoAccion = false;
 
-            try
-            {
-                var conexion = contextoDB.CreateConnection();
+        //    try
+        //    {
+        //        var conexion = contextoDB.CreateConnection();
 
-                string procedimiento = "core.p_inserta_produccion";
-                var parametros = new
-                {
-                    p_planta_id = unEvento.PlantaId,
-                    p_fecha = unEvento.Fecha,
-                    p_valor = unEvento.Valor
-                };
+        //        string procedimiento = "core.p_inserta_produccion";
+        //        var parametros = new
+        //        {
+        //            p_planta_id = unEvento.PlantaId,
+        //            p_fecha = unEvento.Fecha,
+        //            p_valor = unEvento.Valor
+        //        };
 
-                var cantidad_filas = await conexion.ExecuteAsync(
-                    procedimiento,
-                    parametros,
-                    commandType: CommandType.StoredProcedure);
+        //        var cantidad_filas = await conexion.ExecuteAsync(
+        //            procedimiento,
+        //            parametros,
+        //            commandType: CommandType.StoredProcedure);
 
-                if (cantidad_filas != 0)
-                    resultadoAccion = true;
-            }
-            catch (NpgsqlException error)
-            {
-                throw new DbOperationException(error.Message);
-            }
+        //        if (cantidad_filas != 0)
+        //            resultadoAccion = true;
+        //    }
+        //    catch (NpgsqlException error)
+        //    {
+        //        throw new DbOperationException(error.Message);
+        //    }
 
-            return resultadoAccion;
-        }
+        //    return resultadoAccion;
+        //}
 
-        public async Task<bool> UpdateAsync(Produccion unEvento)
-        {
-            bool resultadoAccion = false;
+        //public async Task<bool> UpdateAsync(Produccion unEvento)
+        //{
+        //    bool resultadoAccion = false;
 
-            try
-            {
-                var conexion = contextoDB.CreateConnection();
+        //    try
+        //    {
+        //        var conexion = contextoDB.CreateConnection();
 
-                string procedimiento = "core.p_actualiza_produccion";
-                var parametros = new
-                {
-                    p_id = unEvento.Id,
-                    p_planta_id = unEvento.PlantaId,
-                    p_fecha = unEvento.Fecha,
-                    p_valor = unEvento.Valor
-                };
+        //        string procedimiento = "core.p_actualiza_produccion";
+        //        var parametros = new
+        //        {
+        //            p_id = unEvento.Id,
+        //            p_planta_id = unEvento.PlantaId,
+        //            p_fecha = unEvento.Fecha,
+        //            p_valor = unEvento.Valor
+        //        };
 
-                var cantidad_filas = await conexion.ExecuteAsync(
-                    procedimiento,
-                    parametros,
-                    commandType: CommandType.StoredProcedure);
+        //        var cantidad_filas = await conexion.ExecuteAsync(
+        //            procedimiento,
+        //            parametros,
+        //            commandType: CommandType.StoredProcedure);
 
-                if (cantidad_filas != 0)
-                    resultadoAccion = true;
-            }
-            catch (NpgsqlException error)
-            {
-                throw new DbOperationException(error.Message);
-            }
+        //        if (cantidad_filas != 0)
+        //            resultadoAccion = true;
+        //    }
+        //    catch (NpgsqlException error)
+        //    {
+        //        throw new DbOperationException(error.Message);
+        //    }
 
-            return resultadoAccion;
-        }
+        //    return resultadoAccion;
+        //}
 
-        public async Task<bool> RemoveAsync(Guid eventoId)
-        {
-            bool resultadoAccion = false;
+        //public async Task<bool> RemoveAsync(Guid eventoId)
+        //{
+        //    bool resultadoAccion = false;
 
-            try
-            {
-                var conexion = contextoDB.CreateConnection();
+        //    try
+        //    {
+        //        var conexion = contextoDB.CreateConnection();
 
-                string procedimiento = "core.p_elimina_produccion";
-                var parametros = new
-                {
-                    p_id = eventoId
-                };
+        //        string procedimiento = "core.p_elimina_produccion";
+        //        var parametros = new
+        //        {
+        //            p_id = eventoId
+        //        };
 
-                var cantidad_filas = await conexion.ExecuteAsync(
-                    procedimiento,
-                    parametros,
-                    commandType: CommandType.StoredProcedure);
+        //        var cantidad_filas = await conexion.ExecuteAsync(
+        //            procedimiento,
+        //            parametros,
+        //            commandType: CommandType.StoredProcedure);
 
-                if (cantidad_filas != 0)
-                    resultadoAccion = true;
-            }
-            catch (NpgsqlException error)
-            {
-                throw new DbOperationException(error.Message);
-            }
+        //        if (cantidad_filas != 0)
+        //            resultadoAccion = true;
+        //    }
+        //    catch (NpgsqlException error)
+        //    {
+        //        throw new DbOperationException(error.Message);
+        //    }
 
-            return resultadoAccion;
-        }
+        //    return resultadoAccion;
+        //}
     }
 }

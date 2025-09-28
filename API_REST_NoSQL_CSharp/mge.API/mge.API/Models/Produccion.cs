@@ -12,12 +12,12 @@ namespace mge.API.Models
         public string? Id { get; set; } = string.Empty;
 
         [JsonPropertyName("plantaId")]
-        [BsonElement("plantaId")]
+        [BsonElement("planta_id")]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? PlantaId { get; set; } = string.Empty;
 
         [JsonPropertyName("plantaNombre")]
-        [BsonElement("plantaNombre")]
+        [BsonElement("planta_nombre")]
         [BsonRepresentation(BsonType.String)]
         public string? PlantaNombre { get; set; } = string.Empty;
 

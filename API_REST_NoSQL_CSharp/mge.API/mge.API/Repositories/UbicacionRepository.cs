@@ -2,7 +2,6 @@
 using mge.API.Exceptions;
 using mge.API.Interfaces;
 using mge.API.Models;
-using System.Data;
 using MongoDB.Driver;
 
 namespace mge.API.Repositories
@@ -13,8 +12,11 @@ namespace mge.API.Repositories
 
         public async Task<List<Ubicacion>> GetAllAsync()
         {
-            var conexion = contextoDB.CreateConnection();
-            var coleccionUbicaciones = conexion.GetCollection<Ubicacion>(contextoDB.ConfiguracionColecciones.ColeccionUbicaciones);
+            var conexion = contextoDB
+                .CreateConnection();
+
+            var coleccionUbicaciones = conexion
+                .GetCollection<Ubicacion>(contextoDB.ConfiguracionColecciones.ColeccionUbicaciones);
 
             var lasUbicaciones = await coleccionUbicaciones
                 .Find(_ => true)
@@ -24,98 +26,83 @@ namespace mge.API.Repositories
             return lasUbicaciones;
         }
 
-        //public async Task<List<Ubicacion>> GetAllByDeptoIsoAsync(string deptoIso)
-        //{
-        //    var conexion = contextoDB.CreateConnection();
+        public async Task<List<Ubicacion>> GetAllByDeptoIsoAsync(string deptoIso)
+        {
+            var conexion = contextoDB
+                .CreateConnection();
 
-        //    DynamicParameters parametrosSentencia = new();
-        //    parametrosSentencia.Add("@deptoIso", deptoIso,
-        //                            DbType.String, ParameterDirection.Input);
+            var coleccionUbicaciones = conexion
+                .GetCollection<Ubicacion>(contextoDB.ConfiguracionColecciones.ColeccionUbicaciones);
 
-        //    string sentenciaSQL =
-        //        "SELECT DISTINCT id, codigo_departamento codigoDepartamento, iso_departamento isoDepartamento, " +
-        //        "nombre_departamento nombreDepartamento, codigo_municipio codigoMunicipio, " +
-        //        "nombre_municipio nombreMunicipio " +
-        //        "FROM core.ubicaciones " +
-        //        "WHERE LOWER(iso_departamento) = LOWER(@deptoIso) " +
-        //        "ORDER BY nombre_municipio";
+            var lasUbicaciones = await coleccionUbicaciones
+                .Find(ubicacion => ubicacion.IsoDepartamento!.ToLower() == deptoIso.ToLower())
+                .SortBy(ubicacion => ubicacion.NombreMunicipio)
+                .ToListAsync();
 
-        //    var resultadoUbicaciones = await conexion
-        //        .QueryAsync<Ubicacion>(sentenciaSQL, parametrosSentencia);
+            return lasUbicaciones;
+        }
 
-        //    return [.. resultadoUbicaciones];
-        //}
+        public async Task<Ubicacion> GetByIdAsync(string tipoId)
+        {
+            Ubicacion unaUbicacion = new();
 
-        //public async Task<Ubicacion> GetByIdAsync(Guid ubicacionId)
-        //{
-        //    Ubicacion unaUbicacion = new();
-        //    var conexion = contextoDB.CreateConnection();
+            var conexion = contextoDB
+                .CreateConnection();
 
-        //    DynamicParameters parametrosSentencia = new();
-        //    parametrosSentencia.Add("@ubicacionId", ubicacionId,
-        //                            DbType.Guid, ParameterDirection.Input);
+            var coleccionUbicaciones = conexion
+                .GetCollection<Ubicacion>(contextoDB.ConfiguracionColecciones.ColeccionUbicaciones);
 
-        //    string sentenciaSQL =
-        //        "SELECT DISTINCT id, codigo_departamento codigoDepartamento, iso_departamento isoDepartamento, " +
-        //        "nombre_departamento nombreDepartamento, codigo_municipio codigoMunicipio, " +
-        //        "nombre_municipio nombreMunicipio " +
-        //        "FROM core.ubicaciones " +
-        //        "WHERE id = @ubicacionId";
+            var resultado = await coleccionUbicaciones
+                .Find(tipo => tipo.Id == tipoId)
+                .FirstOrDefaultAsync();
 
-        //    var resultado = await conexion
-        //        .QueryAsync<Ubicacion>(sentenciaSQL, parametrosSentencia);
+            if (resultado is not null)
+                unaUbicacion = resultado;
 
-        //    if (resultado.Any())
-        //        unaUbicacion = resultado.First();
+            return unaUbicacion;
+        }
 
-        //    return unaUbicacion;
-        //}
+        public async Task<Ubicacion> GetByNameAsync(string ubicacionNombre)
+        {
+            Ubicacion unaUbicacion = new(); ;
 
-        //public async Task<Ubicacion> GetByNameAsync(string ubicacionNombre)
-        //{
-        //    Ubicacion unaUbicacion = new();
-        //    var conexion = contextoDB.CreateConnection();
+            string[] datosUbicacion = ubicacionNombre.Split(',');
 
-        //    string[] datosUbicacion = ubicacionNombre.Split(',');
+            var conexion = contextoDB
+                .CreateConnection();
 
-        //    DynamicParameters parametrosSentencia = new();
-        //    parametrosSentencia.Add("@nombreMunicipio", datosUbicacion[0].Trim(),
-        //                            DbType.String, ParameterDirection.Input);
+            var coleccionUbicaciones = conexion
+                .GetCollection<Ubicacion>(contextoDB.ConfiguracionColecciones.ColeccionUbicaciones);
 
-        //    parametrosSentencia.Add("@nombreDepartamento", datosUbicacion[1].Trim(),
-        //                            DbType.String, ParameterDirection.Input);
+            var builder = Builders<Ubicacion>.Filter;
+            var filtro = builder.And(
+                builder.Eq(ubicacion => ubicacion.NombreMunicipio!.ToLower(), datosUbicacion[0].Trim().ToLower()),
+                builder.Eq(ubicacion => ubicacion.NombreDepartamento!.ToLower(), datosUbicacion[1].Trim().ToLower()));
 
-        //    string sentenciaSQL =
-        //        "SELECT DISTINCT id, codigo_departamento codigoDepartamento, iso_departamento isoDepartamento, " +
-        //        "nombre_departamento nombreDepartamento, codigo_municipio codigoMunicipio, " +
-        //        "nombre_municipio nombreMunicipio " +
-        //        "FROM core.ubicaciones " +
-        //        "WHERE LOWER(nombre_municipio) = LOWER(@nombreMunicipio) " +
-        //        "AND  LOWER(nombre_departamento) = LOWER(@nombreDepartamento)";
+            var resultado = await coleccionUbicaciones
+                .Find(filtro)
+                .FirstOrDefaultAsync();
 
-        //    var resultado = await conexion
-        //        .QueryAsync<Ubicacion>(sentenciaSQL, parametrosSentencia);
+            if (resultado is not null)
+                unaUbicacion = resultado;
 
-        //    if (resultado.Any())
-        //        unaUbicacion = resultado.First();
+            return unaUbicacion;
+        }
 
-        //    return unaUbicacion;
-        //}
+        public async Task<Ubicacion> GetByDetailsAsync(string ubicacionId, string ubicacionNombre)
+        {
+            Ubicacion ubicacionExistente = new();
 
-        //public async Task<Ubicacion> GetByDetailsAsync(Guid ubicacionId, string ubicacionNombre)
-        //{
-        //    Ubicacion ubicacionExistente = new();
+            if (string.IsNullOrEmpty(ubicacionNombre) && string.IsNullOrEmpty(ubicacionId))
+                throw new AppValidationException("Datos insuficientes para obtener la ubicación");
 
-        //    if (string.IsNullOrEmpty(ubicacionNombre) && ubicacionId == Guid.Empty)
-        //        throw new AppValidationException("Datos insuficientes para obtener la ubicación");
+            if (!string.IsNullOrEmpty(ubicacionNombre) && ubicacionId == string.Empty)
+                ubicacionExistente = await GetByNameAsync(ubicacionNombre);
 
-        //    if (!string.IsNullOrEmpty(ubicacionNombre) && ubicacionId == Guid.Empty)
-        //        ubicacionExistente = await GetByNameAsync(ubicacionNombre);
+            if (!string.IsNullOrEmpty(ubicacionId))
+                ubicacionExistente = await GetByIdAsync(ubicacionId);
 
-        //    if (ubicacionId != Guid.Empty)
-        //        ubicacionExistente = await GetByIdAsync(ubicacionId);
-
-        //    return ubicacionExistente;
-        //}
+            return ubicacionExistente;
+        }
     }
 }

@@ -3,7 +3,6 @@ using mge.API.Exceptions;
 using mge.API.Interfaces;
 using mge.API.Models;
 using MongoDB.Driver;
-using System.Data;
 
 namespace mge.API.Repositories
 {
@@ -13,8 +12,11 @@ namespace mge.API.Repositories
 
         public async Task<List<Tipo>> GetAllAsync()
         {
-            var conexion = contextoDB.CreateConnection();
-            var coleccionTipos = conexion.GetCollection<Tipo>(contextoDB.ConfiguracionColecciones.ColeccionTipos);
+            var conexion = contextoDB
+                .CreateConnection();
+
+            var coleccionTipos = conexion
+                .GetCollection<Tipo>(contextoDB.ConfiguracionColecciones.ColeccionTipos);
 
             var losTipos = await coleccionTipos
                 .Find(_ => true)
@@ -24,96 +26,87 @@ namespace mge.API.Repositories
             return losTipos;
         }
 
-        //public async Task<Tipo> GetByIdAsync(Guid tipoId)
-        //{
-        //    Tipo unTipo = new();
-        //    var conexion = contextoDB.CreateConnection();
+        public async Task<Tipo> GetByIdAsync(string tipoId)
+        {
+            Tipo unTIpo = new();
 
-        //    DynamicParameters parametrosSentencia = new();
-        //    parametrosSentencia.Add("@tipoId", tipoId,
-        //                            DbType.Guid, ParameterDirection.Input);
+            var conexion = contextoDB
+                .CreateConnection();
 
-        //    string sentenciaSQL =
-        //        "SELECT DISTINCT id, nombre, descripcion, esrenovable " +
-        //        "FROM core.tipos " +
-        //        "WHERE id = @tipoId";
+            var coleccionTipos = conexion
+                .GetCollection<Tipo>(contextoDB.ConfiguracionColecciones.ColeccionTipos);
 
-        //    var resultado = await conexion
-        //        .QueryAsync<Tipo>(sentenciaSQL, parametrosSentencia);
+            var resultado = await coleccionTipos
+                .Find(tipo => tipo.Id == tipoId)
+                .FirstOrDefaultAsync();
 
-        //    if (resultado.Any())
-        //        unTipo = resultado.First();
+            if (resultado is not null)
+                unTIpo = resultado;
 
-        //    return unTipo;
-        //}
+            return unTIpo;
+        }
 
-        //public async Task<Tipo> GetByNameAsync(string tipoNombre)
-        //{
-        //    Tipo unTipo = new();
-        //    var conexion = contextoDB.CreateConnection();
+        public async Task<Tipo> GetByNameAsync(string tipoNombre)
+        {
+            Tipo unTipo = new();
 
-        //    DynamicParameters parametrosSentencia = new();
-        //    parametrosSentencia.Add("@tipoNombre", tipoNombre,
-        //                            DbType.String, ParameterDirection.Input);
+            var conexion = contextoDB
+                .CreateConnection();
 
-        //    string sentenciaSQL =
-        //        "SELECT DISTINCT id, nombre, descripcion, esrenovable " +
-        //        "FROM core.tipos " +
-        //        "WHERE nombre = @tipoNombre";
+            var coleccionTipos = conexion
+                .GetCollection<Tipo>(contextoDB.ConfiguracionColecciones.ColeccionTipos);
 
-        //    var resultado = await conexion
-        //        .QueryAsync<Tipo>(sentenciaSQL, parametrosSentencia);
+            var resultado = await coleccionTipos
+                .Find(tipo => tipo.Nombre!.ToLower() == tipoNombre.ToLower())
+                .FirstOrDefaultAsync();
 
-        //    if (resultado.Any())
-        //        unTipo = resultado.First();
+            if (resultado is not null)
+                unTipo = resultado;
 
-        //    return unTipo;
-        //}
+            return unTipo;
+        }
 
-        //public async Task<Tipo> GetByDetailsAsync(Tipo unTipo)
-        //{
-        //    Tipo tipoExistente = new();
-        //    var conexion = contextoDB.CreateConnection();
+        public async Task<Tipo> GetByDetailsAsync(Tipo unTipo)
+        {
+            Tipo tipoExistente = new();
 
-        //    DynamicParameters parametrosSentencia = new();
-        //    parametrosSentencia.Add("@tipoNombre", unTipo.Nombre,
-        //                            DbType.String, ParameterDirection.Input);
-        //    parametrosSentencia.Add("@tipoDescripcion", unTipo.Descripcion,
-        //                DbType.String, ParameterDirection.Input);
-        //    parametrosSentencia.Add("@tipoEsRenovable", unTipo.EsRenovable,
-        //                DbType.Boolean, ParameterDirection.Input);
+            var conexion = contextoDB
+                .CreateConnection();
 
-        //    string sentenciaSQL =
-        //        "SELECT DISTINCT id, nombre, descripcion, esrenovable " +
-        //        "FROM core.tipos " +
-        //        "WHERE LOWER(nombre) = LOWER(@tipoNombre) " +
-        //        "AND LOWER(descripcion) = LOWER(@tipoDescripcion) " +
-        //        "AND esrenovable = @tipoEsRenovable";
+            var coleccionTipos = conexion
+                .GetCollection<Tipo>(contextoDB.ConfiguracionColecciones.ColeccionTipos);
 
-        //    var resultado = await conexion
-        //        .QueryAsync<Tipo>(sentenciaSQL, parametrosSentencia);
+            var builder = Builders<Tipo>.Filter;
+            var filtro = builder.And(
+                builder.Eq(tipo => tipo.Nombre!.ToLower(), unTipo.Nombre!.ToLower()),
+                builder.Eq(tipo => tipo.Descripcion!.ToLower(), unTipo.Descripcion!.ToLower()),
+                builder.Eq(tipo => tipo.EsRenovable, unTipo.EsRenovable));
 
-        //    if (resultado.Any())
-        //        tipoExistente = resultado.First();
+            var resultado = await coleccionTipos
+                .Find(filtro)
+                .FirstOrDefaultAsync();
 
-        //    return tipoExistente;
-        //}
+            if (resultado is not null)
+                tipoExistente = resultado;
 
-        //public async Task<Tipo> GetByDetailsAsync(Guid tipoId, string tipoNombre)
-        //{
-        //    Tipo tipoExistente = new();
+            return tipoExistente;
+        }
 
-        //    if (string.IsNullOrEmpty(tipoNombre) && tipoId == Guid.Empty)
-        //        throw new AppValidationException("Datos insuficientes para obtener el tipo");
+        public async Task<Tipo> GetByDetailsAsync(string tipoId, string tipoNombre)
+        {
+            Tipo tipoExistente = new();
 
-        //    if (!string.IsNullOrEmpty(tipoNombre) && tipoId == Guid.Empty)
-        //        tipoExistente = await GetByNameAsync(tipoNombre!);
+            if (string.IsNullOrEmpty(tipoNombre) && string.IsNullOrEmpty(tipoId))
+                throw new AppValidationException("Datos insuficientes para obtener el tipo");
 
-        //    if (tipoId != Guid.Empty)
-        //        tipoExistente = await GetByIdAsync(tipoId);
+            if (!string.IsNullOrEmpty(tipoNombre) && string.IsNullOrEmpty(tipoId))
+                tipoExistente = await GetByNameAsync(tipoNombre!);
 
-        //    return tipoExistente;
-        //}
+            if (!string.IsNullOrEmpty(tipoId))
+                tipoExistente = await GetByIdAsync(tipoId);
+
+            return tipoExistente;
+        }
 
         //public async Task<bool> CreateAsync(Tipo unTipo)
         //{

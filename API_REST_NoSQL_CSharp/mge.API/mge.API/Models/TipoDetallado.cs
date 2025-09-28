@@ -2,7 +2,7 @@
 
 namespace mge.API.Models
 {
-    public class TipoDetallado:Tipo
+    public class TipoDetallado : Tipo
     {
         [JsonPropertyName("plantas")]
         public List<Planta>? Plantas { get; set; } = null;

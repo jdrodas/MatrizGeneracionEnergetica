@@ -1,14 +1,13 @@
 ﻿using mge.API.Exceptions;
 using mge.API.Interfaces;
 using mge.API.Models;
-using mge.API.Repositories;
 
 namespace mge.API.Services
 {
-    public class TipoService(ITipoRepository tipoRepository)//, IPlantaRepository plantaRepository)
+    public class TipoService(ITipoRepository tipoRepository, IPlantaRepository plantaRepository)
     {
         private readonly ITipoRepository _tipoRepository = tipoRepository;
-        //private readonly IPlantaRepository _plantaRepository = plantaRepository;
+        private readonly IPlantaRepository _plantaRepository = plantaRepository;
 
         public async Task<List<Tipo>> GetAllAsync()
         {
@@ -16,57 +15,55 @@ namespace mge.API.Services
                 .GetAllAsync();
         }
 
-        //public async Task<Tipo> GetByIdAsync(Guid tipoId)
-        //{
-        //    Tipo unTipo = await _tipoRepository
-        //        .GetByIdAsync(tipoId);
+        public async Task<Tipo> GetByIdAsync(string tipoId)
+        {
+            Tipo unTipo = await _tipoRepository
+                .GetByIdAsync(tipoId);
 
-        //    if (unTipo.Id == Guid.Empty)
-        //        throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
+            if (string.IsNullOrEmpty(unTipo.Id))
+                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
 
-        //    return unTipo;
-        //}
+            return unTipo;
+        }
 
-        //public async Task<TipoDetallado> GetTypeDetailsByIdAsync(Guid tipoId)
-        //{
-        //    Tipo unTipo = await _tipoRepository
-        //        .GetByIdAsync(tipoId);
+        public async Task<TipoDetallado> GetTypeDetailsByIdAsync(string tipoId)
+        {
+            Tipo unTipo = await _tipoRepository
+                .GetByIdAsync(tipoId);
 
-        //    if (unTipo.Id == Guid.Empty)
-        //        throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
+            if (string.IsNullOrEmpty(unTipo.Id))
+                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
 
-        //    TipoDetallado unTipoDetallado = new()
-        //    {
-        //        Id = unTipo.Id,
-        //        Nombre = unTipo.Nombre,
-        //        Descripcion = unTipo.Descripcion,
-        //        EsRenovable = unTipo.EsRenovable,
-        //        Plantas = await _plantaRepository.GetAllByTypeIdAsync(tipoId)
-        //    };
+            TipoDetallado unTipoDetallado = new()
+            {
+                Id = unTipo.Id,
+                Nombre = unTipo.Nombre,
+                Descripcion = unTipo.Descripcion,
+                EsRenovable = unTipo.EsRenovable,
+                Plantas = await _plantaRepository.GetAllByTypeIdAsync(tipoId)
+            };
 
-        //    unTipoDetallado.TotalPlantas = unTipoDetallado.Plantas.Count;
+            unTipoDetallado.TotalPlantas = unTipoDetallado.Plantas.Count;
 
-        //    return unTipoDetallado;
-        //}
+            return unTipoDetallado;
+        }
 
+        public async Task<List<Planta>> GetAssociatedPlantsAsync(string tipoId)
+        {
+            Tipo unTipo = await _tipoRepository
+                .GetByIdAsync(tipoId);
 
+            if (string.IsNullOrEmpty(unTipo.Id))
+                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
 
-        //public async Task<List<Planta>> GetAssociatedPlantsAsync(Guid tipoId)
-        //{
-        //    Tipo unTipo = await _tipoRepository
-        //        .GetByIdAsync(tipoId);
+            var plantasAsociadas = await _plantaRepository
+                .GetAllByTypeIdAsync(tipoId);
 
-        //    if (unTipo.Id == Guid.Empty)
-        //        throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
+            if (plantasAsociadas.Count == 0)
+                throw new AppValidationException($"Tipo {unTipo.Nombre} no tiene plantas asociadas");
 
-        //    var plantasAsociadas = await _plantaRepository
-        //        .GetAllByTypeIdAsync(tipoId);
-
-        //    if (plantasAsociadas.Count == 0)
-        //        throw new AppValidationException($"Tipo {unTipo.Nombre} no tiene plantas asociadas");
-
-        //    return plantasAsociadas;
-        //}
+            return plantasAsociadas;
+        }
 
         //public async Task<Tipo> CreateAsync(Tipo unTipo)
         //{

@@ -1,103 +1,78 @@
-﻿using Dapper;
-using mge.API.DbContexts;
-using mge.API.Exceptions;
+﻿using mge.API.DbContexts;
 using mge.API.Interfaces;
 using mge.API.Models;
-using Npgsql;
-using System.Data;
+using MongoDB.Driver;
 
 namespace mge.API.Repositories
 {
-    public class PlantaRepository(PgsqlDbContext unContexto) : IPlantaRepository
+    public class PlantaRepository(MongoDbContext unContexto) : IPlantaRepository
     {
-        private readonly PgsqlDbContext contextoDB = unContexto;
+        private readonly MongoDbContext contextoDB = unContexto;
 
         public async Task<List<Planta>> GetAllAsync()
         {
-            var conexion = contextoDB.CreateConnection();
+            var conexion = contextoDB
+                .CreateConnection();
 
-            string sentenciaSQL =
-                "SELECT DISTINCT " +
-                "planta_id id, planta_nombre nombre, capacidad, " +
-                "ubicacion_id ubicacionId, ubicacion_nombre ubicacionNombre, " +
-                "tipo_id tipoId, tipo_nombre tipoNombre " +
-                "FROM core.v_info_plantas " +
-                "ORDER BY planta_nombre";
+            var coleccionPlantas = conexion
+                .GetCollection<Planta>(contextoDB.ConfiguracionColecciones.ColeccionPlantas);
 
-            var resultadoPlantas = await conexion
-                .QueryAsync<Planta>(sentenciaSQL, new DynamicParameters());
+            var lasPlantas = await coleccionPlantas
+                .Find(_ => true)
+                .SortBy(planta => planta.Nombre)
+                .ToListAsync();
 
-            return [.. resultadoPlantas];
+            return lasPlantas;
         }
 
-        public async Task<List<Planta>> GetAllByLocationIdAsync(Guid ubicacionId)
+        public async Task<List<Planta>> GetAllByLocationIdAsync(string ubicacionId)
         {
-            var conexion = contextoDB.CreateConnection();
+            var conexion = contextoDB
+                .CreateConnection();
 
-            DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@ubicacionId", ubicacionId,
-                                    DbType.Guid, ParameterDirection.Input);
+            var coleccionPlantas = conexion
+                .GetCollection<Planta>(contextoDB.ConfiguracionColecciones.ColeccionPlantas);
 
-            string sentenciaSQL =
-                "SELECT DISTINCT " +
-                "planta_id id, planta_nombre nombre, capacidad, " +
-                "ubicacion_id ubicacionId, ubicacion_nombre ubicacionNombre, " +
-                "tipo_id tipoId, tipo_nombre tipoNombre " +
-                "FROM core.v_info_plantas " +
-                "WHERE ubicacion_id = @ubicacionId " +
-                "ORDER BY planta_nombre";
+            var lasPlantas = await coleccionPlantas
+                .Find(planta => planta.UbicacionId == ubicacionId)
+                .SortBy(Planta => Planta.Nombre)
+                .ToListAsync();
 
-            var resultadoPlantas = await conexion
-                .QueryAsync<Planta>(sentenciaSQL, parametrosSentencia);
-
-            return [.. resultadoPlantas];
+            return lasPlantas;
         }
 
-        public async Task<List<Planta>> GetAllByTypeIdAsync(Guid tipoId)
+        public async Task<List<Planta>> GetAllByTypeIdAsync(string tipoId)
         {
-            var conexion = contextoDB.CreateConnection();
+            var conexion = contextoDB
+                .CreateConnection();
 
-            DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@tipoId", tipoId,
-                                    DbType.Guid, ParameterDirection.Input);
+            var coleccionPlantas = conexion
+                .GetCollection<Planta>(contextoDB.ConfiguracionColecciones.ColeccionPlantas);
 
-            string sentenciaSQL =
-                "SELECT DISTINCT " +
-                "planta_id id, planta_nombre nombre, capacidad, " +
-                "ubicacion_id ubicacionId, ubicacion_nombre ubicacionNombre, " +
-                "tipo_id tipoId, tipo_nombre tipoNombre " +
-                "FROM core.v_info_plantas " +
-                "WHERE tipo_id = @tipoId " +
-                "ORDER BY planta_nombre";
+            var lasPlantas = await coleccionPlantas
+                .Find(planta => planta.TipoId == tipoId)
+                .SortBy(Planta => Planta.Nombre)
+                .ToListAsync();
 
-            var resultadoPlantas = await conexion
-                .QueryAsync<Planta>(sentenciaSQL, parametrosSentencia);
-
-            return [.. resultadoPlantas];
+            return lasPlantas;
         }
 
-        public async Task<Planta> GetByIdAsync(Guid plantaId)
+        public async Task<Planta> GetByIdAsync(string plantaId)
         {
             Planta unaPlanta = new();
-            var conexion = contextoDB.CreateConnection();
 
-            DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@plantaId", plantaId,
-                                    DbType.Guid, ParameterDirection.Input);
+            var conexion = contextoDB
+                .CreateConnection();
 
-            string sentenciaSQL =
-                "SELECT DISTINCT " +
-                "planta_id id, planta_nombre nombre, capacidad, " +
-                "ubicacion_id ubicacionId, ubicacion_nombre ubicacionNombre, " +
-                "tipo_id tipoId, tipo_nombre tipoNombre " +
-                "FROM core.v_info_plantas " +
-                "WHERE planta_id = @plantaId";
+            var coleccionPlantas = conexion
+                .GetCollection<Planta>(contextoDB.ConfiguracionColecciones.ColeccionPlantas);
 
-            var resultado = await conexion
-                .QueryAsync<Planta>(sentenciaSQL, parametrosSentencia);
+            var resultado = await coleccionPlantas
+                .Find(planta => planta.Id == plantaId)
+                .FirstOrDefaultAsync();
 
-            if (resultado.Any())
-                unaPlanta = resultado.First();
+            if (resultado is not null)
+                unaPlanta = resultado;
 
             return unaPlanta;
         }
@@ -105,34 +80,28 @@ namespace mge.API.Repositories
         public async Task<Planta> GetByNameAsync(string plantaNombre)
         {
             Planta unaPlanta = new();
-            var conexion = contextoDB.CreateConnection();
 
-            DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@plantaNombre", plantaNombre,
-                                    DbType.String, ParameterDirection.Input);
+            var conexion = contextoDB
+                .CreateConnection();
 
-            string sentenciaSQL =
-                "SELECT DISTINCT " +
-                "planta_id id, planta_nombre nombre, capacidad, " +
-                "ubicacion_id ubicacionId, ubicacion_nombre ubicacionNombre, " +
-                "tipo_id tipoId, tipo_nombre tipoNombre " +
-                "FROM core.v_info_plantas " +
-                "WHERE LOWER(planta_nombre) = LOWER(@plantaNombre)";
+            var coleccionPlantas = conexion
+                .GetCollection<Planta>(contextoDB.ConfiguracionColecciones.ColeccionPlantas);
 
-            var resultado = await conexion
-                .QueryAsync<Planta>(sentenciaSQL, parametrosSentencia);
+            var resultado = await coleccionPlantas
+                .Find(planta => planta.Nombre!.ToLower() == plantaNombre.ToLower())
+                .FirstOrDefaultAsync();
 
-            if (resultado.Any())
-                unaPlanta = resultado.First();
+            if (resultado is not null)
+                unaPlanta = resultado;
 
             return unaPlanta;
         }
 
-        public async Task<Planta> GetByDetailsAsync(string plantaNombre, Guid plantaId)
+        public async Task<Planta> GetByDetailsAsync(string plantaNombre, string plantaId)
         {
             Planta unaPlanta = new();
 
-            if (plantaId != Guid.Empty)
+            if (!string.IsNullOrEmpty(plantaId))
                 return await GetByIdAsync(plantaId);
 
             if (!string.IsNullOrEmpty(plantaNombre))
@@ -141,133 +110,127 @@ namespace mge.API.Repositories
             return unaPlanta;
         }
 
-        public async Task<Planta> GetByDetailsAsync(string plantaNombre, Guid ubicacionId, Guid tipoId)
+        public async Task<Planta> GetByDetailsAsync(string plantaNombre, string ubicacionId, string tipoId)
         {
             Planta unaPlanta = new();
-            var conexion = contextoDB.CreateConnection();
 
-            DynamicParameters parametrosSentencia = new();
-            parametrosSentencia.Add("@planta_nombre", plantaNombre,
-                                    DbType.String, ParameterDirection.Input);
-            parametrosSentencia.Add("@ubicacionId", ubicacionId,
-                                    DbType.Guid, ParameterDirection.Input);
-            parametrosSentencia.Add("@tipoId", tipoId,
-                                    DbType.Guid, ParameterDirection.Input);
+            var conexion = contextoDB
+                .CreateConnection();
 
-            string sentenciaSQL =
-                "SELECT DISTINCT " +
-                "planta_id id, planta_nombre nombre, capacidad, " +
-                "ubicacion_id ubicacionId, ubicacion_nombre ubicacionNombre, " +
-                "tipo_id tipoId, tipo_nombre tipoNombre " +
-                "FROM core.v_info_plantas " +
-                "WHERE LOWER(planta_nombre) = LOWER(@planta_nombre) " +
-                "AND ubicacion_id = @ubicacionId " +
-                "AND tipo_id = @tipoId";
+            var coleccionPlantas = conexion
+                .GetCollection<Planta>(contextoDB.ConfiguracionColecciones.ColeccionPlantas);
 
-            var resultado = await conexion
-                .QueryAsync<Planta>(sentenciaSQL, parametrosSentencia);
+            var builder = Builders<Planta>.Filter;
+            var filtro = builder.And(
+                builder.Eq(planta => planta.Nombre!.ToLower(), plantaNombre.ToLower()),
+                builder.Eq(planta => planta.UbicacionId, ubicacionId),
+                builder.Eq(planta => planta.TipoId, tipoId));
 
-            if (resultado.Any())
-                unaPlanta = resultado.First();
+            var resultado = await coleccionPlantas
+                .Find(filtro)
+                .FirstOrDefaultAsync();
+
+            if (resultado is not null)
+                unaPlanta = resultado;
 
             return unaPlanta;
         }
 
-        public async Task<bool> CreateAsync(Planta unaPlanta)
-        {
-            bool resultadoAccion = false;
+        //public async Task<bool> CreateAsync(Planta unaPlanta)
+        //{
+        //    bool resultadoAccion = false;
 
-            try
-            {
-                var conexion = contextoDB.CreateConnection();
+        //    try
+        //    {
+        //        var conexion = contextoDB.CreateConnection();
 
-                string procedimiento = "core.p_inserta_planta";
-                var parametros = new
-                {
-                    p_nombre = unaPlanta.Nombre,
-                    p_tipo_id = unaPlanta.TipoId,
-                    p_ubicacion_id = unaPlanta.UbicacionId,
-                    p_capacidad = unaPlanta.Capacidad
-                };
+        //        string procedimiento = "core.p_inserta_planta";
+        //        var parametros = new
+        //        {
+        //            p_nombre = unaPlanta.Nombre,
+        //            p_tipo_id = unaPlanta.TipoId,
+        //            p_ubicacion_id = unaPlanta.UbicacionId,
+        //            p_capacidad = unaPlanta.Capacidad
+        //        };
 
-                var cantidad_filas = await conexion.ExecuteAsync(
-                    procedimiento,
-                    parametros,
-                    commandType: CommandType.StoredProcedure);
+        //        var cantidad_filas = await conexion.ExecuteAsync(
+        //            procedimiento,
+        //            parametros,
+        //            commandType: CommandType.StoredProcedure);
 
-                if (cantidad_filas != 0)
-                    resultadoAccion = true;
-            }
-            catch (NpgsqlException error)
-            {
-                throw new DbOperationException(error.Message);
-            }
+        //        if (cantidad_filas != 0)
+        //            resultadoAccion = true;
+        //    }
+        //    catch (NpgsqlException error)
+        //    {
+        //        throw new DbOperationException(error.Message);
+        //    }
 
-            return resultadoAccion;
-        }
+        //    return resultadoAccion;
+        //}
 
-        public async Task<bool> UpdateAsync(Planta unaPlanta)
-        {
-            bool resultadoAccion = false;
+        //public async Task<bool> UpdateAsync(Planta unaPlanta)
+        //{
+        //    bool resultadoAccion = false;
 
-            try
-            {
-                var conexion = contextoDB.CreateConnection();
+        //    try
+        //    {
+        //        var conexion = contextoDB.CreateConnection();
 
-                string procedimiento = "core.p_actualiza_planta";
-                var parametros = new
-                {
-                    p_id = unaPlanta.Id,
-                    p_nombre = unaPlanta.Nombre,
-                    p_tipo_id = unaPlanta.TipoId,
-                    p_ubicacion_id = unaPlanta.UbicacionId,
-                    p_capacidad = unaPlanta.Capacidad
-                };
+        //        string procedimiento = "core.p_actualiza_planta";
+        //        var parametros = new
+        //        {
+        //            p_id = unaPlanta.Id,
+        //            p_nombre = unaPlanta.Nombre,
+        //            p_tipo_id = unaPlanta.TipoId,
+        //            p_ubicacion_id = unaPlanta.UbicacionId,
+        //            p_capacidad = unaPlanta.Capacidad
+        //        };
 
-                var cantidad_filas = await conexion.ExecuteAsync(
-                    procedimiento,
-                    parametros,
-                    commandType: CommandType.StoredProcedure);
+        //        var cantidad_filas = await conexion.ExecuteAsync(
+        //            procedimiento,
+        //            parametros,
+        //            commandType: CommandType.StoredProcedure);
 
-                if (cantidad_filas != 0)
-                    resultadoAccion = true;
-            }
-            catch (NpgsqlException error)
-            {
-                throw new DbOperationException(error.Message);
-            }
+        //        if (cantidad_filas != 0)
+        //            resultadoAccion = true;
+        //    }
+        //    catch (NpgsqlException error)
+        //    {
+        //        throw new DbOperationException(error.Message);
+        //    }
 
-            return resultadoAccion;
-        }
+        //    return resultadoAccion;
+        //}
 
-        public async Task<bool> RemoveAsync(Guid plantaId)
-        {
-            bool resultadoAccion = false;
+        //public async Task<bool> RemoveAsync(Guid plantaId)
+        //{
+        //    bool resultadoAccion = false;
 
-            try
-            {
-                var conexion = contextoDB.CreateConnection();
+        //    try
+        //    {
+        //        var conexion = contextoDB.CreateConnection();
 
-                string procedimiento = "core.p_elimina_planta";
-                var parametros = new
-                {
-                    p_id = plantaId
-                };
+        //        string procedimiento = "core.p_elimina_planta";
+        //        var parametros = new
+        //        {
+        //            p_id = plantaId
+        //        };
 
-                var cantidad_filas = await conexion.ExecuteAsync(
-                    procedimiento,
-                    parametros,
-                    commandType: CommandType.StoredProcedure);
+        //        var cantidad_filas = await conexion.ExecuteAsync(
+        //            procedimiento,
+        //            parametros,
+        //            commandType: CommandType.StoredProcedure);
 
-                if (cantidad_filas != 0)
-                    resultadoAccion = true;
-            }
-            catch (NpgsqlException error)
-            {
-                throw new DbOperationException(error.Message);
-            }
+        //        if (cantidad_filas != 0)
+        //            resultadoAccion = true;
+        //    }
+        //    catch (NpgsqlException error)
+        //    {
+        //        throw new DbOperationException(error.Message);
+        //    }
 
-            return resultadoAccion;
-        }
+        //    return resultadoAccion;
+        //}
     }
 }

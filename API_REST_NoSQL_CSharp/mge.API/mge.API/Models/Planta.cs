@@ -22,22 +22,22 @@ namespace mge.API.Models
         public double Capacidad { get; set; } = 0.0d;
 
         [JsonPropertyName("ubicacionId")]
-        [BsonElement("ubicacionId")]
+        [BsonElement("ubicacion_id")]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? UbicacionId { get; set; } = string.Empty;
 
         [JsonPropertyName("ubicacionNombre")]
-        [BsonElement("ubicacionNombre")]
+        [BsonElement("ubicacion_nombre")]
         [BsonRepresentation(BsonType.String)]
         public string? UbicacionNombre { get; set; } = string.Empty;
 
         [JsonPropertyName("tipoId")]
-        [BsonElement("tipoId")]
+        [BsonElement("tipo_id")]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? TipoId { get; set; } = string.Empty;
 
         [JsonPropertyName("tipoNombre")]
-        [BsonElement("tipoNombre")]
+        [BsonElement("tipo_nombre")]
         [BsonRepresentation(BsonType.String)]
         public string? TipoNombre { get; set; } = string.Empty;
 

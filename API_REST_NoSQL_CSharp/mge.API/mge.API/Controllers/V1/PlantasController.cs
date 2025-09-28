@@ -1,13 +1,12 @@
 ﻿using Asp.Versioning;
 using mge.API.Exceptions;
-using mge.API.Models;
 using mge.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace mge.API.Controllers.V2
+namespace mge.API.Controllers.V1
 {
     [ApiController]
-    [ApiVersion("2.0")]
+    [ApiVersion("1.0")]
     [Route("api/plantas")]
     public class PlantasController(PlantaService plantaService) : Controller
     {
@@ -22,8 +21,8 @@ namespace mge.API.Controllers.V2
             return Ok(lasPlantas);
         }
 
-        [HttpGet("{plantaId:Guid}")]
-        public async Task<IActionResult> GetByIdAsync(Guid plantaId)
+        [HttpGet("{plantaId:length(24)}")]
+        public async Task<IActionResult> GetByIdAsync(string plantaId)
         {
             try
             {
@@ -38,64 +37,64 @@ namespace mge.API.Controllers.V2
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateAsync(Planta unaPlanta)
-        {
-            try
-            {
-                var plantaCreada = await _plantaService
-                    .CreateAsync(unaPlanta);
+        //[HttpPost]
+        //public async Task<IActionResult> CreateAsync(Planta unaPlanta)
+        //{
+        //    try
+        //    {
+        //        var plantaCreada = await _plantaService
+        //            .CreateAsync(unaPlanta);
 
-                return Ok(plantaCreada);
-            }
-            catch (AppValidationException error)
-            {
-                return BadRequest($"Error de validación: {error.Message}");
-            }
-            catch (DbOperationException error)
-            {
-                return BadRequest($"Error de operacion en DB: {error.Message}");
-            }
-        }
+        //        return Ok(plantaCreada);
+        //    }
+        //    catch (AppValidationException error)
+        //    {
+        //        return BadRequest($"Error de validación: {error.Message}");
+        //    }
+        //    catch (DbOperationException error)
+        //    {
+        //        return BadRequest($"Error de operacion en DB: {error.Message}");
+        //    }
+        //}
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateAsync(Planta unaPlanta)
-        {
-            try
-            {
-                var plantaActualizada = await _plantaService
-                    .UpdateAsync(unaPlanta);
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateAsync(Planta unaPlanta)
+        //{
+        //    try
+        //    {
+        //        var plantaActualizada = await _plantaService
+        //            .UpdateAsync(unaPlanta);
 
-                return Ok(plantaActualizada);
-            }
-            catch (AppValidationException error)
-            {
-                return BadRequest($"Error de validación: {error.Message}");
-            }
-            catch (DbOperationException error)
-            {
-                return BadRequest($"Error de operacion en DB: {error.Message}");
-            }
-        }
+        //        return Ok(plantaActualizada);
+        //    }
+        //    catch (AppValidationException error)
+        //    {
+        //        return BadRequest($"Error de validación: {error.Message}");
+        //    }
+        //    catch (DbOperationException error)
+        //    {
+        //        return BadRequest($"Error de operacion en DB: {error.Message}");
+        //    }
+        //}
 
-        [HttpDelete("{plantaId:Guid}")]
-        public async Task<IActionResult> RemoveAsync(Guid plantaId)
-        {
-            try
-            {
-                var nombrePlantaBorrada = await _plantaService
-                    .RemoveAsync(plantaId);
+        //[HttpDelete("{plantaId:Guid}")]
+        //public async Task<IActionResult> RemoveAsync(Guid plantaId)
+        //{
+        //    try
+        //    {
+        //        var nombrePlantaBorrada = await _plantaService
+        //            .RemoveAsync(plantaId);
 
-                return Ok($"La planta {nombrePlantaBorrada} fue eliminada correctamente!");
-            }
-            catch (AppValidationException error)
-            {
-                return BadRequest($"Error de validación: {error.Message}");
-            }
-            catch (DbOperationException error)
-            {
-                return BadRequest($"Error de operacion en DB: {error.Message}");
-            }
-        }
+        //        return Ok($"La planta {nombrePlantaBorrada} fue eliminada correctamente!");
+        //    }
+        //    catch (AppValidationException error)
+        //    {
+        //        return BadRequest($"Error de validación: {error.Message}");
+        //    }
+        //    catch (DbOperationException error)
+        //    {
+        //        return BadRequest($"Error de operacion en DB: {error.Message}");
+        //    }
+        //}
     }
 }

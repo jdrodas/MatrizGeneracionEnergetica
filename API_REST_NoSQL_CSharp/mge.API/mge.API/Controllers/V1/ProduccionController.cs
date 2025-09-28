@@ -1,13 +1,12 @@
 ﻿using Asp.Versioning;
 using mge.API.Exceptions;
-using mge.API.Models;
 using mge.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace mge.API.Controllers.V2
+namespace mge.API.Controllers.V1
 {
     [ApiController]
-    [ApiVersion("2.0")]
+    [ApiVersion("1.0")]
     [Route("api/produccion")]
     public class ProduccionController(ProduccionService produccionService) : Controller
     {
@@ -22,8 +21,9 @@ namespace mge.API.Controllers.V2
             return Ok(lasProducciones);
         }
 
-        [HttpGet("planta/{plantaId:Guid}")]
-        public async Task<IActionResult> GetAllByPlantIdAsync(Guid plantaId)
+        [HttpGet("planta/{plantaId:length(24)}")]
+
+        public async Task<IActionResult> GetAllByPlantIdAsync(string plantaId)
         {
             try
             {
@@ -54,8 +54,8 @@ namespace mge.API.Controllers.V2
             }
         }
 
-        [HttpGet("{eventoId:Guid}")]
-        public async Task<IActionResult> GetByIdAsync(Guid eventoId)
+        [HttpGet("{eventoId:length(24)}")]
+        public async Task<IActionResult> GetByIdAsync(string eventoId)
         {
             try
             {
@@ -70,65 +70,65 @@ namespace mge.API.Controllers.V2
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateAsync(Produccion unEvento)
-        {
-            try
-            {
-                var eventoCreado = await _produccionService
-                    .CreateAsync(unEvento);
+        //[HttpPost]
+        //public async Task<IActionResult> CreateAsync(Produccion unEvento)
+        //{
+        //    try
+        //    {
+        //        var eventoCreado = await _produccionService
+        //            .CreateAsync(unEvento);
 
-                return Ok(eventoCreado);
-            }
-            catch (AppValidationException error)
-            {
-                return BadRequest($"Error de validación: {error.Message}");
-            }
-            catch (DbOperationException error)
-            {
-                return BadRequest($"Error de operacion en DB: {error.Message}");
-            }
-        }
+        //        return Ok(eventoCreado);
+        //    }
+        //    catch (AppValidationException error)
+        //    {
+        //        return BadRequest($"Error de validación: {error.Message}");
+        //    }
+        //    catch (DbOperationException error)
+        //    {
+        //        return BadRequest($"Error de operacion en DB: {error.Message}");
+        //    }
+        //}
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateAsync(Produccion unEvento)
-        {
-            try
-            {
-                var eventoActualizado = await _produccionService
-                    .UpdateAsync(unEvento);
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateAsync(Produccion unEvento)
+        //{
+        //    try
+        //    {
+        //        var eventoActualizado = await _produccionService
+        //            .UpdateAsync(unEvento);
 
-                return Ok(eventoActualizado);
-            }
-            catch (AppValidationException error)
-            {
-                return BadRequest($"Error de validación: {error.Message}");
-            }
-            catch (DbOperationException error)
-            {
-                return BadRequest($"Error de operacion en DB: {error.Message}");
-            }
-        }
+        //        return Ok(eventoActualizado);
+        //    }
+        //    catch (AppValidationException error)
+        //    {
+        //        return BadRequest($"Error de validación: {error.Message}");
+        //    }
+        //    catch (DbOperationException error)
+        //    {
+        //        return BadRequest($"Error de operacion en DB: {error.Message}");
+        //    }
+        //}
 
-        [HttpDelete("{eventoId:Guid}")]
-        public async Task<IActionResult> RemoveAsync(Guid eventoId)
-        {
-            try
-            {
-                var eventoRemovido = await _produccionService
-                    .RemoveAsync(eventoId);
+        //[HttpDelete("{eventoId:Guid}")]
+        //public async Task<IActionResult> RemoveAsync(Guid eventoId)
+        //{
+        //    try
+        //    {
+        //        var eventoRemovido = await _produccionService
+        //            .RemoveAsync(eventoId);
 
-                return Ok($"Se ha removido la producción de la planta {eventoRemovido.PlantaNombre} " +
-                    $"para la fecha {eventoRemovido.Fecha} con un valor de {eventoRemovido.Valor} MW");
-            }
-            catch (AppValidationException error)
-            {
-                return BadRequest($"Error de validación: {error.Message}");
-            }
-            catch (DbOperationException error)
-            {
-                return BadRequest($"Error de operacion en DB: {error.Message}");
-            }
-        }
+        //        return Ok($"Se ha removido la producción de la planta {eventoRemovido.PlantaNombre} " +
+        //            $"para la fecha {eventoRemovido.Fecha} con un valor de {eventoRemovido.Valor} MW");
+        //    }
+        //    catch (AppValidationException error)
+        //    {
+        //        return BadRequest($"Error de validación: {error.Message}");
+        //    }
+        //    catch (DbOperationException error)
+        //    {
+        //        return BadRequest($"Error de operacion en DB: {error.Message}");
+        //    }
+        //}
     }
 }

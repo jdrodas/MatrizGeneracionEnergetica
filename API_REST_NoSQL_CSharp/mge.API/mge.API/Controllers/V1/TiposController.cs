@@ -1,6 +1,5 @@
 ﻿using Asp.Versioning;
 using mge.API.Exceptions;
-using mge.API.Models;
 using mge.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,37 +21,37 @@ namespace mge.API.Controllers.V1
             return Ok(losTipos);
         }
 
-        //[HttpGet("{tipoId:Guid}")]
-        //public async Task<IActionResult> GetByIdAsync(Guid tipoId)
-        //{
-        //    try
-        //    {
-        //        var unTipoDetallado = await _tipoService
-        //            .GetTypeDetailsByIdAsync(tipoId);
+        [HttpGet("{tipoId:length(24)}")]
+        public async Task<IActionResult> GetByIdAsync(string tipoId)
+        {
+            try
+            {
+                var unTipoDetallado = await _tipoService
+                    .GetByIdAsync(tipoId);
 
-        //        return Ok(unTipoDetallado);
-        //    }
-        //    catch (AppValidationException error)
-        //    {
-        //        return BadRequest(error.Message);
-        //    }
-        //}
+                return Ok(unTipoDetallado);
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest(error.Message);
+            }
+        }
 
-        //[HttpGet("{tipoId:Guid}/plantas")]
-        //public async Task<IActionResult> GetAssociatedPlantsAsync(Guid tipoId)
-        //{
-        //    try
-        //    {
-        //        var lasPlantasAsociadas = await _tipoService
-        //            .GetAssociatedPlantsAsync(tipoId);
+        [HttpGet("{tipoId:length(24)}/plantas")]
+        public async Task<IActionResult> GetAssociatedPlantsAsync(string tipoId)
+        {
+            try
+            {
+                var lasPlantasAsociadas = await _tipoService
+                    .GetAssociatedPlantsAsync(tipoId);
 
-        //        return Ok(lasPlantasAsociadas);
-        //    }
-        //    catch (AppValidationException error)
-        //    {
-        //        return BadRequest(error.Message);
-        //    }
-        //}
+                return Ok(lasPlantasAsociadas);
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest(error.Message);
+            }
+        }
 
         //[HttpPost]
         //public async Task<IActionResult> CreateAsync(Tipo unTipo)

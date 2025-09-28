@@ -7,17 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\V1\PlantasController.cs" />
-    <Compile Remove="Controllers\V1\ProduccionController.cs" />
-    <Compile Remove="Interfaces\IPlantaRepository.cs" />
-    <Compile Remove="Interfaces\IProduccionRepository.cs" />
-    <Compile Remove="Repositories\PlantaRepository.cs" />
-    <Compile Remove="Repositories\ProduccionRepository.cs" />
-    <Compile Remove="Services\PlantaService.cs" />
-    <Compile Remove="Services\ProduccionService.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
