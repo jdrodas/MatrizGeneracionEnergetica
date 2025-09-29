@@ -5,6 +5,10 @@ Repositorio del proyecto de seguimiento a la generación energética por tipo de
 API REST desarrollada como ejercicio demostrativo para el curso de **Tópicos Avanzados de Bases de Datos**, enfocada en la implementación del **patrón repositorio** y la separación por capas. El dominio de problema aborda el registro de composición de la matriz energética de un país, permitiendo el seguimiento de la producción diaria de diferentes fuentes de energía.
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/jdrodas/MatrizGeneracionEnergetica)
+![License](https://img.shields.io/badge/license-Academic-orange)
+![.NET](https://img.shields.io/badge/.NET-9.0-purple)
+![PostgreSQL](https://img.shields.io/badge/database-postgreSQL-blue)
+![MongoDB](https://img.shields.io/badge/database-mongoDB-green)
 
 ## Objetivos Académicos
 
@@ -12,6 +16,7 @@ API REST desarrollada como ejercicio demostrativo para el curso de **Tópicos Av
 - Evidenciar la separación clara entre capas de la aplicación.
 - Mostrar el desacople de la capa de persistencia para intercambio de bases de datos.
 - Implementar versionamiento de APIs siguiendo estándares de la industria.
+- Implementar paginación en las respuestas de las peticiones con gran cantidad de resultados.
 - Aplicar mejores prácticas de seguridad usando GUIDs en lugar de IDs secuenciales.
 
 ## Arquitectura
@@ -88,10 +93,13 @@ Registro diario de producción energética.
 ## Stack Tecnológico
 
 - **Framework**: .NET 9.x
-- **Base de Datos**: PostgreSQL
-- **ORM**: Dapper (micro-ORM)
+- **Base de Datos**: PostgreSQL 17.x / MongoDB 8.x
+- **ORM**: Dapper (micro-ORM) 2.1.x
 - **Documentación**: Swagger/OpenAPI
-- **Identificadores**: UUID/GUID para seguridad
+- **Identificadores**: UUID/GUID para seguridad en versión relacional
+- **Driver DB Relacional**: Npgsql 9.0.3
+- **Driver DB NoSQL**: MongoDB Driver 3.5.x
+
 
 ## Endpoints API
 
