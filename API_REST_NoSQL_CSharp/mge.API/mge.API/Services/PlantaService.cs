@@ -4,15 +4,15 @@ using mge.API.Models;
 
 namespace mge.API.Services
 {
-    public class PlantaService(IPlantaRepository plantaRepository,
-                                ITipoRepository tipoRepository,
-                                IUbicacionRepository ubicacionRepository,
-                                IProduccionRepository produccionRepository)
+    public class PlantaService(IPlantaRepository plantaRepository) //,
+                                                                   //ITipoRepository tipoRepository,
+                                                                   //IUbicacionRepository ubicacionRepository,
+                                                                   //IProduccionRepository produccionRepository)
     {
         private readonly IPlantaRepository _plantaRepository = plantaRepository;
-        private readonly ITipoRepository _tipoRepository = tipoRepository;
-        private readonly IUbicacionRepository _ubicacionRepository = ubicacionRepository;
-        private readonly IProduccionRepository _produccionRepository = produccionRepository;
+        //private readonly ITipoRepository _tipoRepository = tipoRepository;
+        //private readonly IUbicacionRepository _ubicacionRepository = ubicacionRepository;
+        //private readonly IProduccionRepository _produccionRepository = produccionRepository;
 
         public async Task<List<Planta>> GetAllAsync()
         {

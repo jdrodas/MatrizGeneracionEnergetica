@@ -2,6 +2,7 @@
 using mge.API.Interfaces;
 using mge.API.Models;
 using MongoDB.Driver;
+using System.Globalization;
 
 namespace mge.API.Repositories
 {
@@ -22,6 +23,8 @@ namespace mge.API.Repositories
                 .SortBy(evento => evento.PlantaNombre)
                 .ToListAsync();
 
+            ModificaFormatoFechas(losEventos);
+
             return losEventos;
         }
 
@@ -38,6 +41,8 @@ namespace mge.API.Repositories
                 .SortBy(evento => evento.PlantaNombre)
                 .ToListAsync();
 
+            ModificaFormatoFechas(losEventos);
+
             return losEventos;
         }
 
@@ -53,6 +58,8 @@ namespace mge.API.Repositories
                 .Find(evento => evento.Fecha == fechaId)
                 .SortBy(evento => evento.PlantaNombre)
                 .ToListAsync();
+
+            ModificaFormatoFechas(losEventos);
 
             return losEventos;
         }
@@ -73,6 +80,8 @@ namespace mge.API.Repositories
 
             if (resultado is not null)
                 unEvento = resultado;
+
+            ModificaFormatoFechas(unEvento);
 
             return unEvento;
         }
@@ -99,6 +108,8 @@ namespace mge.API.Repositories
 
             if (resultado is not null)
                 eventoExistente = resultado;
+
+            ModificaFormatoFechas(eventoExistente);
 
             return eventoExistente;
         }
@@ -197,5 +208,22 @@ namespace mge.API.Repositories
 
         //    return resultadoAccion;
         //}
+
+        private static void ModificaFormatoFechas(List<Produccion> losEventos)
+        {
+            DateTime fechaEvento;
+
+            foreach (Produccion unEvento in losEventos)
+            {
+                fechaEvento = DateTime.ParseExact(unEvento.Fecha!, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None);
+                unEvento.Fecha = fechaEvento.ToString("dd-MM-yyyy");
+            }
+        }
+
+        private static void ModificaFormatoFechas(Produccion unEvento)
+        {
+            DateTime fechaEvento = DateTime.ParseExact(unEvento.Fecha!, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None);
+            unEvento.Fecha = fechaEvento.ToString("dd-MM-yyyy");
+        }
     }
 }

@@ -22,12 +22,12 @@ namespace mge.API.Controllers.V1
         }
 
         [HttpGet("{tipoId:length(24)}")]
-        public async Task<IActionResult> GetByIdAsync(string tipoId)
+        public async Task<IActionResult> GetTypeDetailsByIdAsync(string tipoId)
         {
             try
             {
                 var unTipoDetallado = await _tipoService
-                    .GetByIdAsync(tipoId);
+                    .GetTypeDetailsByIdAsync(tipoId);
 
                 return Ok(unTipoDetallado);
             }

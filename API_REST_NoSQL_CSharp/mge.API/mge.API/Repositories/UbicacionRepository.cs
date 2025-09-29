@@ -64,9 +64,9 @@ namespace mge.API.Repositories
 
         public async Task<Ubicacion> GetByNameAsync(string ubicacionNombre)
         {
-            Ubicacion unaUbicacion = new(); ;
+            Ubicacion unaUbicacion = new();
 
-            string[] datosUbicacion = ubicacionNombre.Split(',');
+            string[] datosUbicacion = ubicacionNombre.ToUpper().Split(',');
 
             var conexion = contextoDB
                 .CreateConnection();
@@ -76,8 +76,8 @@ namespace mge.API.Repositories
 
             var builder = Builders<Ubicacion>.Filter;
             var filtro = builder.And(
-                builder.Eq(ubicacion => ubicacion.NombreMunicipio!.ToLower(), datosUbicacion[0].Trim().ToLower()),
-                builder.Eq(ubicacion => ubicacion.NombreDepartamento!.ToLower(), datosUbicacion[1].Trim().ToLower()));
+                builder.Eq(ubicacion => ubicacion.NombreMunicipio, datosUbicacion[0].Trim()),
+                builder.Eq(ubicacion => ubicacion.NombreDepartamento, datosUbicacion[1].Trim()));
 
             var resultado = await coleccionUbicaciones
                 .Find(filtro)

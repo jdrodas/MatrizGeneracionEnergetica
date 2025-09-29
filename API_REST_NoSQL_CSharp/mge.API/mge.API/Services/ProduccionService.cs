@@ -37,13 +37,13 @@ namespace mge.API.Services
                 throw new AppValidationException($"No hay planta registrada con el Id {plantaId}");
 
 
-            var LosEventos = await _produccionRepository
+            var losEventos = await _produccionRepository
                 .GetAllByPlantIdAsync(plantaId);
 
-            if (LosEventos.Count == 0)
+            if (losEventos.Count == 0)
                 throw new AppValidationException($"No hay producción asociada a la planta {unaPlanta.Nombre}");
 
-            return LosEventos;
+            return losEventos;
         }
 
         public async Task<List<Produccion>> GetAllByDateIdAsync(string fechaId)
@@ -54,13 +54,13 @@ namespace mge.API.Services
             if (!fechaValida)
                 throw new AppValidationException($"La fecha suministrada {fechaId} no tiene el formato DD-MM-YYYY");
 
-            var LosEventos = await _produccionRepository
-                .GetAllByDateIdAsync(fechaResultante.ToString("yyyy-MM-dd"));                
+            var losEventos = await _produccionRepository
+                .GetAllByDateIdAsync(fechaResultante.ToString("yyyy-MM-dd"));
 
-            if (LosEventos.Count == 0)
+            if (losEventos.Count == 0)
                 throw new AppValidationException($"No hay producción asociada a la fecha {fechaResultante}");
 
-            return LosEventos;
+            return losEventos;
         }
 
         //public async Task<Produccion> CreateAsync(Produccion unEvento)

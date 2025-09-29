@@ -13,15 +13,6 @@ namespace mge.API.Controllers.V1
     {
         private readonly UbicacionService _ubicacionService = ubicacionService;
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAllAsync()
-        //{
-        //    var lasUbicaciones = await _ubicacionService
-        //        .GetAllAsync();
-
-        //    return Ok(lasUbicaciones);
-        //}
-
         [HttpGet]
         public async Task<IActionResult> GetDetailsByParameterAsync([FromQuery] UbicacionParametrosConsulta ubicacionParametrosConsulta)
         {
@@ -87,7 +78,7 @@ namespace mge.API.Controllers.V1
         }
 
         [HttpGet("{ubicacionId:length(24)}")]
-        public async Task<IActionResult> GetByIdAsync(string ubicacionId)
+        public async Task<IActionResult> GetLocationDetailsByIdAsync(string ubicacionId)
         {
             try
             {
