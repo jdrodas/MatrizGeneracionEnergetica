@@ -4,7 +4,7 @@ namespace mge.API.Interfaces
 {
     public interface IPlantaRepository
     {
-        public Task<List<Planta>> GetAllAsync();
+        public Task<IEnumerable<Planta>> GetAllAsync();
         public Task<List<Planta>> GetAllByLocationIdAsync(string ubicacionId);
         public Task<List<Planta>> GetAllByTypeIdAsync(string tipoId);
         public Task<Planta> GetByIdAsync(string tipoId);

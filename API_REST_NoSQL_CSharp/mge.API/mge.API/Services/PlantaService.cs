@@ -14,10 +14,14 @@ namespace mge.API.Services
         //private readonly IUbicacionRepository _ubicacionRepository = ubicacionRepository;
         //private readonly IProduccionRepository _produccionRepository = produccionRepository;
 
-        public async Task<List<Planta>> GetAllAsync()
+        public async Task<PlantaRespuesta> GetAllAsync(PlantaParametrosConsulta plantaParametrosConsulta)
         {
-            return await _plantaRepository
+            var lasPlantas = await _plantaRepository
                 .GetAllAsync();
+
+            var respuestaPlantas = BuildPlantResponse(lasPlantas, plantaParametrosConsulta);
+
+            return respuestaPlantas;
         }
 
         public async Task<Planta> GetByIdAsync(string plantaId)
@@ -196,5 +200,34 @@ namespace mge.API.Services
 
         //    return string.Empty;
         //}
+
+        private static PlantaRespuesta BuildPlantResponse(IEnumerable<Planta> lasPlantas, PlantaParametrosConsulta plantaParametrosConsulta)
+        {
+            // Calculamos items totales y cantidad de páginas
+            var totalElementos = lasPlantas.Count();
+            var totalPaginas = (int)Math.Ceiling((double)totalElementos / plantaParametrosConsulta.ElementosPorPagina);
+
+            //Validamos que la página solicitada está dentro del rango permitido
+            if (plantaParametrosConsulta.Pagina > totalPaginas && totalPaginas > 0)
+                throw new AppValidationException($"La página solicitada No. {plantaParametrosConsulta.Pagina} excede el número total de página de {totalPaginas}");
+
+            //Aplicamos la paginación
+            lasPlantas = lasPlantas
+                .Skip((plantaParametrosConsulta.Pagina - 1) * plantaParametrosConsulta.ElementosPorPagina)
+                .Take(plantaParametrosConsulta.ElementosPorPagina);
+
+            var respuestaPlantas = new PlantaRespuesta
+            {
+                Tipo = "Planta",
+                TotalElementos = totalElementos,
+                Pagina = plantaParametrosConsulta.Pagina, // page
+                ElementosPorPagina = plantaParametrosConsulta.ElementosPorPagina, // pageSize
+                TotalPaginas = totalPaginas,
+                Criterio = plantaParametrosConsulta.Criterio,
+                Data = [.. lasPlantas]
+            };
+
+            return respuestaPlantas;
+        }
     }
 }

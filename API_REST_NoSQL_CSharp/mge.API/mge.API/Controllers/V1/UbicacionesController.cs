@@ -70,11 +70,18 @@ namespace mge.API.Controllers.V1
                 }
             }
 
-            // De lo contrario, se obtienen todas las ubicaciones
-            var lasUbicaciones = await _ubicacionService
-                    .GetAllAsync(ubicacionParametrosConsulta);
+            try 
+            {
+                // De lo contrario, se obtienen todas las ubicaciones
+                var lasUbicaciones = await _ubicacionService
+                        .GetAllAsync(ubicacionParametrosConsulta);
 
-            return Ok(lasUbicaciones);
+                return Ok(lasUbicaciones);
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest(error.Message);
+            }
         }
 
         [HttpGet("{ubicacionId:length(24)}")]

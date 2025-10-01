@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using mge.API.Exceptions;
+using mge.API.Models;
 using mge.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,12 +14,19 @@ namespace mge.API.Controllers.V1
         private readonly PlantaService _plantaService = plantaService;
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync([FromQuery] PlantaParametrosConsulta plantaParametrosConsulta)
         {
-            var lasPlantas = await _plantaService
-                .GetAllAsync();
+            try 
+            {
+                var lasPlantas = await _plantaService
+                .GetAllAsync(plantaParametrosConsulta);
 
-            return Ok(lasPlantas);
+                return Ok(lasPlantas);
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest(error.Message);
+            }
         }
 
         [HttpGet("{plantaId:length(24)}")]

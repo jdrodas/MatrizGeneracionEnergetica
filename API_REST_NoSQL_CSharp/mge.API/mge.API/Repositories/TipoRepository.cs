@@ -28,7 +28,7 @@ namespace mge.API.Repositories
 
         public async Task<Tipo> GetByIdAsync(string tipoId)
         {
-            Tipo unTIpo = new();
+            Tipo unTipo = new();
 
             var conexion = contextoDB
                 .CreateConnection();
@@ -41,9 +41,9 @@ namespace mge.API.Repositories
                 .FirstOrDefaultAsync();
 
             if (resultado is not null)
-                unTIpo = resultado;
+                unTipo = resultado;
 
-            return unTIpo;
+            return unTipo;
         }
 
         public async Task<Tipo> GetByNameAsync(string tipoNombre)

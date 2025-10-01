@@ -11,7 +11,7 @@ namespace mge.API.Models
         public int TotalElementos { get; set; }
 
         [JsonPropertyName("pagina")]
-        public int Pagina { get; set; }
+        public int Pagina { get; set; } //Page
 
         [JsonPropertyName("elementosPorPagina")]
         public int ElementosPorPagina { get; set; } // PageSize
