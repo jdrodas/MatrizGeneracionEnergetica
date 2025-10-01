@@ -11,7 +11,7 @@ namespace mge.API.Repositories
     {
         private readonly PgsqlDbContext contextoDB = unContexto;
 
-        public async Task<List<Ubicacion>> GetAllAsync()
+        public async Task<IEnumerable<Ubicacion>> GetAllAsync()
         {
             var conexion = contextoDB.CreateConnection();
 
@@ -28,7 +28,7 @@ namespace mge.API.Repositories
             return [.. resultadoUbicaciones];
         }
 
-        public async Task<List<Ubicacion>> GetAllByDeptoIsoAsync(string deptoIso)
+        public async Task<IEnumerable<Ubicacion>> GetAllByDeptoIsoAsync(string deptoIso)
         {
             var conexion = contextoDB.CreateConnection();
 

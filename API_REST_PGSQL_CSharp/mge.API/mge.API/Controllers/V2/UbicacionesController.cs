@@ -60,7 +60,7 @@ namespace mge.API.Controllers.V2
                     ubicacionParametrosConsulta.Criterio = "deptoIso";
 
                     var ubicacionesIsoDepto = await _ubicacionService
-                        .GetAllByDeptoIsoAsync(ubicacionParametrosConsulta.DeptoIso);
+                        .GetAllByDeptoIsoAsync(ubicacionParametrosConsulta.DeptoIso, ubicacionParametrosConsulta);
 
                     return Ok(ubicacionesIsoDepto);
                 }
@@ -72,7 +72,7 @@ namespace mge.API.Controllers.V2
 
             // De lo contrario, se obtienen todas las ubicaciones
             var lasUbicaciones = await _ubicacionService
-                    .GetAllAsync();
+                    .GetAllAsync(ubicacionParametrosConsulta);
 
             return Ok(lasUbicaciones);
         }

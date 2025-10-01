@@ -25,11 +25,12 @@
         }
 
         //Propiedades bases para implementar la consulta por criterios
-
         public Guid Id { get; set; } = Guid.Empty;
         public string? Nombre { get; set; } = string.Empty;
 
-
+        //Propiedades bases para implementar paginación
+        public int Pagina { get; set; } = 1;
+        public int ElementosPorPagina { get; set; } = 10;
 
 
 
