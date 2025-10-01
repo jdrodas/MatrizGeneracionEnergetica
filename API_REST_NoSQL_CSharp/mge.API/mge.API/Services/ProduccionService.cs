@@ -11,10 +11,14 @@ namespace mge.API.Services
         private readonly IProduccionRepository _produccionRepository = produccionRepository;
         private readonly IPlantaRepository _plantaRepository = plantaRepository;
 
-        public async Task<List<Produccion>> GetAllAsync()
+        public async Task<ProduccionRespuesta> GetAllAsync(ProduccionParametrosConsulta produccionParametrosConsulta)
         {
-            return await _produccionRepository
+            var laProduccion = await _produccionRepository
                 .GetAllAsync();
+
+            var respuestaProduccion = BuildProductionResponse(laProduccion, produccionParametrosConsulta);
+
+            return respuestaProduccion;
         }
 
         public async Task<Produccion> GetByIdAsync(string eventoId)
@@ -222,5 +226,35 @@ namespace mge.API.Services
 
         //    return string.Empty;
         //}
+
+        private static ProduccionRespuesta BuildProductionResponse(IEnumerable<Produccion> laProduccion, ProduccionParametrosConsulta produccionParametrosConsulta)
+        {
+            // Calculamos items totales y cantidad de páginas
+            var totalElementos = laProduccion.Count();
+            var totalPaginas = (int)Math.Ceiling((double)totalElementos / produccionParametrosConsulta.ElementosPorPagina);
+
+            //Validamos que la página solicitada está dentro del rango permitido
+            if (produccionParametrosConsulta.Pagina > totalPaginas && totalPaginas > 0)
+                throw new AppValidationException($"La página solicitada No. {produccionParametrosConsulta.Pagina} excede el número total " +
+                    $"de página de {totalPaginas} con una cantidad de elementos por página de {produccionParametrosConsulta.ElementosPorPagina}");
+
+            //Aplicamos la paginación
+            laProduccion = laProduccion
+                .Skip((produccionParametrosConsulta.Pagina - 1) * produccionParametrosConsulta.ElementosPorPagina)
+                .Take(produccionParametrosConsulta.ElementosPorPagina);
+
+            var respuestaProduccion = new ProduccionRespuesta
+            {
+                Tipo = "Producción",
+                TotalElementos = totalElementos,
+                Pagina = produccionParametrosConsulta.Pagina, // page
+                ElementosPorPagina = produccionParametrosConsulta.ElementosPorPagina, // pageSize
+                TotalPaginas = totalPaginas,
+                Criterio = produccionParametrosConsulta.Criterio,
+                Data = [.. laProduccion]
+            };
+
+            return respuestaProduccion;
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace mge.API.Repositories
     {
         private readonly MongoDbContext contextoDB = unContexto;
 
-        public async Task<List<Produccion>> GetAllAsync()
+        public async Task<IEnumerable<Produccion>> GetAllAsync()
         {
             var conexion = contextoDB
                 .CreateConnection();

@@ -107,7 +107,8 @@ namespace mge.API.Services
 
             //Validamos que la página solicitada está dentro del rango permitido
             if (ubicacionParametrosConsulta.Pagina > totalPaginas && totalPaginas > 0)
-                throw new AppValidationException($"La página solicitada No. {ubicacionParametrosConsulta.Pagina} excede el número total de página de {totalPaginas}");
+                throw new AppValidationException($"La página solicitada No. {ubicacionParametrosConsulta.Pagina} excede el número total " +
+                    $"de página de {totalPaginas} con una cantidad de elementos por página de {ubicacionParametrosConsulta.ElementosPorPagina}");
 
             //Aplicamos la paginación
             lasUbicaciones = lasUbicaciones

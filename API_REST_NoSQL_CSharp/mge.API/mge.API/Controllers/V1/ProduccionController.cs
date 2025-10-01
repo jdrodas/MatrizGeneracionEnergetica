@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using mge.API.Exceptions;
+using mge.API.Models;
 using mge.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,12 +14,19 @@ namespace mge.API.Controllers.V1
         private readonly ProduccionService _produccionService = produccionService;
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync([FromQuery] ProduccionParametrosConsulta produccionParametrosConsulta)
         {
-            var lasProducciones = await _produccionService
-                .GetAllAsync();
+            try
+            {
+                var lasProducciones = await _produccionService
+                    .GetAllAsync(produccionParametrosConsulta);
 
-            return Ok(lasProducciones);
+                return Ok(lasProducciones);
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest(error.Message);
+            }
         }
 
         [HttpGet("planta/{plantaId:length(24)}")]
