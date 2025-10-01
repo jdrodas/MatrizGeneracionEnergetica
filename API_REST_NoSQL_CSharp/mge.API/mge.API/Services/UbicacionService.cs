@@ -9,16 +9,31 @@ namespace mge.API.Services
         private readonly IUbicacionRepository _ubicacionRepository = ubicacionRepository;
         private readonly IPlantaRepository _plantaRepository = plantaRepository;
 
-        public async Task<List<Ubicacion>> GetAllAsync()
+        public async Task<UbicacionRespuesta> GetAllAsync(UbicacionParametrosConsulta ubicacionParametrosConsulta)
+        {
+            var lasUbicaciones = await _ubicacionRepository
+                .GetAllAsync();
+
+            var respuestaUbicaciones = BuildLocationResponse(lasUbicaciones, ubicacionParametrosConsulta);
+
+            return respuestaUbicaciones;
+        }
+
+        public async Task<IEnumerable<Ubicacion>> GetAllAsync()
         {
             return await _ubicacionRepository
                 .GetAllAsync();
         }
 
-        public async Task<List<Ubicacion>> GetAllByDeptoIsoAsync(string deptoIso)
+        public async Task<UbicacionRespuesta> GetAllByDeptoIsoAsync(string deptoIso, UbicacionParametrosConsulta ubicacionParametrosConsulta)
         {
-            return await _ubicacionRepository
+            var lasUbicaciones = await _ubicacionRepository
                 .GetAllByDeptoIsoAsync(deptoIso);
+
+            var respuestaUbicaciones = BuildLocationResponse(lasUbicaciones, ubicacionParametrosConsulta);
+
+            return respuestaUbicaciones;
+
         }
 
         public async Task<Ubicacion> GetByIdAsync(string ubicacionId)
@@ -82,6 +97,35 @@ namespace mge.API.Services
                 throw new AppValidationException($"Ubicación {unaUbicacion.NombreMunicipio}, {unaUbicacion.NombreDepartamento} no tiene plantas asociadas");
 
             return plantasAsociadas;
+        }
+
+        private static UbicacionRespuesta BuildLocationResponse(IEnumerable<Ubicacion> lasUbicaciones, UbicacionParametrosConsulta ubicacionParametrosConsulta)
+        {
+            // Calculamos items totales y cantidad de páginas
+            var totalElementos = lasUbicaciones.Count();
+            var totalPaginas = (int)Math.Ceiling((double)totalElementos / ubicacionParametrosConsulta.ElementosPorPagina);
+
+            //Validamos que la página solicitada está dentro del rango permitido
+            if (ubicacionParametrosConsulta.Pagina > totalPaginas && totalPaginas > 0)
+                throw new AppValidationException($"La página solicitada No. {ubicacionParametrosConsulta.Pagina} excede el número total de página de {totalPaginas}");
+
+            //Aplicamos la paginación
+            lasUbicaciones = lasUbicaciones
+                .Skip((ubicacionParametrosConsulta.Pagina - 1) * ubicacionParametrosConsulta.ElementosPorPagina)
+                .Take(ubicacionParametrosConsulta.ElementosPorPagina);
+
+            var respuestaUbicaciones = new UbicacionRespuesta
+            {
+                Tipo = "Ubicación",
+                TotalElementos = totalElementos,
+                Pagina = ubicacionParametrosConsulta.Pagina, // page
+                ElementosPorPagina = ubicacionParametrosConsulta.ElementosPorPagina, // pageSize
+                TotalPaginas = totalPaginas,
+                Criterio = ubicacionParametrosConsulta.Criterio,
+                Data = [.. lasUbicaciones]
+            };
+
+            return respuestaUbicaciones;
         }
     }
 }
