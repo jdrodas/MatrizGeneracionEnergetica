@@ -77,9 +77,11 @@ namespace mge.API.Repositories
                 .GetCollection<Tipo>(contextoDB.ConfiguracionColecciones.ColeccionTipos);
 
             var builder = Builders<Tipo>.Filter;
+            
+            //TODO: Aplicar comparación invariante de mayúsculas y minúsculas para el nombre y la descripción
             var filtro = builder.And(
-                builder.Eq(tipo => tipo.Nombre!.ToLower(), unTipo.Nombre!.ToLower()),
-                builder.Eq(tipo => tipo.Descripcion!.ToLower(), unTipo.Descripcion!.ToLower()),
+                builder.Eq(tipo => tipo.Nombre, unTipo.Nombre),
+                builder.Eq(tipo => tipo.Descripcion, unTipo.Descripcion),
                 builder.Eq(tipo => tipo.EsRenovable, unTipo.EsRenovable));
 
             var resultado = await coleccionTipos
@@ -108,99 +110,82 @@ namespace mge.API.Repositories
             return tipoExistente;
         }
 
-        //public async Task<bool> CreateAsync(Tipo unTipo)
-        //{
-        //    bool resultadoAccion = false;
+        public async Task<bool> CreateAsync(Tipo unTipo)
+        {
+            bool resultadoAccion = false;
 
-        //    try
-        //    {
-        //        var conexion = contextoDB.CreateConnection();
+            var conexion = contextoDB
+                .CreateConnection();
+            
+            var coleccionTipos = conexion
+                .GetCollection<Tipo>(contextoDB.ConfiguracionColecciones.ColeccionTipos);
 
-        //        string procedimiento = "core.p_inserta_tipo";
-        //        var parametros = new
-        //        {
-        //            p_nombre = unTipo.Nombre,
-        //            p_descripcion = unTipo.Descripcion,
-        //            p_esrenovable = unTipo.EsRenovable
-        //        };
+            await coleccionTipos
+                .InsertOneAsync(unTipo);
 
-        //        var cantidad_filas = await conexion.ExecuteAsync(
-        //            procedimiento,
-        //            parametros,
-        //            commandType: CommandType.StoredProcedure);
+            var resultado = await GetByDetailsAsync(unTipo);
 
-        //        if (cantidad_filas != 0)
-        //            resultadoAccion = true;
-        //    }
-        //    catch (NpgsqlException error)
-        //    {
-        //        throw new DbOperationException(error.Message);
-        //    }
+            if (resultado is not null)
+                resultadoAccion = true;
 
-        //    return resultadoAccion;
-        //}
+            return resultadoAccion;
+        }
 
-        //public async Task<bool> UpdateAsync(Tipo unTipo)
-        //{
-        //    bool resultadoAccion = false;
+        public async Task<bool> UpdateAsync(Tipo unTipo)
+        {
+            bool resultadoAccion = false;
 
-        //    try
-        //    {
-        //        var conexion = contextoDB.CreateConnection();
+            var conexion = contextoDB
+                .CreateConnection();
+            
+            var coleccionTipos = conexion
+                .GetCollection<Tipo>(contextoDB.ConfiguracionColecciones.ColeccionTipos);
 
-        //        string procedimiento = "core.p_actualiza_tipo";
-        //        var parametros = new
-        //        {
-        //            p_id = unTipo.Id,
-        //            p_nombre = unTipo.Nombre,
-        //            p_descripcion = unTipo.Descripcion,
-        //            p_esrenovable = unTipo.EsRenovable
-        //        };
+            var resultado = await coleccionTipos
+                .ReplaceOneAsync(tipo => tipo.Id == unTipo.Id, unTipo);
 
-        //        var cantidad_filas = await conexion.ExecuteAsync(
-        //            procedimiento,
-        //            parametros,
-        //            commandType: CommandType.StoredProcedure);
+            if (resultado.IsAcknowledged)
+                resultadoAccion = true;
 
-        //        if (cantidad_filas != 0)
-        //            resultadoAccion = true;
-        //    }
-        //    catch (NpgsqlException error)
-        //    {
-        //        throw new DbOperationException(error.Message);
-        //    }
+            return resultadoAccion;
+        }
 
-        //    return resultadoAccion;
-        //}
+        /*
+        public async Task<bool> UpdateAsync(Comportamiento unComportamiento)
+        {
+            bool resultadoAccion = false;
 
-        //public async Task<bool> RemoveAsync(Guid tipoId)
-        //{
-        //    bool resultadoAccion = false;
+            var conexion = contextoDB.CreateConnection();
+            var coleccionComportamientos = conexion
+                .GetCollection<Comportamiento>(contextoDB.ConfiguracionColecciones.ColeccionComportamientos);
 
-        //    try
-        //    {
-        //        var conexion = contextoDB.CreateConnection();
+            var resultado = await coleccionComportamientos
+                .ReplaceOneAsync(comportamiento => comportamiento.Id == unComportamiento.Id, unComportamiento);
 
-        //        string procedimiento = "core.p_elimina_tipo";
-        //        var parametros = new
-        //        {
-        //            p_id = tipoId
-        //        };
+            if (resultado.IsAcknowledged)
+                resultadoAccion = true;
 
-        //        var cantidad_filas = await conexion.ExecuteAsync(
-        //            procedimiento,
-        //            parametros,
-        //            commandType: CommandType.StoredProcedure);
+            return resultadoAccion;
+        }
+        */
 
-        //        if (cantidad_filas != 0)
-        //            resultadoAccion = true;
-        //    }
-        //    catch (NpgsqlException error)
-        //    {
-        //        throw new DbOperationException(error.Message);
-        //    }
+        public async Task<bool> RemoveAsync(string tipoId)
+        {
+            bool resultadoAccion = false;
 
-        //    return resultadoAccion;
-        //}
+            var conexion = contextoDB
+                .CreateConnection();
+            
+            var coleccionTipos = conexion
+                .GetCollection<Tipo>(contextoDB.ConfiguracionColecciones.ColeccionTipos);
+
+            var resultado = await coleccionTipos
+                .DeleteOneAsync(tipo => tipo.Id == tipoId);
+
+            if (resultado.IsAcknowledged)
+                resultadoAccion = true;
+
+            return resultadoAccion;
+        }
     }
 }

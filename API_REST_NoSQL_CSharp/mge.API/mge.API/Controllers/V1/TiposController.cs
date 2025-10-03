@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using mge.API.Exceptions;
+using mge.API.Models;
 using mge.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -53,64 +54,64 @@ namespace mge.API.Controllers.V1
             }
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateAsync(Tipo unTipo)
-        //{
-        //    try
-        //    {
-        //        var tipoCreado = await _tipoService
-        //            .CreateAsync(unTipo);
+        [HttpPost]
+        public async Task<IActionResult> CreateAsync(Tipo unTipo)
+        {
+            try
+            {
+                var tipoCreado = await _tipoService
+                    .CreateAsync(unTipo);
 
-        //        return Ok(tipoCreado);
-        //    }
-        //    catch (AppValidationException error)
-        //    {
-        //        return BadRequest($"Error de validación: {error.Message}");
-        //    }
-        //    catch (DbOperationException error)
-        //    {
-        //        return BadRequest($"Error de operacion en DB: {error.Message}");
-        //    }
-        //}
+                return Ok(tipoCreado);
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest($"Error de validación: {error.Message}");
+            }
+            catch (DbOperationException error)
+            {
+                return BadRequest($"Error de operacion en DB: {error.Message}");
+            }
+        }
 
-        //[HttpPut]
-        //public async Task<IActionResult> UpdateAsync(Tipo unTipo)
-        //{
-        //    try
-        //    {
-        //        var tipoActualizado = await _tipoService
-        //            .UpdateAsync(unTipo);
+        [HttpPut]
+        public async Task<IActionResult> UpdateAsync(Tipo unTipo)
+        {
+            try
+            {
+                var tipoActualizado = await _tipoService
+                    .UpdateAsync(unTipo);
 
-        //        return Ok(tipoActualizado);
-        //    }
-        //    catch (AppValidationException error)
-        //    {
-        //        return BadRequest($"Error de validación: {error.Message}");
-        //    }
-        //    catch (DbOperationException error)
-        //    {
-        //        return BadRequest($"Error de operacion en DB: {error.Message}");
-        //    }
-        //}
+                return Ok(tipoActualizado);
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest($"Error de validación: {error.Message}");
+            }
+            catch (DbOperationException error)
+            {
+                return BadRequest($"Error de operacion en DB: {error.Message}");
+            }
+        }
 
-        //[HttpDelete("{tipoId:Guid}")]
-        //public async Task<IActionResult> RemoveAsync(Guid tipoId)
-        //{
-        //    try
-        //    {
-        //        var nombreTipoBorrado = await _tipoService
-        //            .RemoveAsync(tipoId);
+        [HttpDelete("{tipoId:length(24)}")] 
+        public async Task<IActionResult> RemoveAsync(string tipoId)
+        {
+            try
+            {
+                var nombreTipoBorrado = await _tipoService
+                    .RemoveAsync(tipoId);
 
-        //        return Ok($"El tipo {nombreTipoBorrado} fue eliminado correctamente!");
-        //    }
-        //    catch (AppValidationException error)
-        //    {
-        //        return BadRequest($"Error de validación: {error.Message}");
-        //    }
-        //    catch (DbOperationException error)
-        //    {
-        //        return BadRequest($"Error de operacion en DB: {error.Message}");
-        //    }
-        //}
+                return Ok($"El tipo {nombreTipoBorrado} fue eliminado correctamente!");
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest($"Error de validación: {error.Message}");
+            }
+            catch (DbOperationException error)
+            {
+                return BadRequest($"Error de operacion en DB: {error.Message}");
+            }
+        }
     }
 }

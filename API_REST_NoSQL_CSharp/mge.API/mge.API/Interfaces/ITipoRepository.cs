@@ -8,8 +8,8 @@ namespace mge.API.Interfaces
         public Task<Tipo> GetByIdAsync(string tipoId);
         public Task<Tipo> GetByDetailsAsync(Tipo unTipo);
         public Task<Tipo> GetByDetailsAsync(string tipoId, string tipoNombre);
-        //public Task<bool> CreateAsync(Tipo unTipo);
-        //public Task<bool> UpdateAsync(Tipo unTipo);
-        //public Task<bool> RemoveAsync(Guid tipoId);
+        public Task<bool> CreateAsync(Tipo unTipo);
+        public Task<bool> UpdateAsync(Tipo unTipo);
+        public Task<bool> RemoveAsync(string tipoId);
     }
 }
