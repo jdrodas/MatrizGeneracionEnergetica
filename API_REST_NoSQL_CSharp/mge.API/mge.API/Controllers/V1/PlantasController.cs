@@ -45,64 +45,72 @@ namespace mge.API.Controllers.V1
             }
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateAsync(Planta unaPlanta)
-        //{
-        //    try
-        //    {
-        //        var plantaCreada = await _plantaService
-        //            .CreateAsync(unaPlanta);
+        [HttpPost]
+        public async Task<IActionResult> CreateAsync(Planta unaPlanta)
+        {
+            try
+            {
+                var plantaCreada = await _plantaService
+                    .CreateAsync(unaPlanta);
 
-        //        return Ok(plantaCreada);
-        //    }
-        //    catch (AppValidationException error)
-        //    {
-        //        return BadRequest($"Error de validación: {error.Message}");
-        //    }
-        //    catch (DbOperationException error)
-        //    {
-        //        return BadRequest($"Error de operacion en DB: {error.Message}");
-        //    }
-        //}
+                return Ok(plantaCreada);
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest($"Error de validación: {error.Message}");
+            }
+            catch (DbOperationException error)
+            {
+                return BadRequest($"Error de operacion en DB: {error.Message}");
+            }
+        }
 
-        //[HttpPut]
-        //public async Task<IActionResult> UpdateAsync(Planta unaPlanta)
-        //{
-        //    try
-        //    {
-        //        var plantaActualizada = await _plantaService
-        //            .UpdateAsync(unaPlanta);
+        [HttpPut]
+        public async Task<IActionResult> UpdateAsync(Planta unaPlanta)
+        {
+            try
+            {
+                var plantaActualizada = await _plantaService
+                    .UpdateAsync(unaPlanta);
 
-        //        return Ok(plantaActualizada);
-        //    }
-        //    catch (AppValidationException error)
-        //    {
-        //        return BadRequest($"Error de validación: {error.Message}");
-        //    }
-        //    catch (DbOperationException error)
-        //    {
-        //        return BadRequest($"Error de operacion en DB: {error.Message}");
-        //    }
-        //}
+                return Ok(plantaActualizada);
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest($"Error de validación: {error.Message}");
+            }
+            catch (DbOperationException error)
+            {
+                return BadRequest($"Error de operacion en DB: {error.Message}");
+            }
+            catch (EmptyCollectionException error)
+            {
+                return NotFound($"Error de Validación: {error.Message}");
+            }
+        }
 
-        //[HttpDelete("{plantaId:Guid}")]
-        //public async Task<IActionResult> RemoveAsync(Guid plantaId)
-        //{
-        //    try
-        //    {
-        //        var nombrePlantaBorrada = await _plantaService
-        //            .RemoveAsync(plantaId);
+        [HttpDelete("{plantaId:length(24)}")]
+        public async Task<IActionResult> RemoveAsync(string plantaId)
+        {
+            try
+            {
+                var nombrePlantaBorrada = await _plantaService
+                    .RemoveAsync(plantaId);
 
-        //        return Ok($"La planta {nombrePlantaBorrada} fue eliminada correctamente!");
-        //    }
-        //    catch (AppValidationException error)
-        //    {
-        //        return BadRequest($"Error de validación: {error.Message}");
-        //    }
-        //    catch (DbOperationException error)
-        //    {
-        //        return BadRequest($"Error de operacion en DB: {error.Message}");
-        //    }
-        //}
+                return Ok($"La planta {nombrePlantaBorrada} fue eliminada correctamente!");
+            }
+            catch (AppValidationException error)
+            {
+                return BadRequest($"Error de validación: {error.Message}");
+            }
+            catch (DbOperationException error)
+            {
+                return BadRequest($"Error de operacion en DB: {error.Message}");
+            }
+            catch (EmptyCollectionException error)
+            {
+                return NotFound($"Error de Validación: {error.Message}");
+            }
+        }
     }
 }

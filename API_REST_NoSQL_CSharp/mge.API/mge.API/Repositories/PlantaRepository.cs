@@ -121,8 +121,10 @@ namespace mge.API.Repositories
                 .GetCollection<Planta>(contextoDB.ConfiguracionColecciones.ColeccionPlantas);
 
             var builder = Builders<Planta>.Filter;
+
+            //TODO: Aplicar comparación invariante de mayúsculas y minúsculas para el nombre
             var filtro = builder.And(
-                builder.Eq(planta => planta.Nombre!.ToLower(), plantaNombre.ToLower()),
+                builder.Eq(planta => planta.Nombre, plantaNombre),
                 builder.Eq(planta => planta.UbicacionId, ubicacionId),
                 builder.Eq(planta => planta.TipoId, tipoId));
 
@@ -136,101 +138,63 @@ namespace mge.API.Repositories
             return unaPlanta;
         }
 
-        //public async Task<bool> CreateAsync(Planta unaPlanta)
-        //{
-        //    bool resultadoAccion = false;
+        public async Task<bool> CreateAsync(Planta unaPlanta)
+        {
+            bool resultadoAccion = false;
 
-        //    try
-        //    {
-        //        var conexion = contextoDB.CreateConnection();
+            var conexion = contextoDB
+                .CreateConnection();
 
-        //        string procedimiento = "core.p_inserta_planta";
-        //        var parametros = new
-        //        {
-        //            p_nombre = unaPlanta.Nombre,
-        //            p_tipo_id = unaPlanta.TipoId,
-        //            p_ubicacion_id = unaPlanta.UbicacionId,
-        //            p_capacidad = unaPlanta.Capacidad
-        //        };
+            var coleccionPlantas = conexion
+                .GetCollection<Planta>(contextoDB.ConfiguracionColecciones.ColeccionPlantas);
 
-        //        var cantidad_filas = await conexion.ExecuteAsync(
-        //            procedimiento,
-        //            parametros,
-        //            commandType: CommandType.StoredProcedure);
+            await coleccionPlantas
+                .InsertOneAsync(unaPlanta);
 
-        //        if (cantidad_filas != 0)
-        //            resultadoAccion = true;
-        //    }
-        //    catch (NpgsqlException error)
-        //    {
-        //        throw new DbOperationException(error.Message);
-        //    }
+            var resultado = await GetByDetailsAsync(unaPlanta.Nombre!, unaPlanta.UbicacionId!, unaPlanta.TipoId!);
 
-        //    return resultadoAccion;
-        //}
+            if (resultado is not null)
+                resultadoAccion = true;
 
-        //public async Task<bool> UpdateAsync(Planta unaPlanta)
-        //{
-        //    bool resultadoAccion = false;
+            return resultadoAccion;
+        }
 
-        //    try
-        //    {
-        //        var conexion = contextoDB.CreateConnection();
+        public async Task<bool> UpdateAsync(Planta unaPlanta)
+        {
+            bool resultadoAccion = false;
 
-        //        string procedimiento = "core.p_actualiza_planta";
-        //        var parametros = new
-        //        {
-        //            p_id = unaPlanta.Id,
-        //            p_nombre = unaPlanta.Nombre,
-        //            p_tipo_id = unaPlanta.TipoId,
-        //            p_ubicacion_id = unaPlanta.UbicacionId,
-        //            p_capacidad = unaPlanta.Capacidad
-        //        };
+            var conexion = contextoDB
+                .CreateConnection();
 
-        //        var cantidad_filas = await conexion.ExecuteAsync(
-        //            procedimiento,
-        //            parametros,
-        //            commandType: CommandType.StoredProcedure);
+            var coleccionPlantas = conexion
+                .GetCollection<Planta>(contextoDB.ConfiguracionColecciones.ColeccionPlantas);
 
-        //        if (cantidad_filas != 0)
-        //            resultadoAccion = true;
-        //    }
-        //    catch (NpgsqlException error)
-        //    {
-        //        throw new DbOperationException(error.Message);
-        //    }
+            var resultado = await coleccionPlantas
+                .ReplaceOneAsync(planta => planta.Id == unaPlanta.Id, unaPlanta);
 
-        //    return resultadoAccion;
-        //}
+            if (resultado.IsAcknowledged)
+                resultadoAccion = true;
 
-        //public async Task<bool> RemoveAsync(Guid plantaId)
-        //{
-        //    bool resultadoAccion = false;
+            return resultadoAccion;
+        }
 
-        //    try
-        //    {
-        //        var conexion = contextoDB.CreateConnection();
+        public async Task<bool> RemoveAsync(string plantaId)
+        {
+            bool resultadoAccion = false;
 
-        //        string procedimiento = "core.p_elimina_planta";
-        //        var parametros = new
-        //        {
-        //            p_id = plantaId
-        //        };
+            var conexion = contextoDB
+                .CreateConnection();
 
-        //        var cantidad_filas = await conexion.ExecuteAsync(
-        //            procedimiento,
-        //            parametros,
-        //            commandType: CommandType.StoredProcedure);
+            var coleccionPlantas = conexion
+                .GetCollection<Planta>(contextoDB.ConfiguracionColecciones.ColeccionPlantas);
 
-        //        if (cantidad_filas != 0)
-        //            resultadoAccion = true;
-        //    }
-        //    catch (NpgsqlException error)
-        //    {
-        //        throw new DbOperationException(error.Message);
-        //    }
+            var resultado = await coleccionPlantas
+                .DeleteOneAsync(planta => planta.Id == plantaId);
 
-        //    return resultadoAccion;
-        //}
+            if (resultado.IsAcknowledged)
+                resultadoAccion = true;
+
+            return resultadoAccion;
+        }
     }
 }

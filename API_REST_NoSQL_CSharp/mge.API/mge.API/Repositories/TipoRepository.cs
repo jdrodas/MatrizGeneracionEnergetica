@@ -148,26 +148,7 @@ namespace mge.API.Repositories
                 resultadoAccion = true;
 
             return resultadoAccion;
-        }
-
-        /*
-        public async Task<bool> UpdateAsync(Comportamiento unComportamiento)
-        {
-            bool resultadoAccion = false;
-
-            var conexion = contextoDB.CreateConnection();
-            var coleccionComportamientos = conexion
-                .GetCollection<Comportamiento>(contextoDB.ConfiguracionColecciones.ColeccionComportamientos);
-
-            var resultado = await coleccionComportamientos
-                .ReplaceOneAsync(comportamiento => comportamiento.Id == unComportamiento.Id, unComportamiento);
-
-            if (resultado.IsAcknowledged)
-                resultadoAccion = true;
-
-            return resultadoAccion;
-        }
-        */
+        }        
 
         public async Task<bool> RemoveAsync(string tipoId)
         {

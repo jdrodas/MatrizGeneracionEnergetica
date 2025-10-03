@@ -60,7 +60,7 @@ namespace mge.API.Services
                 .GetAllByTypeIdAsync(tipoId);
 
             if (plantasAsociadas.Count == 0)
-                throw new AppValidationException($"Tipo {unTipo.Nombre} no tiene plantas asociadas");
+                throw new EmptyCollectionException($"Tipo {unTipo.Nombre} no tiene plantas asociadas");
 
             return plantasAsociadas;
         }
@@ -135,6 +135,9 @@ namespace mge.API.Services
 
                 tipoExistente = await _tipoRepository
                     .GetByIdAsync(unTipo.Id!);
+
+                //TODO: Actualizar la información del tipo en las plantas asociadas
+
             }
             catch (DbOperationException)
             {
