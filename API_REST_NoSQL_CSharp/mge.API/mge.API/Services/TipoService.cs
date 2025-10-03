@@ -80,8 +80,8 @@ namespace mge.API.Services
                 .GetByDetailsAsync(unTipo);
 
             //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
-            if (tipoExistente.Nombre == unTipo.Nombre! &&
-                tipoExistente.Descripcion == unTipo.Descripcion &&
+            if (tipoExistente.Nombre!.ToLower() == unTipo.Nombre!.ToLower() &&
+                tipoExistente.Descripcion!.ToLower() == unTipo.Descripcion!.ToLower() &&
                 tipoExistente.EsRenovable == unTipo.EsRenovable)
                 return tipoExistente;
 

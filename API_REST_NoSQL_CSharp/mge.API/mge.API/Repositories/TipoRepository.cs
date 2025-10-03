@@ -77,11 +77,9 @@ namespace mge.API.Repositories
                 .GetCollection<Tipo>(contextoDB.ConfiguracionColecciones.ColeccionTipos);
 
             var builder = Builders<Tipo>.Filter;
-            
-            //TODO: Aplicar comparación invariante de mayúsculas y minúsculas para el nombre y la descripción
             var filtro = builder.And(
-                builder.Eq(tipo => tipo.Nombre, unTipo.Nombre),
-                builder.Eq(tipo => tipo.Descripcion, unTipo.Descripcion),
+                builder.Regex(tipo => tipo.Nombre, $"/^{unTipo.Nombre}$/i"),
+                builder.Regex(tipo => tipo.Descripcion, $"/^{unTipo.Descripcion}$/i"),
                 builder.Eq(tipo => tipo.EsRenovable, unTipo.EsRenovable));
 
             var resultado = await coleccionTipos
@@ -168,5 +166,6 @@ namespace mge.API.Repositories
 
             return resultadoAccion;
         }
+    
     }
 }

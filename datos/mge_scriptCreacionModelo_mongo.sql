@@ -225,7 +225,6 @@ db.createCollection("plantas",{
     }
 );
 
-
 -- Colección: produccion
 db.createCollection("produccion",{
         validator:{
@@ -370,3 +369,16 @@ db.createView("v_produccion_tipo_dia", "produccion", [
     }
   }
 ]);
+
+
+-- ****************************************
+--   Creación de Indices
+-- ****************************************
+
+db.tipos.createIndex({
+    "nombre": 1,
+    "descripcion": 1, 
+    "esRenovable": 1
+}, {
+    name: "tipo_nombre_descripcion_renovable_ix"
+});

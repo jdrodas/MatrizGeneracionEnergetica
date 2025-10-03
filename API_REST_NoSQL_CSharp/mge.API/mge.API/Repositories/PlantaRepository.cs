@@ -121,10 +121,8 @@ namespace mge.API.Repositories
                 .GetCollection<Planta>(contextoDB.ConfiguracionColecciones.ColeccionPlantas);
 
             var builder = Builders<Planta>.Filter;
-
-            //TODO: Aplicar comparación invariante de mayúsculas y minúsculas para el nombre
             var filtro = builder.And(
-                builder.Eq(planta => planta.Nombre, plantaNombre),
+                builder.Regex(planta => planta.Nombre, $"/^{plantaNombre}$/i"),
                 builder.Eq(planta => planta.UbicacionId, ubicacionId),
                 builder.Eq(planta => planta.TipoId, tipoId));
 
