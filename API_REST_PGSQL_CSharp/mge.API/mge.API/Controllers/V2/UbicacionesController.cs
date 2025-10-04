@@ -68,6 +68,10 @@ namespace mge.API.Controllers.V2
                 {
                     return BadRequest(error.Message);
                 }
+                catch (EmptyCollectionException error)
+                {
+                    return NotFound($"Error de validación: {error.Message}");
+                }
             }
 
             // De lo contrario, se obtienen todas las ubicaciones
@@ -91,6 +95,10 @@ namespace mge.API.Controllers.V2
             {
                 return BadRequest(error.Message);
             }
+            catch (EmptyCollectionException error)
+            {
+                return NotFound($"Error de validación: {error.Message}");
+            }
         }
 
         [HttpGet("{ubicacionId:Guid}/plantas")]
@@ -106,6 +114,10 @@ namespace mge.API.Controllers.V2
             catch (AppValidationException error)
             {
                 return BadRequest(error.Message);
+            }
+            catch (EmptyCollectionException error)
+            {
+                return NotFound($"Error de validación: {error.Message}");
             }
         }
     }

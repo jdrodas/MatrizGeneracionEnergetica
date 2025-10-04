@@ -23,7 +23,7 @@ namespace mge.API.Services
                 .GetByIdAsync(eventoId);
 
             if (unEvento.Id == Guid.Empty)
-                throw new AppValidationException($"Evento de producción no encontrado con el Id {eventoId}");
+                throw new EmptyCollectionException($"Evento de producción no encontrado con el Id {eventoId}");
 
             return unEvento;
         }
@@ -41,7 +41,7 @@ namespace mge.API.Services
                 .GetAllByPlantIdAsync(plantaId);
 
             if (LosEventos.Count == 0)
-                throw new AppValidationException($"No hay producción asociada a la planta {unaPlanta.Nombre}");
+                throw new EmptyCollectionException($"No hay producción asociada a la planta {unaPlanta.Nombre}");
 
             return LosEventos;
         }
@@ -58,7 +58,7 @@ namespace mge.API.Services
                 .GetAllByDateIdAsync(fechaId);
 
             if (LosEventos.Count == 0)
-                throw new AppValidationException($"No hay producción asociada a la fecha {fechaResultante}");
+                throw new EmptyCollectionException($"No hay producción asociada a la fecha {fechaResultante}");
 
             return LosEventos;
         }
@@ -72,12 +72,11 @@ namespace mge.API.Services
             if (!string.IsNullOrEmpty(resultadoValidacion))
                 throw new AppValidationException(resultadoValidacion);
 
-            //Validamos si la planta existe
             var plantaExistente = await _plantaRepository
                 .GetByDetailsAsync(unEvento.PlantaNombre, unEvento.PlantaId);
 
             if (plantaExistente.Id == Guid.Empty)
-                throw new AppValidationException($"No hay planta registrada con esa identificación");
+                throw new EmptyCollectionException($"No hay planta registrada con esa identificación");
 
             unEvento.PlantaId = plantaExistente.Id;
 
@@ -85,18 +84,14 @@ namespace mge.API.Services
             var eventoExistente = await _produccionRepository
                 .GetByDetailsAsync(unEvento);
 
-
-            //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
             if (eventoExistente.PlantaId == unEvento.PlantaId &&
                 eventoExistente.Fecha == unEvento.Fecha &&
                 eventoExistente.Valor == unEvento.Valor)
                 return eventoExistente;
 
-            //Validamos que la producción no supere la capacidad de la planta
             if (unEvento.Valor > plantaExistente.Capacidad)
                 throw new AppValidationException($"El evento supera la capacidad de producción " +
                     $"de la planta {plantaExistente.Nombre} de {plantaExistente.Capacidad} MW");
-
 
             try
             {
@@ -132,7 +127,7 @@ namespace mge.API.Services
                 .GetByDetailsAsync(unEvento.PlantaNombre, unEvento.PlantaId);
 
             if (plantaExistente.Id == Guid.Empty)
-                throw new AppValidationException($"No hay planta registrada con esa identificación");
+                throw new EmptyCollectionException($"No hay planta registrada con esa identificación");
 
             unEvento.PlantaId = plantaExistente.Id;
 
@@ -141,15 +136,13 @@ namespace mge.API.Services
                 .GetByIdAsync(unEvento.Id);
 
             if (eventoExistente.Id == Guid.Empty)
-                throw new AppValidationException($"No existe un evento de producción registrado con ese Id");
+                throw new EmptyCollectionException($"No existe un evento de producción registrado con ese Id");
 
-            //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
             if (eventoExistente.PlantaId == unEvento.PlantaId &&
                 eventoExistente.Fecha == unEvento.Fecha &&
                 eventoExistente.Valor == unEvento.Valor)
                 return eventoExistente;
 
-            //Validamos que la producción no supere la capacidad de la planta
             if (unEvento.Valor > plantaExistente.Capacidad)
                 throw new AppValidationException($"El evento supera la capacidad de producción " +
                     $"de la planta {plantaExistente.Nombre} de {plantaExistente.Capacidad} MW");
@@ -179,7 +172,7 @@ namespace mge.API.Services
                 .GetByIdAsync(eventoId);
 
             if (unEvento.Id == Guid.Empty)
-                throw new AppValidationException($"No se encontró evento con el Id {eventoId}");
+                throw new EmptyCollectionException($"No se encontró evento con el Id {eventoId}");
 
             try
             {
@@ -199,9 +192,7 @@ namespace mge.API.Services
 
         private static string EvaluateEventDetailsAsync(Produccion unEvento)
         {
-
-            //Se valida si viene con nombre y el guid es vacío
-            if (unEvento.PlantaNombre!.Length == 0 && unEvento.PlantaId == Guid.Empty)
+            if (string.IsNullOrEmpty(unEvento.PlantaNombre) && unEvento.PlantaId == Guid.Empty)
                 return "no se puede insertar un evento sin información de la planta";
 
             if (unEvento.Valor <= 0)

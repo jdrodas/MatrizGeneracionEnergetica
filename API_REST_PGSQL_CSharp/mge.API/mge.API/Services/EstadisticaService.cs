@@ -12,6 +12,5 @@ namespace mge.API.Services
             return await _estadisticaRepository
                 .GetAllAsync();
         }
-
     }
 }

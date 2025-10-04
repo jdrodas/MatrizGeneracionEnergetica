@@ -42,7 +42,7 @@ namespace mge.API.Services
                 .GetByIdAsync(ubicacionId);
 
             if (unaUbicacion.Id == Guid.Empty)
-                throw new AppValidationException($"Ubicación no encontrada con el Id {ubicacionId}");
+                throw new EmptyCollectionException($"Ubicación no encontrada con el Id {ubicacionId}");
 
             return unaUbicacion;
         }
@@ -53,7 +53,7 @@ namespace mge.API.Services
                 .GetByIdAsync(ubicacionId);
 
             if (unaUbicacion.Id == Guid.Empty)
-                throw new AppValidationException($"Ubicación no encontrada con el Id {ubicacionId}");
+                throw new EmptyCollectionException($"Ubicación no encontrada con el Id {ubicacionId}");
 
             UbicacionDetallada unaUbicacionDetallada = new()
             {
@@ -77,7 +77,7 @@ namespace mge.API.Services
                 .GetByNameAsync(ubicacionNombre);
 
             if (unaUbicacion.Id == Guid.Empty)
-                throw new AppValidationException($"Ubicación no encontrada con el nombre {ubicacionNombre}");
+                throw new EmptyCollectionException($"Ubicación no encontrada con el nombre {ubicacionNombre}");
 
             return unaUbicacion;
         }
@@ -88,7 +88,7 @@ namespace mge.API.Services
                 .GetByIdAsync(ubicacionId);
 
             if (unaUbicacion.Id == Guid.Empty)
-                throw new AppValidationException($"Ubicación no encontrada con el Id {ubicacionId}");
+                throw new EmptyCollectionException($"Ubicación no encontrada con el Id {ubicacionId}");
 
             var plantasAsociadas = await _plantaRepository
                 .GetAllByLocationIdAsync(ubicacionId);

@@ -104,6 +104,10 @@ namespace mge.API.Controllers.V2
             {
                 return BadRequest($"Error de validación: {error.Message}");
             }
+            catch (EmptyCollectionException error)
+            {
+                return NotFound($"Error de validación: {error.Message}");
+            }
             catch (DbOperationException error)
             {
                 return BadRequest($"Error de operacion en DB: {error.Message}");
@@ -124,6 +128,10 @@ namespace mge.API.Controllers.V2
             catch (AppValidationException error)
             {
                 return BadRequest($"Error de validación: {error.Message}");
+            }
+            catch (EmptyCollectionException error)
+            {
+                return NotFound($"Error de validación: {error.Message}");
             }
             catch (DbOperationException error)
             {

@@ -35,6 +35,10 @@ namespace mge.API.Controllers.V1
             {
                 return BadRequest(error.Message);
             }
+            catch (EmptyCollectionException error)
+            {
+                return NotFound($"Error de validación: {error.Message}");
+            }
         }
 
         [HttpGet("{ubicacionId:Guid}/plantas")]
@@ -50,6 +54,10 @@ namespace mge.API.Controllers.V1
             catch (AppValidationException error)
             {
                 return BadRequest(error.Message);
+            }
+            catch (EmptyCollectionException error)
+            {
+                return NotFound($"Error de validación: {error.Message}");
             }
         }
     }

@@ -26,7 +26,7 @@ namespace mge.API.Services
                 .GetByIdAsync(plantaId);
 
             if (unaPlanta.Id == Guid.Empty)
-                throw new AppValidationException($"Planta no encontrada con el Id {plantaId}");
+                throw new EmptyCollectionException($"Planta no encontrada con el Id {plantaId}");
 
             return unaPlanta;
         }
@@ -122,7 +122,7 @@ namespace mge.API.Services
                 .GetByIdAsync(unaPlanta.Id);
 
             if (plantaExistente.Id == Guid.Empty)
-                throw new AppValidationException($"Actualización fallida - No hay planta registrada con el Id {unaPlanta.Id}");
+                throw new EmptyCollectionException($"Actualización fallida - No hay planta registrada con el Id {unaPlanta.Id}");
 
             //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
             if (plantaExistente.Equals(unaPlanta))
@@ -153,14 +153,15 @@ namespace mge.API.Services
                 .GetByIdAsync(plantaId);
 
             if (unaPlanta.Id == Guid.Empty)
-                throw new AppValidationException($"Planta no encontrada con el id {plantaId}");
+                throw new EmptyCollectionException($"Planta no encontrada con el id {plantaId}");
 
             //Validar si la planta tiene producción asociada
             var produccion_asociada = await _produccionRepository
                 .GetAllByPlantIdAsync(plantaId);
 
-            if (produccion_asociada.Count == 0)
-                throw new AppValidationException($"la planta {unaPlanta.Nombre} no se puede eliminar porque tiene producción asociada");
+            if (produccion_asociada.Count != 0)
+                throw new AppValidationException($"la planta {unaPlanta.Nombre} no se puede eliminar " +
+                    $"porque tiene {produccion_asociada.Count} eventos de producción");
 
             string nombrePlantaEliminada = unaPlanta.Nombre!;
 
@@ -182,13 +183,13 @@ namespace mge.API.Services
 
         private static string EvaluatePlantDetailsAsync(Planta unaPlanta)
         {
-            if (unaPlanta.Nombre!.Length == 0)
+            if (string.IsNullOrEmpty(unaPlanta.Nombre))
                 return "No se puede insertar una planta con nombre nulo";
 
-            if (unaPlanta.TipoNombre!.Length == 0 && unaPlanta.TipoId == Guid.Empty)
+            if (string.IsNullOrEmpty(unaPlanta.TipoNombre) && unaPlanta.TipoId == Guid.Empty)
                 return "No se puede insertar una planta sin información del tipo de fuente";
 
-            if (unaPlanta.UbicacionNombre!.Length == 0 && unaPlanta.UbicacionId == Guid.Empty)
+            if (string.IsNullOrEmpty(unaPlanta.UbicacionNombre) && unaPlanta.UbicacionId == Guid.Empty)
                 return "No se puede insertar una planta sin información de la ubicación";
 
             if (unaPlanta.Capacidad <= 0)

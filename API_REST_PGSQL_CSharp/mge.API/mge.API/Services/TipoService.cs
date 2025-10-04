@@ -22,7 +22,7 @@ namespace mge.API.Services
                 .GetByIdAsync(tipoId);
 
             if (unTipo.Id == Guid.Empty)
-                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
+                throw new EmptyCollectionException($"Tipo de fuente no encontrado con el Id {tipoId}");
 
             return unTipo;
         }
@@ -33,7 +33,7 @@ namespace mge.API.Services
                 .GetByIdAsync(tipoId);
 
             if (unTipo.Id == Guid.Empty)
-                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
+                throw new EmptyCollectionException($"Tipo de fuente no encontrado con el Id {tipoId}");
 
             TipoDetallado unTipoDetallado = new()
             {
@@ -49,21 +49,19 @@ namespace mge.API.Services
             return unTipoDetallado;
         }
 
-
-
         public async Task<List<Planta>> GetAssociatedPlantsAsync(Guid tipoId)
         {
             Tipo unTipo = await _tipoRepository
                 .GetByIdAsync(tipoId);
 
             if (unTipo.Id == Guid.Empty)
-                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
+                throw new EmptyCollectionException($"Tipo de fuente no encontrado con el Id {tipoId}");
 
             var plantasAsociadas = await _plantaRepository
                 .GetAllByTypeIdAsync(tipoId);
 
             if (plantasAsociadas.Count == 0)
-                throw new AppValidationException($"Tipo {unTipo.Nombre} no tiene plantas asociadas");
+                throw new EmptyCollectionException($"Tipo {unTipo.Nombre} no tiene plantas asociadas");
 
             return plantasAsociadas;
         }
@@ -78,11 +76,9 @@ namespace mge.API.Services
             if (!string.IsNullOrEmpty(resultadoValidacion))
                 throw new AppValidationException(resultadoValidacion);
 
-            //Validamos primero si existe con ese nombre, descripcion y si es renovable
             var tipoExistente = await _tipoRepository
                 .GetByDetailsAsync(unTipo);
 
-            //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
             if (tipoExistente.Nombre == unTipo.Nombre! &&
                 tipoExistente.Descripcion == unTipo.Descripcion &&
                 tipoExistente.EsRenovable == unTipo.EsRenovable)
@@ -117,14 +113,12 @@ namespace mge.API.Services
             if (!string.IsNullOrEmpty(resultadoValidacion))
                 throw new AppValidationException(resultadoValidacion);
 
-            //Validamos primero si existe un tipo con ese Id
             var tipoExistente = await _tipoRepository
                 .GetByIdAsync(unTipo.Id);
 
             if (tipoExistente.Id == Guid.Empty)
-                throw new AppValidationException($"No existe un tipo con el Guid {unTipo.Id} que se pueda actualizar");
+                throw new EmptyCollectionException($"No existe un tipo con el Guid {unTipo.Id} que se pueda actualizar");
 
-            //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
             if (tipoExistente.Equals(unTipo))
                 return tipoExistente;
 
@@ -153,14 +147,14 @@ namespace mge.API.Services
                 .GetByIdAsync(tipoId);
 
             if (unTipo.Id == Guid.Empty)
-                throw new AppValidationException($"Tipo no encontrado con el id {tipoId}");
+                throw new EmptyCollectionException($"Tipo no encontrado con el id {tipoId}");
 
             //Validar si el tipo de fuente tiene plantas asociadas
             var plantasAsociadas = await _plantaRepository
                 .GetAllByTypeIdAsync(tipoId);
 
-            if (plantasAsociadas.Count == 0)
-                throw new AppValidationException($"El tipo {unTipo.Nombre} no se puede eliminar porque tiene plantas asociadas");
+            if (plantasAsociadas.Count != 0)
+                throw new AppValidationException($"El tipo {unTipo.Nombre} no se puede eliminar porque tiene {plantasAsociadas.Count} plantas asociadas");
 
             string nombreTipoEliminado = unTipo.Nombre!;
 
@@ -182,10 +176,10 @@ namespace mge.API.Services
 
         private static string EvaluateTypeDetailsAsync(Tipo unTipo)
         {
-            if (unTipo.Nombre!.Length == 0)
+            if (string.IsNullOrEmpty(unTipo.Nombre))
                 return "No se puede insertar un tipo con nombre nulo";
 
-            if (unTipo.Descripcion!.Length == 0)
+            if (string.IsNullOrEmpty(unTipo.Descripcion))
                 return "No se puede insertar un tipo con la descripción nula.";
 
             return string.Empty;
