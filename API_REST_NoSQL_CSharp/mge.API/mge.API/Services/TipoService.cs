@@ -136,7 +136,11 @@ namespace mge.API.Services
                 tipoExistente = await _tipoRepository
                     .GetByIdAsync(unTipo.Id!);
 
-                //TODO: Actualizar la información del tipo en las plantas asociadas
+                resultadoAccion = await _plantaRepository
+                    .UpdateSourceTypeAsync(tipoExistente);
+
+                if (!resultadoAccion)
+                    throw new AppValidationException("No se actualizaron plantas relacionadas");
 
             }
             catch (DbOperationException)

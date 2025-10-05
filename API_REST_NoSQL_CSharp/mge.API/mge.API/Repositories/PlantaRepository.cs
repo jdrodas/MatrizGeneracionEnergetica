@@ -176,6 +176,33 @@ namespace mge.API.Repositories
             return resultadoAccion;
         }
 
+        public async Task<bool> UpdateSourceTypeAsync(Tipo unTipo)
+        {
+            bool resultadoAccion = false;
+
+            var conexion = contextoDB
+                .CreateConnection();
+            
+            var coleccionPlantas = conexion
+                .GetCollection<Planta>(contextoDB.ConfiguracionColecciones.ColeccionPlantas);
+
+            var filtroPlantas = Builders<Planta>
+                .Filter
+                .Eq(planta => planta.TipoId, unTipo.Id);
+
+            var actualizadorPlantas = Builders<Planta>
+                .Update
+                .Set(planta => planta.TipoNombre, unTipo.Nombre);
+
+            var resultado = await coleccionPlantas
+                .UpdateManyAsync(filtroPlantas, actualizadorPlantas);
+
+            if (resultado.IsAcknowledged)
+                resultadoAccion = true;
+
+            return resultadoAccion;
+        }
+
         public async Task<bool> RemoveAsync(string plantaId)
         {
             bool resultadoAccion = false;

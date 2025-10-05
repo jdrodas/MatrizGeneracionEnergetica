@@ -12,6 +12,7 @@ namespace mge.API.Interfaces
         public Task<Planta> GetByDetailsAsync(string plantaNombre, string ubicacionId, string tipoId);
         public Task<bool> CreateAsync(Planta unaPlanta);
         public Task<bool> UpdateAsync(Planta unaPlanta);
+        public Task<bool> UpdateSourceTypeAsync(Tipo unTipo);
         public Task<bool> RemoveAsync(string plantaId);
     }
 }
