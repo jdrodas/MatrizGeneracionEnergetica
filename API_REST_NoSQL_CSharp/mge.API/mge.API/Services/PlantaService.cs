@@ -143,7 +143,12 @@ namespace mge.API.Services
                 plantaExistente = await _plantaRepository
                     .GetByIdAsync(unaPlanta.Id!);
 
-                //TODO: Actualizar la información de la planta en los eventos de producción
+                resultadoAccion = await _produccionRepository
+                    .UpdatePlantAsync(plantaExistente);
+
+                if (!resultadoAccion)
+                    throw new AppValidationException("No se actualizaron eventos de producción relacionados a esta planta");
+
             }
             catch (DbOperationException)
             {
