@@ -67,165 +67,160 @@ namespace mge.API.Services
             return losEventos;
         }
 
-        //public async Task<Produccion> CreateAsync(Produccion unEvento)
-        //{
-        //    unEvento.PlantaNombre = unEvento.PlantaNombre!.Trim();
+        public async Task<Produccion> CreateAsync(Produccion unEvento)
+        {
+            unEvento.PlantaNombre = unEvento.PlantaNombre!.Trim();
 
-        //    string resultadoValidacion = EvaluateEventDetailsAsync(unEvento);
+            string resultadoValidacion = EvaluateEventDetailsAsync(unEvento);
 
-        //    if (!string.IsNullOrEmpty(resultadoValidacion))
-        //        throw new AppValidationException(resultadoValidacion);
+            if (!string.IsNullOrEmpty(resultadoValidacion))
+                throw new AppValidationException(resultadoValidacion);
 
-        //    //Validamos si la planta existe
-        //    var plantaExistente = await _plantaRepository
-        //        .GetByDetailsAsync(unEvento.PlantaNombre, unEvento.PlantaId);
+            var plantaExistente = await _plantaRepository
+                .GetByDetailsAsync(unEvento.PlantaNombre, unEvento.PlantaId!);
 
-        //    if (plantaExistente.Id == Guid.Empty)
-        //        throw new AppValidationException($"No hay planta registrada con esa identificación");
+            if (string.IsNullOrEmpty(plantaExistente.Id))
+                throw new EmptyCollectionException($"No hay planta registrada con esa identificación");
 
-        //    unEvento.PlantaId = plantaExistente.Id;
+            unEvento.PlantaId = plantaExistente.Id;
+            unEvento.PlantaNombre = plantaExistente.Nombre;
 
-        //    //Validamos si ya hay un evento de producción de esa planta para la fecha
-        //    var eventoExistente = await _produccionRepository
-        //        .GetByDetailsAsync(unEvento);
+            var eventoExistente = await _produccionRepository
+                .GetByDetailsAsync(unEvento);
 
+            if (eventoExistente.PlantaId == unEvento.PlantaId &&
+                eventoExistente.Fecha == unEvento.Fecha &&
+                eventoExistente.Valor == unEvento.Valor)
+                return eventoExistente;
 
-        //    //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
-        //    if (eventoExistente.PlantaId == unEvento.PlantaId &&
-        //        eventoExistente.Fecha == unEvento.Fecha &&
-        //        eventoExistente.Valor == unEvento.Valor)
-        //        return eventoExistente;
+            if (unEvento.Valor > plantaExistente.Capacidad)
+                throw new AppValidationException($"El evento supera la capacidad de producción " +
+                    $"de la planta {plantaExistente.Nombre} de {plantaExistente.Capacidad} MW");
 
-        //    //Validamos que la producción no supere la capacidad de la planta
-        //    if (unEvento.Valor > plantaExistente.Capacidad)
-        //        throw new AppValidationException($"El evento supera la capacidad de producción " +
-        //            $"de la planta {plantaExistente.Nombre} de {plantaExistente.Capacidad} MW");
+            try
+            {
+                bool resultadoAccion = await _produccionRepository
+                    .CreateAsync(unEvento);
 
+                if (!resultadoAccion)
+                    throw new AppValidationException("Operación ejecutada pero no generó cambios en la DB");
 
-        //    try
-        //    {
-        //        bool resultadoAccion = await _produccionRepository
-        //            .CreateAsync(unEvento);
+                eventoExistente = await _produccionRepository
+                .GetByDetailsAsync(unEvento);
 
-        //        if (!resultadoAccion)
-        //            throw new AppValidationException("Operación ejecutada pero no generó cambios en la DB");
+            }
+            catch (DbOperationException)
+            {
+                throw;
+            }
 
-        //        eventoExistente = await _produccionRepository
-        //        .GetByDetailsAsync(unEvento);
+            return eventoExistente;
+        }
 
-        //    }
-        //    catch (DbOperationException)
-        //    {
-        //        throw;
-        //    }
+        public async Task<Produccion> UpdateAsync(Produccion unEvento)
+        {
+            unEvento.PlantaNombre = unEvento.PlantaNombre!.Trim();
 
-        //    return eventoExistente;
-        //}
+            string resultadoValidacion = EvaluateEventDetailsAsync(unEvento);
 
-        //public async Task<Produccion> UpdateAsync(Produccion unEvento)
-        //{
-        //    unEvento.PlantaNombre = unEvento.PlantaNombre!.Trim();
+            if (!string.IsNullOrEmpty(resultadoValidacion))
+                throw new AppValidationException(resultadoValidacion);
 
-        //    string resultadoValidacion = EvaluateEventDetailsAsync(unEvento);
+            //Validamos si la planta existe
+            var plantaExistente = await _plantaRepository
+                .GetByDetailsAsync(unEvento.PlantaNombre, unEvento.PlantaId!);
 
-        //    if (!string.IsNullOrEmpty(resultadoValidacion))
-        //        throw new AppValidationException(resultadoValidacion);
+            if (string.IsNullOrEmpty(plantaExistente.Id))
+                throw new EmptyCollectionException($"No hay planta registrada con esa identificación");
 
-        //    //Validamos si la planta existe
-        //    var plantaExistente = await _plantaRepository
-        //        .GetByDetailsAsync(unEvento.PlantaNombre, unEvento.PlantaId);
+            unEvento.PlantaId = plantaExistente.Id;
+            unEvento.PlantaNombre = plantaExistente.Nombre;
 
-        //    if (plantaExistente.Id == Guid.Empty)
-        //        throw new AppValidationException($"No hay planta registrada con esa identificación");
+            var eventoExistente = await _produccionRepository
+                .GetByIdAsync(unEvento.Id!);
 
-        //    unEvento.PlantaId = plantaExistente.Id;
+            if (string.IsNullOrEmpty(eventoExistente.Id))
+                throw new EmptyCollectionException($"No existe un evento de producción registrado con ese Id");
 
-        //    //Validamos si ya hay un evento de producción con ese Id
-        //    var eventoExistente = await _produccionRepository
-        //        .GetByIdAsync(unEvento.Id);
+            if (eventoExistente.PlantaId == unEvento.PlantaId &&
+                eventoExistente.Fecha == unEvento.Fecha &&
+                eventoExistente.Valor == unEvento.Valor)
+                return eventoExistente;
 
-        //    if (eventoExistente.Id == Guid.Empty)
-        //        throw new AppValidationException($"No existe un evento de producción registrado con ese Id");
+            if (unEvento.Valor > plantaExistente.Capacidad)
+                throw new AppValidationException($"El evento supera la capacidad de producción " +
+                    $"de la planta {plantaExistente.Nombre} de {plantaExistente.Capacidad} MW");
 
-        //    //Si existe y los datos son iguales, se retorna el objeto para garantizar idempotencia
-        //    if (eventoExistente.PlantaId == unEvento.PlantaId &&
-        //        eventoExistente.Fecha == unEvento.Fecha &&
-        //        eventoExistente.Valor == unEvento.Valor)
-        //        return eventoExistente;
+            try
+            {
+                bool resultadoAccion = await _produccionRepository
+                    .UpdateAsync(unEvento);
 
-        //    //Validamos que la producción no supere la capacidad de la planta
-        //    if (unEvento.Valor > plantaExistente.Capacidad)
-        //        throw new AppValidationException($"El evento supera la capacidad de producción " +
-        //            $"de la planta {plantaExistente.Nombre} de {plantaExistente.Capacidad} MW");
+                if (!resultadoAccion)
+                    throw new AppValidationException("Operación ejecutada pero no generó cambios en la DB");
 
-        //    try
-        //    {
-        //        bool resultadoAccion = await _produccionRepository
-        //            .UpdateAsync(unEvento);
+                eventoExistente = await _produccionRepository
+                    .GetByIdAsync(unEvento.Id!);
+            }
+            catch (DbOperationException)
+            {
+                throw;
+            }
 
-        //        if (!resultadoAccion)
-        //            throw new AppValidationException("Operación ejecutada pero no generó cambios en la DB");
+            return eventoExistente;
+        }
 
-        //        eventoExistente = await _produccionRepository
-        //            .GetByIdAsync(unEvento.Id);
-        //    }
-        //    catch (DbOperationException)
-        //    {
-        //        throw;
-        //    }
+        public async Task<Produccion> RemoveAsync(string eventoId)
+        {
+            Produccion unEvento = await _produccionRepository
+                .GetByIdAsync(eventoId);
 
-        //    return eventoExistente;
-        //}
+            if (string.IsNullOrEmpty(unEvento.Id))
+                throw new EmptyCollectionException($"No se encontró evento con el Id {eventoId}");
 
-        //public async Task<Produccion> RemoveAsync(Guid eventoId)
-        //{
-        //    Produccion unEvento = await _produccionRepository
-        //        .GetByIdAsync(eventoId);
+            try
+            {
+                bool resultadoAccion = await _produccionRepository
+                    .RemoveAsync(eventoId);
 
-        //    if (unEvento.Id == Guid.Empty)
-        //        throw new AppValidationException($"No se encontró evento con el Id {eventoId}");
+                if (!resultadoAccion)
+                    throw new DbOperationException("Operación ejecutada pero no generó cambios en la DB");
+            }
+            catch (DbOperationException)
+            {
+                throw;
+            }
 
-        //    try
-        //    {
-        //        bool resultadoAccion = await _produccionRepository
-        //            .RemoveAsync(eventoId);
+            return unEvento;
+        }
 
-        //        if (!resultadoAccion)
-        //            throw new DbOperationException("Operación ejecutada pero no generó cambios en la DB");
-        //    }
-        //    catch (DbOperationException)
-        //    {
-        //        throw;
-        //    }
+        private static string EvaluateEventDetailsAsync(Produccion unEvento)
+        {
 
-        //    return unEvento;
-        //}
+            //Se valida si viene con nombre y el guid es vacío
+            if (string.IsNullOrEmpty(unEvento.PlantaNombre) && string.IsNullOrEmpty(unEvento.PlantaId))
+                return "no se puede insertar un evento sin información de la planta";
 
-        //private static string EvaluateEventDetailsAsync(Produccion unEvento)
-        //{
+            if (unEvento.Valor <= 0)
+                return "El valor de la producción registrada en MW debe ser mayor que 0";
 
-        //    //Se valida si viene con nombre y el guid es vacío
-        //    if (unEvento.PlantaNombre!.Length == 0 && unEvento.PlantaId == Guid.Empty)
-        //        return "no se puede insertar un evento sin información de la planta";
+            bool fechaValida = DateTime
+                            .TryParseExact(
+                                unEvento.Fecha, "dd-MM-yyyy",
+                                CultureInfo.InvariantCulture, DateTimeStyles.None,
+                                out DateTime fechaResultante);
 
-        //    if (unEvento.Valor <= 0)
-        //        return "El valor de la producción registrada en MW debe ser mayor que 0";
+            if (!fechaValida)
+                throw new AppValidationException($"La fecha suministrada {unEvento.Fecha} no tiene el formato DD-MM-YYYY");
 
-        //    bool fechaValida = DateTime
-        //                    .TryParseExact(
-        //                        unEvento.Fecha, "dd-MM-yyyy",
-        //                        CultureInfo.InvariantCulture, DateTimeStyles.None,
-        //                        out DateTime fechaResultante);
+            if (fechaResultante >= DateTime.Now)
+                throw new AppValidationException($"No se puede registrar eventos de producción futuros. " +
+                    $"La fecha actual es {DateTime.Now:dd-MM-yyyy}");
 
-        //    if (!fechaValida)
-        //        throw new AppValidationException($"La fecha suministrada {unEvento.Fecha} no tiene el formato DD-MM-YYYY");
+            unEvento.Fecha = fechaResultante.ToString("yyyy-MM-dd");
 
-        //    if (fechaResultante >= DateTime.Now)
-        //        throw new AppValidationException($"No se puede registrar eventos de producción futuros. " +
-        //            $"La fecha actual es {DateTime.Now:dd-MM-yyyy}");
-
-        //    return string.Empty;
-        //}
+            return string.Empty;
+        }
 
         private static ProduccionRespuesta BuildProductionResponse(IEnumerable<Produccion> laProduccion, ProduccionParametrosConsulta produccionParametrosConsulta)
         {

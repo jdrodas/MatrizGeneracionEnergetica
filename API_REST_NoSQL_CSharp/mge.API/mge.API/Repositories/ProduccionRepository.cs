@@ -107,107 +107,71 @@ namespace mge.API.Repositories
                 .FirstOrDefaultAsync();
 
             if (resultado is not null)
+            {
+                ModificaFormatoFechas(resultado);
                 eventoExistente = resultado;
-
-            ModificaFormatoFechas(eventoExistente);
-
+            }
             return eventoExistente;
         }
 
-        //public async Task<bool> CreateAsync(Produccion unEvento)
-        //{
-        //    bool resultadoAccion = false;
+        public async Task<bool> CreateAsync(Produccion unEvento)
+        {
+            bool resultadoAccion = false;
 
-        //    try
-        //    {
-        //        var conexion = contextoDB.CreateConnection();
+            var conexion = contextoDB
+                .CreateConnection();
 
-        //        string procedimiento = "core.p_inserta_produccion";
-        //        var parametros = new
-        //        {
-        //            p_planta_id = unEvento.PlantaId,
-        //            p_fecha = unEvento.Fecha,
-        //            p_valor = unEvento.Valor
-        //        };
+            var coleccionProduccion = conexion
+                .GetCollection<Produccion>(contextoDB.ConfiguracionColecciones.ColeccionProduccion);
 
-        //        var cantidad_filas = await conexion.ExecuteAsync(
-        //            procedimiento,
-        //            parametros,
-        //            commandType: CommandType.StoredProcedure);
+            await coleccionProduccion
+                .InsertOneAsync(unEvento);
 
-        //        if (cantidad_filas != 0)
-        //            resultadoAccion = true;
-        //    }
-        //    catch (NpgsqlException error)
-        //    {
-        //        throw new DbOperationException(error.Message);
-        //    }
+            var resultado = await GetByDetailsAsync(unEvento);
 
-        //    return resultadoAccion;
-        //}
+            if (resultado is not null)
+                resultadoAccion = true;
 
-        //public async Task<bool> UpdateAsync(Produccion unEvento)
-        //{
-        //    bool resultadoAccion = false;
+            return resultadoAccion;
+        }
 
-        //    try
-        //    {
-        //        var conexion = contextoDB.CreateConnection();
+        public async Task<bool> UpdateAsync(Produccion unEvento)
+        {
+            bool resultadoAccion = false;
 
-        //        string procedimiento = "core.p_actualiza_produccion";
-        //        var parametros = new
-        //        {
-        //            p_id = unEvento.Id,
-        //            p_planta_id = unEvento.PlantaId,
-        //            p_fecha = unEvento.Fecha,
-        //            p_valor = unEvento.Valor
-        //        };
+            var conexion = contextoDB
+                .CreateConnection();
 
-        //        var cantidad_filas = await conexion.ExecuteAsync(
-        //            procedimiento,
-        //            parametros,
-        //            commandType: CommandType.StoredProcedure);
+            var coleccionProduccion = conexion
+                .GetCollection<Produccion>(contextoDB.ConfiguracionColecciones.ColeccionProduccion);
 
-        //        if (cantidad_filas != 0)
-        //            resultadoAccion = true;
-        //    }
-        //    catch (NpgsqlException error)
-        //    {
-        //        throw new DbOperationException(error.Message);
-        //    }
+            var resultado = await coleccionProduccion
+                .ReplaceOneAsync(evento => evento.Id == unEvento.Id, unEvento);
 
-        //    return resultadoAccion;
-        //}
+            if (resultado.IsAcknowledged)
+                resultadoAccion = true;
 
-        //public async Task<bool> RemoveAsync(Guid eventoId)
-        //{
-        //    bool resultadoAccion = false;
+            return resultadoAccion;
+        }
 
-        //    try
-        //    {
-        //        var conexion = contextoDB.CreateConnection();
+        public async Task<bool> RemoveAsync(string eventoId)
+        {
+            bool resultadoAccion = false;
 
-        //        string procedimiento = "core.p_elimina_produccion";
-        //        var parametros = new
-        //        {
-        //            p_id = eventoId
-        //        };
+            var conexion = contextoDB
+                .CreateConnection();
 
-        //        var cantidad_filas = await conexion.ExecuteAsync(
-        //            procedimiento,
-        //            parametros,
-        //            commandType: CommandType.StoredProcedure);
+            var coleccionProduccion = conexion
+                .GetCollection<Produccion>(contextoDB.ConfiguracionColecciones.ColeccionProduccion);
 
-        //        if (cantidad_filas != 0)
-        //            resultadoAccion = true;
-        //    }
-        //    catch (NpgsqlException error)
-        //    {
-        //        throw new DbOperationException(error.Message);
-        //    }
+            var resultado = await coleccionProduccion
+                .DeleteOneAsync(evento => evento.Id == eventoId);
 
-        //    return resultadoAccion;
-        //}
+            if (resultado.IsAcknowledged)
+                resultadoAccion = true;
+
+            return resultadoAccion;
+        }
 
         private static void ModificaFormatoFechas(List<Produccion> losEventos)
         {
