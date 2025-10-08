@@ -116,7 +116,8 @@ db.createCollection("tipos",{
                         bsonType: 'bool',
                         description: "'esRenovable' debe ser un valor booleano y no puede ser nulo"                        
                     }
-                }
+                },
+                additionalProperties: false
             }
         }
     } 
@@ -164,7 +165,8 @@ db.createCollection("ubicaciones",{
                         description: "'iso_departamento' debe ser una cadena de caracteres y no puede ser nulo",
                         maxLength: 6
                     }
-                }
+                },
+                additionalProperties: false
             }
         }
     }
@@ -219,7 +221,8 @@ db.createCollection("plantas",{
                         description: "Capacidad de generación en Megavatios de la planta",
                         minimum: 0
                     }
-                }
+                },
+                additionalProperties: false
             }
         }
     }
@@ -262,7 +265,8 @@ db.createCollection("produccion",{
                         description: "fecha en formato YYYY-MM-DD del evento de generación de la planta",
                         minLength: 3
                     }
-                }
+                },
+                additionalProperties: false
             }
         }
     }
@@ -375,10 +379,51 @@ db.createView("v_produccion_tipo_dia", "produccion", [
 --   Creación de Indices
 -- ****************************************
 
-db.tipos.createIndex({
+db.tipos.createIndex(
+  {
     "nombre": 1,
     "descripcion": 1, 
     "esRenovable": 1
-}, {
+  },
+  {
     name: "tipo_nombre_descripcion_renovable_ix"
-});
+  }
+);
+
+
+db.plantas.createIndex(
+  {
+    "ubicacion_id": 1
+  },
+  {
+    name: "plantas_ubicacion_ix"
+  }
+);
+
+db.plantas.createIndex(
+  {
+    "tipo_id": 1
+  },
+  {
+    name: "plantas_tipo_ix"
+  }
+);
+
+
+db.produccion.createIndex(
+  {
+      "planta_id": 1
+  },
+  {
+    name: "produccion_planta_ix"
+  }
+);
+
+db.ubicaciones.createIndex(
+  {
+      "iso_departamento": 1
+  },
+  {
+    name: "ubicacion_iso_depto_ix"
+  }
+);
