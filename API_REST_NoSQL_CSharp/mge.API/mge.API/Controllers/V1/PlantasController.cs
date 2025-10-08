@@ -43,6 +43,10 @@ namespace mge.API.Controllers.V1
             {
                 return BadRequest(error.Message);
             }
+            catch (EmptyCollectionException error)
+            {
+                return NotFound(error.Message);
+            }
         }
 
         [HttpPost]

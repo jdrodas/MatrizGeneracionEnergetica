@@ -23,31 +23,45 @@ namespace mge.API.Services
 
         public async Task<Produccion> GetByIdAsync(string eventoId)
         {
-            Produccion unEvento = await _produccionRepository
-                .GetByIdAsync(eventoId);
+            try
+            {
+                Produccion unEvento = await _produccionRepository
+                    .GetByIdAsync(eventoId);
 
-            if (string.IsNullOrEmpty(unEvento.Id))
-                throw new AppValidationException($"Evento de producción no encontrado con el Id {eventoId}");
+                if (string.IsNullOrEmpty(unEvento.Id))
+                    throw new EmptyCollectionException($"Evento de producción no encontrado con el Id {eventoId}");
 
-            return unEvento;
+                return unEvento;
+            }
+            catch (FormatException error)
+            {
+                throw new AppValidationException($"La cadena de caracteres no representa un Id válido. {error.Message}");
+            }
         }
 
         public async Task<List<Produccion>> GetAllByPlantIdAsync(string plantaId)
         {
-            Planta unaPlanta = await _plantaRepository
-                .GetByIdAsync(plantaId);
+            try
+            {
+                Planta unaPlanta = await _plantaRepository
+                    .GetByIdAsync(plantaId);
 
-            if (string.IsNullOrEmpty(unaPlanta.Id))
-                throw new AppValidationException($"No hay planta registrada con el Id {plantaId}");
+                if (string.IsNullOrEmpty(unaPlanta.Id))
+                    throw new EmptyCollectionException($"No hay planta registrada con el Id {plantaId}");
 
 
-            var losEventos = await _produccionRepository
-                .GetAllByPlantIdAsync(plantaId);
+                var losEventos = await _produccionRepository
+                    .GetAllByPlantIdAsync(plantaId);
 
-            if (losEventos.Count == 0)
-                throw new AppValidationException($"No hay producción asociada a la planta {unaPlanta.Nombre}");
+                if (losEventos.Count == 0)
+                    throw new EmptyCollectionException($"No hay producción asociada a la planta {unaPlanta.Nombre}");
 
-            return losEventos;
+                return losEventos;
+            }
+            catch (FormatException error)
+            {
+                throw new AppValidationException($"La cadena de caracteres no representa un Id válido. {error.Message}");
+            }
         }
 
         public async Task<List<Produccion>> GetAllByDateIdAsync(string fechaId)
@@ -62,7 +76,7 @@ namespace mge.API.Services
                 .GetAllByDateIdAsync(fechaResultante.ToString("yyyy-MM-dd"));
 
             if (losEventos.Count == 0)
-                throw new AppValidationException($"No hay producción asociada a la fecha {fechaResultante}");
+                throw new EmptyCollectionException($"No hay producción asociada a la fecha {fechaResultante}");
 
             return losEventos;
         }

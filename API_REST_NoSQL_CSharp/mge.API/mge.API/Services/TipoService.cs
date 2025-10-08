@@ -17,52 +17,73 @@ namespace mge.API.Services
 
         public async Task<Tipo> GetByIdAsync(string tipoId)
         {
-            Tipo unTipo = await _tipoRepository
-                .GetByIdAsync(tipoId);
+            try
+            {
+                Tipo unTipo = await _tipoRepository
+                    .GetByIdAsync(tipoId);
 
-            if (string.IsNullOrEmpty(unTipo.Id))
-                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
+                if (string.IsNullOrEmpty(unTipo.Id))
+                    throw new EmptyCollectionException($"Tipo de fuente no encontrado con el Id {tipoId}");
 
-            return unTipo;
+                return unTipo;
+            }
+            catch (FormatException error)
+            {
+                throw new AppValidationException($"La cadena de caracteres no representa un Id válido. {error.Message}");
+            }
         }
 
         public async Task<TipoDetallado> GetTypeDetailsByIdAsync(string tipoId)
         {
-            Tipo unTipo = await _tipoRepository
-                .GetByIdAsync(tipoId);
-
-            if (string.IsNullOrEmpty(unTipo.Id))
-                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
-
-            TipoDetallado unTipoDetallado = new()
+            try
             {
-                Id = unTipo.Id,
-                Nombre = unTipo.Nombre,
-                Descripcion = unTipo.Descripcion,
-                EsRenovable = unTipo.EsRenovable,
-                Plantas = await _plantaRepository.GetAllByTypeIdAsync(tipoId)
-            };
+                Tipo unTipo = await _tipoRepository
+                    .GetByIdAsync(tipoId);
 
-            unTipoDetallado.TotalPlantas = unTipoDetallado.Plantas.Count;
+                if (string.IsNullOrEmpty(unTipo.Id))
+                    throw new EmptyCollectionException($"Tipo de fuente no encontrado con el Id {tipoId}");
 
-            return unTipoDetallado;
+                TipoDetallado unTipoDetallado = new()
+                {
+                    Id = unTipo.Id,
+                    Nombre = unTipo.Nombre,
+                    Descripcion = unTipo.Descripcion,
+                    EsRenovable = unTipo.EsRenovable,
+                    Plantas = await _plantaRepository.GetAllByTypeIdAsync(tipoId)
+                };
+
+                unTipoDetallado.TotalPlantas = unTipoDetallado.Plantas.Count;
+
+                return unTipoDetallado;
+            }
+            catch (FormatException error)
+            {
+                throw new AppValidationException($"La cadena de caracteres no representa un Id válido. {error.Message}");
+            }
         }
 
         public async Task<List<Planta>> GetAssociatedPlantsAsync(string tipoId)
         {
-            Tipo unTipo = await _tipoRepository
-                .GetByIdAsync(tipoId);
+            try
+            {
+                Tipo unTipo = await _tipoRepository
+                    .GetByIdAsync(tipoId);
 
-            if (string.IsNullOrEmpty(unTipo.Id))
-                throw new AppValidationException($"Tipo de fuente no encontrado con el Id {tipoId}");
+                if (string.IsNullOrEmpty(unTipo.Id))
+                    throw new EmptyCollectionException($"Tipo de fuente no encontrado con el Id {tipoId}");
 
-            var plantasAsociadas = await _plantaRepository
-                .GetAllByTypeIdAsync(tipoId);
+                var plantasAsociadas = await _plantaRepository
+                    .GetAllByTypeIdAsync(tipoId);
 
-            if (plantasAsociadas.Count == 0)
-                throw new EmptyCollectionException($"Tipo {unTipo.Nombre} no tiene plantas asociadas");
+                if (plantasAsociadas.Count == 0)
+                    throw new EmptyCollectionException($"Tipo {unTipo.Nombre} no tiene plantas asociadas");
 
-            return plantasAsociadas;
+                return plantasAsociadas;
+            }
+            catch (FormatException error)
+            {
+                throw new AppValidationException($"La cadena de caracteres no representa un Id válido. {error.Message}");
+            }
         }
 
         public async Task<Tipo> CreateAsync(Tipo unTipo)

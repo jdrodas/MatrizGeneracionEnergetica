@@ -38,37 +38,51 @@ namespace mge.API.Services
 
         public async Task<Ubicacion> GetByIdAsync(string ubicacionId)
         {
-            Ubicacion unaUbicacion = await _ubicacionRepository
-                .GetByIdAsync(ubicacionId);
+            try
+            {
+                Ubicacion unaUbicacion = await _ubicacionRepository
+                    .GetByIdAsync(ubicacionId);
 
-            if (string.IsNullOrEmpty(unaUbicacion.Id))
-                throw new AppValidationException($"Ubicación no encontrada con el Id {ubicacionId}");
+                if (string.IsNullOrEmpty(unaUbicacion.Id))
+                    throw new AppValidationException($"Ubicación no encontrada con el Id {ubicacionId}");
 
-            return unaUbicacion;
+                return unaUbicacion;
+            }
+            catch (FormatException error)
+            {
+                throw new AppValidationException($"La cadena de caracteres no representa un Id válido. {error.Message}");
+            }
         }
 
         public async Task<UbicacionDetallada> GetLocationDetailsByIdAsync(string ubicacionId)
         {
-            Ubicacion unaUbicacion = await _ubicacionRepository
-                .GetByIdAsync(ubicacionId);
-
-            if (string.IsNullOrEmpty(unaUbicacion.Id))
-                throw new AppValidationException($"Ubicación no encontrada con el Id {ubicacionId}");
-
-            UbicacionDetallada unaUbicacionDetallada = new()
+            try 
             {
-                Id = unaUbicacion.Id,
-                CodigoDepartamento = unaUbicacion.CodigoDepartamento,
-                IsoDepartamento = unaUbicacion.IsoDepartamento,
-                NombreDepartamento = unaUbicacion.NombreDepartamento,
-                CodigoMunicipio = unaUbicacion.CodigoMunicipio,
-                NombreMunicipio = unaUbicacion.NombreMunicipio,
-                Plantas = await _plantaRepository.GetAllByLocationIdAsync(ubicacionId)
-            };
+                Ubicacion unaUbicacion = await _ubicacionRepository
+                    .GetByIdAsync(ubicacionId);
 
-            unaUbicacionDetallada.TotalPlantas = unaUbicacionDetallada.Plantas.Count;
+                if (string.IsNullOrEmpty(unaUbicacion.Id))
+                    throw new EmptyCollectionException($"Ubicación no encontrada con el Id {ubicacionId}");
 
-            return unaUbicacionDetallada;
+                UbicacionDetallada unaUbicacionDetallada = new()
+                {
+                    Id = unaUbicacion.Id,
+                    CodigoDepartamento = unaUbicacion.CodigoDepartamento,
+                    IsoDepartamento = unaUbicacion.IsoDepartamento,
+                    NombreDepartamento = unaUbicacion.NombreDepartamento,
+                    CodigoMunicipio = unaUbicacion.CodigoMunicipio,
+                    NombreMunicipio = unaUbicacion.NombreMunicipio,
+                    Plantas = await _plantaRepository.GetAllByLocationIdAsync(ubicacionId)
+                };
+
+                unaUbicacionDetallada.TotalPlantas = unaUbicacionDetallada.Plantas.Count;
+
+                return unaUbicacionDetallada;
+            }
+            catch (FormatException error)
+            {
+                throw new AppValidationException($"La cadena de caracteres no representa un Id válido. {error.Message}");
+            }
         }
 
         public async Task<Ubicacion> GetByNameAsync(string ubicacionNombre)
@@ -77,26 +91,33 @@ namespace mge.API.Services
                 .GetByNameAsync(ubicacionNombre);
 
             if (string.IsNullOrEmpty(unaUbicacion.Id))
-                throw new AppValidationException($"Ubicación no encontrada con el nombre {ubicacionNombre}");
+                throw new EmptyCollectionException($"Ubicación no encontrada con el nombre {ubicacionNombre}");
 
             return unaUbicacion;
         }
 
         public async Task<List<Planta>> GetAssociatedPlantsByIdAsync(string ubicacionId)
         {
-            Ubicacion unaUbicacion = await _ubicacionRepository
-                .GetByIdAsync(ubicacionId);
+            try
+            {
+                Ubicacion unaUbicacion = await _ubicacionRepository
+                    .GetByIdAsync(ubicacionId);
 
-            if (string.IsNullOrEmpty(unaUbicacion.Id))
-                throw new AppValidationException($"Ubicación no encontrada con el Id {ubicacionId}");
+                if (string.IsNullOrEmpty(unaUbicacion.Id))
+                    throw new EmptyCollectionException($"Ubicación no encontrada con el Id {ubicacionId}");
 
-            var plantasAsociadas = await _plantaRepository
-                .GetAllByLocationIdAsync(ubicacionId);
+                var plantasAsociadas = await _plantaRepository
+                    .GetAllByLocationIdAsync(ubicacionId);
 
-            if (plantasAsociadas.Count == 0)
-                throw new AppValidationException($"Ubicación {unaUbicacion.NombreMunicipio}, {unaUbicacion.NombreDepartamento} no tiene plantas asociadas");
+                if (plantasAsociadas.Count == 0)
+                    throw new EmptyCollectionException($"Ubicación {unaUbicacion.NombreMunicipio}, {unaUbicacion.NombreDepartamento} no tiene plantas asociadas");
 
-            return plantasAsociadas;
+                return plantasAsociadas;
+            }
+            catch (FormatException error)
+            {
+                throw new AppValidationException($"La cadena de caracteres no representa un Id válido. {error.Message}");
+            }
         }
 
         private static UbicacionRespuesta BuildLocationResponse(IEnumerable<Ubicacion> lasUbicaciones, UbicacionParametrosConsulta ubicacionParametrosConsulta)

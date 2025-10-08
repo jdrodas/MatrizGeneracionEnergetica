@@ -26,13 +26,20 @@ namespace mge.API.Services
 
         public async Task<Planta> GetByIdAsync(string plantaId)
         {
-            Planta unaPlanta = await _plantaRepository
+            try
+            {
+                Planta unaPlanta = await _plantaRepository
                 .GetByIdAsync(plantaId);
 
-            if (string.IsNullOrEmpty(unaPlanta.Id))
-                throw new AppValidationException($"Planta no encontrada con el Id {plantaId}");
+                if (string.IsNullOrEmpty(unaPlanta.Id))
+                    throw new EmptyCollectionException($"Planta no encontrada con el Id {plantaId}");
 
-            return unaPlanta;
+                return unaPlanta;
+            }
+            catch (FormatException error)
+            {
+                throw new AppValidationException($"La cadena de caracteres no representa un Id válido. {error.Message}");
+            }
         }
 
         public async Task<Planta> CreateAsync(Planta unaPlanta)
